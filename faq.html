@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Domande Frequenti · ECLYSS</title>
+<meta name="description" content="Domande frequenti su ECLYSS: produzione, acquisto, pagamenti, assistenza clienti e privacy.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Archivo+Black&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000;--dark:#07070a;--purple:#7B2FFF;--purple-glow:#9B5FFF;--purple-light:#C084FC;
+  --white:#fff;--gray:#666;--gray-light:#999;--gold:#F59E0B;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+
+/* ── NAV (identica al sito principale) ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:12px 72px;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(123,47,255,0.12);
+}
+.nav-logo{justify-self:start;}
+.nav-logo img{height:40px;filter:invert(1);vertical-align:middle}
+.nav-links{
+  display:flex;
+  justify-content:center;
+  gap:48px;
+  list-style:none;
+  justify-self:center;
+}
+.nav-links a{
+  position:relative;
+  font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:600;
+  letter-spacing:2.8px;text-transform:uppercase;color:var(--gray-light);
+  text-decoration:none;transition:color .2s;
+  white-space:nowrap;
+  padding-bottom:4px;
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
+  background:var(--purple-light);transform:scaleX(0);transform-origin:left;
+  transition:transform .25s ease;
+}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-links a.active{color:var(--purple-light)}
+.nav-links a.active::after{transform:scaleX(1)}
+
+/* ── CART (identico al sito principale) ── */
+.nav-cart{position:relative;justify-self:end}
+.cart-btn{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+  color:var(--white);cursor:pointer;transition:background .2s,border-color .2s;
+}
+.cart-btn:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5)}
+.cart-btn svg{width:20px;height:20px}
+.cart-count{
+  position:absolute;top:-4px;right:-4px;
+  min-width:16px;height:16px;padding:0 3px;border-radius:8px;
+  background:var(--purple-light);color:#150022;
+  font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;line-height:16px;text-align:center;
+}
+.cart-count[data-empty="true"]{display:none}
+.cart-dropdown{
+  position:absolute;top:calc(100% + 16px);right:0;width:320px;
+  background:rgba(10,6,18,.92);backdrop-filter:blur(16px);
+  border:1px solid rgba(123,47,255,.22);border-radius:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+  padding:20px;
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .2s ease,transform .2s ease,visibility .2s;
+  z-index:250;
+}
+.nav-cart.open .cart-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.cart-dropdown-header{
+  font-family:'Cinzel',serif;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--white);margin-bottom:14px;padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.cart-empty{
+  font-family:'Rajdhani',sans-serif;font-size:14px;line-height:1.6;color:var(--gray-light);
+  padding:8px 0 4px;
+}
+.cart-items{display:flex;flex-direction:column;gap:10px}
+.cart-item{display:flex;align-items:center;gap:12px}
+.cart-item img{width:44px;height:44px;object-fit:cover;border-radius:8px;background:rgba(255,255,255,.05)}
+.cart-item-info{display:flex;flex-direction:column;gap:4px}
+.cart-item-name{font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--white);font-weight:600}
+.cart-item-meta{font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--gray-light)}
+.cart-item-qty{display:flex;align-items:center;gap:6px}
+.cart-item-qty button{
+  width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.04);color:var(--white);font-size:12px;line-height:1;cursor:pointer;
+}
+.cart-item-qty button:hover{background:rgba(123,47,255,.28)}
+.cart-item-qty span{font-family:'Rajdhani',sans-serif;font-size:12px;min-width:14px;text-align:center}
+.cart-item-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.cart-item-price{font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--purple-light);font-weight:700}
+.cart-item-remove{background:none;border:none;color:var(--gray-light);font-size:11px;cursor:pointer;text-decoration:underline;padding:0}
+.cart-item-remove:hover{color:#ef4444}
+.cart-footer{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.cart-subtotal{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--white);
+  margin-bottom:14px;
+}
+.cart-subtotal span:last-child{font-weight:700;color:var(--purple-light);font-size:16px}
+.cart-checkout{display:block;text-align:center;width:100%}
+.btn-purple{
+  display:inline-block;font-family:'Cinzel',serif;font-size:15px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--white);
+  background:var(--purple);padding:14px 28px;border:none;border-radius:2px;
+  cursor:pointer;transition:background .2s ease,box-shadow .2s ease,transform .2s ease;text-decoration:none;
+}
+.btn-purple:hover{background:#9b5fff;box-shadow:0 8px 34px rgba(123,47,255,.5);transform:translateY(-2px)}
+.btn-purple:active{transform:translateY(0)}
+
+/* ── SECTIONS ── */
+section{padding:110px 52px}
+section[id]{scroll-margin-top:90px}
+.section-label{
+  font-family:'Cinzel',serif;font-size:15px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;color:var(--purple-light);margin-bottom:16px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.section-label::before{
+  content:'';display:inline-block;width:26px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--purple));flex-shrink:0;
+}
+.section-label::after{
+  content:'';display:inline-block;width:26px;height:1px;
+  background:linear-gradient(90deg,var(--purple),transparent);flex-shrink:0;
+}
+.section-title{
+  font-family:'Cinzel',serif;font-size:clamp(30px,4vw,52px);
+  font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;
+  text-shadow:0 0 34px rgba(123,47,255,.22);text-align:center;
+}
+
+/* ── FAQ HERO ── */
+.faq-hero{
+  padding-top:170px;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,#1a0533 0%,#0a0010 55%,#000 100%);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.faq-hero-grid{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;
+  max-width:1200px;margin:0 auto;
+}
+.faq-hero-text{text-align:left}
+.faq-hero-text .section-label{justify-content:flex-start}
+.faq-hero-text .section-title{text-align:left}
+.faq-hero-lead{font-size:21px;color:var(--gray-light);line-height:1.8;max-width:560px}
+.faq-hero-media{
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.faq-hero-media::before{
+  content:'';position:absolute;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(123,47,255,.35) 0%,transparent 70%);
+  filter:blur(10px);
+}
+.faq-hero-media img{position:relative;max-width:260px;width:100%;height:auto;filter:drop-shadow(0 25px 40px rgba(0,0,0,.6))}
+
+/* ── FAQ LIST ── */
+.faq-section{background:var(--dark)}
+.faq-inner{max-width:820px;margin:0 auto}
+.faq-list{border-top:1px solid rgba(255,255,255,.08)}
+.faq-item{border-bottom:1px solid rgba(255,255,255,.08)}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  background:none;border:none;cursor:pointer;text-align:left;
+  padding:26px 4px;color:var(--white);
+}
+.faq-q-text{
+  font-family:'Cinzel',serif;font-size:19px;font-weight:600;letter-spacing:.4px;
+}
+.faq-icon{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);color:var(--purple-light);
+  display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;
+  transition:transform .25s ease,background .2s ease;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:rgba(123,47,255,.22)}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height .3s ease;
+}
+.faq-a-inner{padding:0 4px 28px;font-size:17px;color:var(--gray-light);line-height:1.8}
+.faq-a-inner ul{margin:12px 0 0 22px}
+.faq-a-inner li{margin-bottom:6px}
+.faq-a-inner a{color:var(--purple-light);text-decoration:none}
+.faq-a-inner a:hover{text-decoration:underline}
+
+/* ── Immagine di rottura a meta' pagina ── */
+.faq-media-break{
+  max-width:820px;margin:70px auto;display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.faq-media-break .media-glow{
+  position:relative;display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.faq-media-break .media-glow::before{
+  content:'';position:absolute;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(123,47,255,.3) 0%,transparent 70%);filter:blur(8px);
+}
+.faq-media-break img{position:relative;max-width:200px;width:100%;height:auto;filter:drop-shadow(0 20px 34px rgba(0,0,0,.6))}
+.faq-media-caption{font-size:15px;color:var(--gray-light);letter-spacing:.5px;text-align:center;font-style:italic}
+
+/* ── CTA finale ── */
+.faq-cta{
+  max-width:820px;margin:0 auto;text-align:center;
+  padding-top:50px;border-top:1px solid rgba(255,255,255,.08);
+}
+.faq-cta p{font-size:19px;color:var(--gray-light);margin-bottom:26px;line-height:1.7}
+.faq-cta a.mail{color:var(--purple-light);text-decoration:none}
+.faq-cta a.mail:hover{text-decoration:underline}
+
+/* ── FOOTER (identico al sito principale) ── */
+footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-mantra{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:50px}
+.fm-line{flex:0 0 110px;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.55))}
+.fm-line-r{background:linear-gradient(90deg,rgba(192,132,252,.55),transparent)}
+.fm-txt{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gray-light);text-align:center;white-space:nowrap}
+.footer-grid{display:grid;grid-template-columns:80px 1fr 1fr 1fr auto;gap:44px;margin-bottom:44px;align-items:start;max-width:1200px;margin-left:auto;margin-right:auto}
+.footer-col-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--white);margin-bottom:18px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:16.5px;color:var(--gray);text-decoration:none;transition:color .2s;letter-spacing:.5px}
+.footer-links a:hover{color:var(--white)}
+.social-col{display:flex;gap:12px}
+.soc-btn{
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;color:var(--gray-light);
+  transition:color .2s,border-color .2s;
+}
+.soc-btn:hover{color:var(--white);border-color:rgba(192,132,252,.5)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:22px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin-left:auto;margin-right:auto}
+.footer-copy{font-size:14px;color:var(--gray);letter-spacing:1px;text-transform:uppercase}
+.footer-legal{display:flex;gap:22px}
+.footer-legal a{font-size:14px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;text-decoration:none;transition:color .2s}
+.footer-legal a:hover{color:var(--white)}
+
+@media (max-width:900px){
+  nav{padding:12px 24px}
+  .nav-links{display:none}
+  section{padding:80px 24px}
+  .faq-hero-grid{grid-template-columns:1fr;text-align:center}
+  .faq-hero-text{text-align:center}
+  .faq-hero-text .section-label,.faq-hero-text .section-title{justify-content:center;text-align:center}
+  .faq-hero-lead{margin:0 auto}
+  .footer-grid{grid-template-columns:1fr 1fr;max-width:none}
+  .footer-bottom{flex-direction:column;gap:14px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="eclyss_card_stats (1).html" class="nav-logo"><img src="assets/Scritta Eclyss.png" alt="ECLYSS"></a>
+  <ul class="nav-links">
+    <li><a href="eclyss_card_stats (1).html#home">Home</a></li>
+  </ul>
+  <div class="nav-cart">
+    <button class="cart-btn" id="cartBtn" type="button" aria-label="Apri il carrello" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <div class="cart-dropdown" id="cartDropdown">
+      <div class="cart-dropdown-header">Il tuo carrello</div>
+      <div class="cart-empty" id="cartEmpty">Il carrello è vuoto.<br>Aggiungi la tua prima ECLYSS Box.</div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer" id="cartFooter" hidden>
+        <div class="cart-subtotal"><span>Subtotale</span><span id="cartSubtotal">€0,00</span></div>
+        <a href="eclyss_card_stats (1).html#box" class="btn-purple cart-checkout">Vai all'acquisto</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- FAQ HERO -->
+<section class="faq-hero">
+  <div class="faq-hero-grid">
+    <div class="faq-hero-text">
+      <div class="section-label">Assistenza</div>
+      <h1 class="section-title">Domande Frequenti (FAQ)</h1>
+      <p class="faq-hero-lead">Tutto quello che vuoi sapere su ECLYSS: produzione, acquisto, pagamenti e assistenza. Non trovi la risposta che cerchi? Scrivici, siamo qui per aiutarti.</p>
+    </div>
+    <div class="faq-hero-media">
+      <img src="assets/faq-can-34.png" alt="Lattina ECLYSS">
+    </div>
+  </div>
+</section>
+
+<!-- FAQ LIST -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Che cos'è Eclyss?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Eclyss è un energy drink prodotto e confezionato in Italia per LA COMMERCIALE SRL. Nasce con l'obiettivo di offrire una bevanda energizzante dal gusto distintivo, realizzata secondo elevati standard qualitativi.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Dove viene prodotto Eclyss?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Eclyss è prodotto e confezionato in Italia per LA COMMERCIALE SRL, Corso Asti 8/A, 12051 Alba (CN), da BUBBLE Bev. presso lo stabilimento di Piazza Valerio Grosso 1, 13853 Lessona (BI).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Chi può acquistare Eclyss?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Eclyss è disponibile per l'acquisto da parte di privati direttamente attraverso il nostro sito e-commerce.</p>
+            <p>Collaboriamo inoltre con aziende e rivenditori selezionati interessati alla distribuzione del prodotto. Se desideri ricevere maggiori informazioni sulle opportunità di rivendita, puoi contattarci all'indirizzo e-mail dedicato.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Quali prodotti sono disponibili?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Attualmente è disponibile l'Energy Drink Eclyss.</p>
+            <p>Stiamo lavorando all'ampliamento della nostra gamma con nuove proposte che saranno disponibili prossimamente.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Come posso acquistare Eclyss?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Puoi acquistare Eclyss direttamente dal nostro sito e-commerce in modo semplice e sicuro.</p>
+            <p>In futuro il prodotto sarà disponibile anche attraverso i canali di vendita integrati sui nostri profili social, come Instagram e TikTok, non appena tali servizi saranno attivati.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Quali metodi di pagamento accettate?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Accettiamo diversi metodi di pagamento per offrirti la massima flessibilità:</p>
+            <ul>
+              <li>Carta di credito</li>
+              <li>PayPal</li>
+              <li>Bonifico bancario</li>
+            </ul>
+            <p>Tutti i pagamenti vengono gestiti attraverso sistemi sicuri.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">I pagamenti sono sicuri?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Sì. Tutte le transazioni vengono effettuate tramite piattaforme di pagamento affidabili e protette, nel rispetto dei più elevati standard di sicurezza.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Immagine di rottura -->
+    <div class="faq-media-break">
+      <div class="media-glow">
+        <img src="assets/faq-can-front.png" alt="ECLYSS — prodotta e confezionata in Italia">
+      </div>
+      <span class="faq-media-caption">Eclyss, prodotta e confezionata interamente in Italia.</span>
+    </div>
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Come posso contattare l'assistenza clienti?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Per qualsiasi domanda, informazione o richiesta di assistenza puoi scriverci all'indirizzo:</p>
+            <p><a href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a></p>
+            <p>Ti risponderemo nel più breve tempo possibile.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Come vengono trattati i miei dati personali?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>La protezione dei dati personali è una nostra priorità.</p>
+            <p>Le informazioni fornite durante la navigazione o l'acquisto vengono trattate nel rispetto della normativa vigente in materia di privacy e utilizzate esclusivamente per le finalità indicate nella nostra Informativa Privacy.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Eclyss è prodotto in Italia?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Sì. Eclyss è interamente prodotto e confezionato in Italia.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          <span class="faq-q-text">Sono un rivenditore: posso distribuire Eclyss?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <p>Sì. Valutiamo collaborazioni con rivenditori e realtà commerciali interessate alla distribuzione del marchio.</p>
+            <p>Per ricevere maggiori informazioni puoi contattarci via e-mail all'indirizzo <a href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a>, indicando la tua attività e la tua richiesta.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="faq-cta">
+      <p>Non hai trovato la risposta che cercavi?<br>Scrivici a <a class="mail" href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a>, ti risponderemo il prima possibile.</p>
+      <a href="eclyss_card_stats (1).html#box" class="btn-purple">Torna al Sito</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-mantra">
+    <span class="fm-line"></span>
+    <span class="fm-txt">ÆRA · THRÆ · EON · ZÆTH — «Dal silenzio nasce l'armonia eterna»</span>
+    <span class="fm-line fm-line-r"></span>
+  </div>
+  <div class="footer-grid">
+    <div><img src="assets/Scritta Eclyss.png" alt="ECLYSS" style="height:32px;filter:invert(1);opacity:.65"></div>
+    <div>
+      <div class="footer-col-title">ECLYSS</div>
+      <ul class="footer-links"><li><a href="eclyss_card_stats (1).html#lore">L'Universo</a></li><li><a href="eclyss_card_stats (1).html#codex">L'Eclydex</a></li><li><a href="eclyss_card_stats (1).html#box">Acquista</a></li></ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Collezione</div>
+      <ul class="footer-links"><li><a href="eclyss_card_stats (1).html#guardians">I Custodi</a></li><li><a href="eclyss_card_stats (1).html#interferenti">Gli Interferenti</a></li><li><a href="eclyss_card_stats (1).html#how">Come funziona</a></li></ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Supporto</div>
+      <ul class="footer-links"><li><a href="faq.html">FAQ</a></li><li><a href="#">Spedizioni</a></li><li><a href="#">Contatti</a></li></ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Seguici</div>
+      <div class="social-col">
+        <a class="soc-btn" href="https://www.instagram.com/eclyss.energydrink/" target="_blank" rel="noopener" title="Instagram">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a class="soc-btn" href="https://www.facebook.com/profile.php?id=61591589246364" target="_blank" rel="noopener" title="Facebook">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a class="soc-btn" href="https://www.tiktok.com/@eclyss.energydrink" target="_blank" rel="noopener" title="TikTok">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 ECLYSS. Tutti i diritti riservati.</span>
+    <div class="footer-legal">
+      <a href="#">Termini e condizioni</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Accordion FAQ ──────────────────────────────────────────────────────────────
+document.querySelectorAll('.faq-item').forEach(item => {
+  const btn = item.querySelector('.faq-q');
+  const panel = item.querySelector('.faq-a');
+  btn.addEventListener('click', () => {
+    const isOpen = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+    panel.style.maxHeight = isOpen ? panel.scrollHeight + 'px' : null;
+  });
+});
+
+// ── Carrello (stessa logica/stato del sito principale, via localStorage) ──────
+(function() {
+  const navCart  = document.querySelector('.nav-cart');
+  const cartBtn  = document.getElementById('cartBtn');
+  if (!navCart || !cartBtn) return;
+
+  const STORAGE_KEY = 'eclyssCart';
+  const PRODUCTS = {
+    'eclyss-box': { id: 'eclyss-box', name: 'ECLYSS Box', meta: '4 lattine + carte', price: 19.99, image: 'assets/logo-magenta.png' }
+  };
+
+  function formatPrice(n) {
+    return '€' + n.toFixed(2).replace('.', ',');
+  }
+  function loadCart() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function saveCart(cart) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch (e) {}
+  }
+
+  let cart = loadCart();
+
+  function setQty(productId, qty) {
+    if (qty <= 0) delete cart[productId];
+    else cart[productId] = qty;
+    saveCart(cart);
+    render();
+  }
+
+  const cartCountEl = document.getElementById('cartCount');
+  const cartEmptyEl = document.getElementById('cartEmpty');
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartFooterEl = document.getElementById('cartFooter');
+  const cartSubtotalEl = document.getElementById('cartSubtotal');
+
+  function render() {
+    const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
+    const totalCount = entries.reduce((sum, id) => sum + cart[id], 0);
+    const subtotal = entries.reduce((sum, id) => sum + cart[id] * PRODUCTS[id].price, 0);
+
+    if (cartCountEl) {
+      cartCountEl.textContent = String(totalCount);
+      cartCountEl.dataset.empty = totalCount === 0 ? 'true' : 'false';
+    }
+    if (cartEmptyEl) cartEmptyEl.hidden = entries.length > 0;
+    if (cartFooterEl) cartFooterEl.hidden = entries.length === 0;
+    if (cartSubtotalEl) cartSubtotalEl.textContent = formatPrice(subtotal);
+
+    if (cartItemsEl) {
+      cartItemsEl.innerHTML = entries.map(id => {
+        const p = PRODUCTS[id];
+        const qty = cart[id];
+        return `<div class="cart-item" data-product-id="${id}">` +
+          `<img src="${p.image}" alt="${p.name}">` +
+          `<div class="cart-item-info">` +
+            `<span class="cart-item-name">${p.name}</span>` +
+            `<span class="cart-item-meta">${p.meta}</span>` +
+            `<span class="cart-item-qty">` +
+              `<button type="button" data-cart-step="-1">−</button>` +
+              `<span>${qty}</span>` +
+              `<button type="button" data-cart-step="1">+</button>` +
+            `</span>` +
+          `</div>` +
+          `<div class="cart-item-right">` +
+            `<span class="cart-item-price">${formatPrice(p.price * qty)}</span>` +
+            `<button type="button" class="cart-item-remove" data-cart-remove>Rimuovi</button>` +
+          `</div>` +
+        `</div>`;
+      }).join('');
+    }
+  }
+
+  if (cartItemsEl) {
+    cartItemsEl.addEventListener('click', e => {
+      const row = e.target.closest('.cart-item');
+      if (!row) return;
+      const id = row.dataset.productId;
+      const stepBtn = e.target.closest('[data-cart-step]');
+      if (stepBtn) {
+        setQty(id, (cart[id] || 0) + Number(stepBtn.dataset.cartStep));
+      } else if (e.target.closest('[data-cart-remove]')) {
+        setQty(id, 0);
+      }
+    });
+  }
+
+  function closeCart() {
+    navCart.classList.remove('open');
+    cartBtn.setAttribute('aria-expanded', 'false');
+  }
+  function toggleCart() {
+    const isOpen = navCart.classList.toggle('open');
+    cartBtn.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  cartBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleCart();
+  });
+  document.addEventListener('click', e => {
+    if (!navCart.contains(e.target)) closeCart();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCart();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
