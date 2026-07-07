@@ -29,12 +29,12 @@ nav{
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
-  padding:42px 72px;
+  padding:12px 72px;
   background:rgba(0,0,0,0.55);backdrop-filter:blur(14px);
   border-bottom:1px solid rgba(123,47,255,0.12);
 }
 .nav-logo{justify-self:start;}
-.nav-logo img{height:82px;filter:invert(1);vertical-align:middle}
+.nav-logo img{height:40px;filter:invert(1);vertical-align:middle}
 .nav-links{
   display:flex;
   justify-content:center;
@@ -74,7 +74,7 @@ nav{
   min-height:100vh;
   position:relative;
   z-index:10;
-  padding-top:172px;
+  padding-top:72px;
   padding-left:0;
   padding-right:0;
 }
@@ -706,9 +706,9 @@ footer{
   <ul class="nav-links">
     <li><a href="#home" class="active">Home</a></li>
     <li><a href="#lore">L'Universo</a></li>
-    <li><a href="#guardians">Collezione</a></li>
-    <li><a href="#codex">Eclydex</a></li>
     <li><a href="#how">Come Funziona</a></li>
+    <li><a href="#codex">Eclydex</a></li>
+    <li><a href="#guardians">Collezione</a></li>
     <li><a href="#box">Acquista</a></li>
   </ul>
 </nav>
@@ -784,6 +784,92 @@ footer{
   </div>
 </section>
 
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-label">Come Funziona</div>
+    <h2 class="section-title">Il Rituale</h2>
+    <p class="how-lead">Ogni lattina è un frammento di <span class="hl">ECLYSS</span>:<br>scoprila, rivela la tua creatura e aggiungila alla tua <span class="hl">collezione</span>.</p>
+
+    <div class="ritual-grid">
+      <div class="ritual-step">
+        <span class="ritual-num">01</span>
+        <div class="ritual-frame">
+          <div class="ritual-media"><img src="assets/istruzioni1.jpeg" alt="Acquista"></div>
+          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16 h6 l6 26 h22 l6 -20 h-30"/><circle cx="27" cy="50" r="3"/><circle cx="43" cy="50" r="3"/></svg></div>
+        </div>
+        <h3>Acquista</h3>
+        <p>Scegli la tua lattina ECLYSS da <span class="hl">collezione</span>. Ogni lattina contiene una <span class="hl">carta unica</span>.</p>
+      </div>
+
+      <div class="ritual-step">
+        <span class="ritual-num">02</span>
+        <div class="ritual-frame">
+          <div class="ritual-media"><img src="assets/istruzioni2.jpeg" alt="Stacca"></div>
+          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 14 L50 32 L32 50 L14 32 Z"/><path d="M32 14 L50 32 L32 50 Z" fill="currentColor" stroke="none" opacity=".85"/></svg></div>
+        </div>
+        <h3>rivela</h3>
+        <p>Rimuovi il <span class="hl">sigillo</span> e scopri la carta esclusiva sigillata sulla lattina. È parte della tua <span class="hl">collezione</span>.</p>
+      </div>
+
+      <div class="ritual-step">
+        <span class="ritual-num">03</span>
+        <div class="ritual-frame">
+          <div class="ritual-media"><img src="assets/istruzioni3.jpeg" alt="Scansiona"></div>
+          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 v-8 h8 M42 14 h8 v8 M50 42 v8 h-8 M22 50 h-8 v-8"/><rect x="24" y="24" width="7" height="7"/><rect x="34" y="24" width="6" height="7"/><rect x="24" y="34" width="7" height="6"/><path d="M34 37 h6 M37 34 v6"/></svg></div>
+        </div>
+        <h3>Scansiona</h3>
+        <p>Inquadra il <span class="hl">QR Code</span> sulla tua carta. Accedi al mondo di <span class="hl">ECLYSS</span> e aggiungila alla tua collezione.</p>
+      </div>
+
+      <div class="ritual-step">
+        <span class="ritual-num">04</span>
+        <div class="ritual-frame">
+          <div class="ritual-media"><img src="assets/istruzioni4.jpeg" alt="Rivela"></div>
+          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M32 10 C34.5 25 39 29.5 54 32 C39 34.5 34.5 39 32 54 C29.5 39 25 34.5 10 32 C25 29.5 29.5 25 32 10 Z"/></svg></div>
+        </div>
+        <h3>Colleziona</h3>
+        <p>La tua carta è ora nella tua <span class="hl">collezione digitale</span>. Ogni creatura, una storia. Ogni storia, il tuo legame.</p>
+      </div>
+    </div>
+
+    <div class="ritual-banner">
+      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M32 8 C34.8 25 39 29.2 56 32 C39 34.8 34.8 39 32 56 C29.2 39 25 34.8 8 32 C25 29.2 29.2 25 32 8 Z"/></svg></div>
+      <div class="rb-text">
+        <p>Colleziona. Connetti. Rivela il tuo legame con ECLYSS.<br>Ogni lattina, una storia. Ogni carta, un destino.</p>
+        <div class="rb-cta">Collezionale tutte.</div>
+      </div>
+      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><g transform="rotate(-16 22 38)"><rect x="12" y="22" width="19" height="28" rx="3"/></g><g transform="rotate(16 42 38)"><rect x="33" y="22" width="19" height="28" rx="3"/></g><rect x="23" y="17" width="19" height="28" rx="3" fill="#050008"/><path d="M32 26 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6 z" fill="currentColor" stroke="none"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECLYDEX -->
+<section class="codex" id="codex">
+  <div class="codex-inner">
+    <div class="section-label">Il Linguaggio dei Custodi</div>
+    <h2 class="section-title">L'Eclydex</h2>
+    <p class="codex-lead">Ogni carta contiene un messaggio nascosto, inciso in un alfabeto sacro e visivo: glifi geometrici, a metà tra runa e segnale digitale. I glifi dei Custodi sono armonici e simmetrici; quelli degli Interferenti, spezzati e specchiati. Collezionando le carte e ricomponendo i glifi si ricostruisce la <strong class="txt-purple">Sequenza Originaria</strong> — la Voce che non ha bisogno di suono.</p>
+    <div class="codex-grid">
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="3" fill="currentColor" stroke="none"/></svg></div><span class="glyph-name">ÆRA</span><span class="glyph-mean">Silenzio, centro dell'esistenza</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M26 14 a18 18 0 1 0 0 36 a14 14 0 1 1 0 -36 z"/><path d="M38 14 a18 18 0 1 1 0 36 a14 14 0 1 0 0 -36 z"/></svg></div><span class="glyph-name">LUNOR</span><span class="glyph-mean">Sogno, connessione onirica — SUNA</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="18" y="18" width="28" height="28"/><path d="M8 46 Q 32 18 56 46"/></svg></div><span class="glyph-name">VÆL</span><span class="glyph-mean">Protezione, confine sacro — JUNA</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 32 Q 40 16 52 22"/><path d="M32 32 Q 14 28 16 44"/><path d="M32 32 Q 40 46 28 52"/><circle cx="52" cy="22" r="2.4" fill="currentColor" stroke="none"/></svg></div><span class="glyph-name">ORIX</span><span class="glyph-mean">Tempo che si avvolge, memoria ciclica — ORUN</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 22 h12 M36 22 h12"/><path d="M16 32 h8 M40 32 h8"/><path d="M16 42 h12 M36 42 h12"/></svg></div><span class="glyph-name">KYR</span><span class="glyph-mean">Segreto, parola non pronunciata — KYO</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M32 12 L48 40 H16 Z"/><path d="M32 52 L16 24 H48 Z"/></svg></div><span class="glyph-name">EON</span><span class="glyph-mean">Eternità, passaggio tra i piani — EONA</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="32" cy="17" r="8"/><circle cx="17" cy="44" r="8"/><circle cx="47" cy="44" r="8"/><path d="M26 23 Q 20 30 19 36 M38 23 Q 44 30 45 36 M25 46 Q 32 51 39 46"/></svg></div><span class="glyph-name">THRÆ</span><span class="glyph-mean">Risonanza, armonia</span></div>
+      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 10 L44 22 M50 28 L54 32 L44 42 M38 48 L32 54 L22 44 M16 38 L10 32 L20 22"/></svg></div><span class="glyph-name">ZÆTH</span><span class="glyph-mean">Ricomposizione dell'Eclydex — il glifo finale</span></div>
+      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M46 16 A19 19 0 1 0 48 42"/><path d="M50 22 l9 -5 M53 32 l9 3 M47 46 l7 8"/></svg></div><span class="glyph-name">NØX</span><span class="glyph-mean">Rumore, dissonanza, corruzione</span></div>
+      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><g transform="rotate(45 32 32)"><path d="M32 10 v13 M32 41 v13 M10 32 h13 M41 32 h13"/></g></svg></div><span class="glyph-name">CRYX</span><span class="glyph-mean">Errore, deviazione dell'Eclydex</span></div>
+      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 34 q0 -14 13 -13 q13 1 11 16 q-2 13 -17 12"/><path d="M29 38 q-11 3 -13 -8"/></svg></div><span class="glyph-name">VARN</span><span class="glyph-mean">Confusione, perdita del segnale</span></div>
+      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M26 12 q-9 20 0 40"/><path d="M38 12 q9 20 0 40"/></svg></div><span class="glyph-name">MIIR</span><span class="glyph-mean">Illusione, riflesso distorto</span></div>
+    </div>
+    <div class="codex-mantra">
+      <span class="mantra-glifi">ÆRA · THRÆ · EON · ZÆTH</span>
+      <span class="mantra-tr">«Dal silenzio nasce l'armonia eterna»</span>
+    </div>
+  </div>
+</section>
 
 <!--<div class="gcard"><div class="gcard-1"><span style="font-size:50px"><img src="assets/1.png" alt="Lyra" class="gcard-img-photo"></span></div></div>
       <div class="gcard"><div class="gcard-2"><span style="font-size:50px"><img src="assets/2.png" alt="Lyra" class="gcard-img-photo"></span></div></div>
@@ -942,93 +1028,6 @@ footer{
   /* ... altre tue proprietà esistenti ... */
   margin-left: 20px; /* Aumenta o diminuisci i pixel (px) per regolare lo spostamento */
 }-->
-    </div>
-  </div>
-</section>
-
-<!-- ECLYDEX -->
-<section class="codex" id="codex">
-  <div class="codex-inner">
-    <div class="section-label">Il Linguaggio dei Custodi</div>
-    <h2 class="section-title">L'Eclydex</h2>
-    <p class="codex-lead">Ogni carta contiene un messaggio nascosto, inciso in un alfabeto sacro e visivo: glifi geometrici, a metà tra runa e segnale digitale. I glifi dei Custodi sono armonici e simmetrici; quelli degli Interferenti, spezzati e specchiati. Collezionando le carte e ricomponendo i glifi si ricostruisce la <strong class="txt-purple">Sequenza Originaria</strong> — la Voce che non ha bisogno di suono.</p>
-    <div class="codex-grid">
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="3" fill="currentColor" stroke="none"/></svg></div><span class="glyph-name">ÆRA</span><span class="glyph-mean">Silenzio, centro dell'esistenza</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M26 14 a18 18 0 1 0 0 36 a14 14 0 1 1 0 -36 z"/><path d="M38 14 a18 18 0 1 1 0 36 a14 14 0 1 0 0 -36 z"/></svg></div><span class="glyph-name">LUNOR</span><span class="glyph-mean">Sogno, connessione onirica — SUNA</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="18" y="18" width="28" height="28"/><path d="M8 46 Q 32 18 56 46"/></svg></div><span class="glyph-name">VÆL</span><span class="glyph-mean">Protezione, confine sacro — JUNA</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 32 Q 40 16 52 22"/><path d="M32 32 Q 14 28 16 44"/><path d="M32 32 Q 40 46 28 52"/><circle cx="52" cy="22" r="2.4" fill="currentColor" stroke="none"/></svg></div><span class="glyph-name">ORIX</span><span class="glyph-mean">Tempo che si avvolge, memoria ciclica — ORUN</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 22 h12 M36 22 h12"/><path d="M16 32 h8 M40 32 h8"/><path d="M16 42 h12 M36 42 h12"/></svg></div><span class="glyph-name">KYR</span><span class="glyph-mean">Segreto, parola non pronunciata — KYO</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M32 12 L48 40 H16 Z"/><path d="M32 52 L16 24 H48 Z"/></svg></div><span class="glyph-name">EON</span><span class="glyph-mean">Eternità, passaggio tra i piani — EONA</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="32" cy="17" r="8"/><circle cx="17" cy="44" r="8"/><circle cx="47" cy="44" r="8"/><path d="M26 23 Q 20 30 19 36 M38 23 Q 44 30 45 36 M25 46 Q 32 51 39 46"/></svg></div><span class="glyph-name">THRÆ</span><span class="glyph-mean">Risonanza, armonia</span></div>
-      <div class="glyph-card"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 10 L44 22 M50 28 L54 32 L44 42 M38 48 L32 54 L22 44 M16 38 L10 32 L20 22"/></svg></div><span class="glyph-name">ZÆTH</span><span class="glyph-mean">Ricomposizione dell'Eclydex — il glifo finale</span></div>
-      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M46 16 A19 19 0 1 0 48 42"/><path d="M50 22 l9 -5 M53 32 l9 3 M47 46 l7 8"/></svg></div><span class="glyph-name">NØX</span><span class="glyph-mean">Rumore, dissonanza, corruzione</span></div>
-      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><g transform="rotate(45 32 32)"><path d="M32 10 v13 M32 41 v13 M10 32 h13 M41 32 h13"/></g></svg></div><span class="glyph-name">CRYX</span><span class="glyph-mean">Errore, deviazione dell'Eclydex</span></div>
-      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M32 34 q0 -14 13 -13 q13 1 11 16 q-2 13 -17 12"/><path d="M29 38 q-11 3 -13 -8"/></svg></div><span class="glyph-name">VARN</span><span class="glyph-mean">Confusione, perdita del segnale</span></div>
-      <div class="glyph-card glyph-int"><div class="glyph-svg"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M26 12 q-9 20 0 40"/><path d="M38 12 q9 20 0 40"/></svg></div><span class="glyph-name">MIIR</span><span class="glyph-mean">Illusione, riflesso distorto</span></div>
-    </div>
-    <div class="codex-mantra">
-      <span class="mantra-glifi">ÆRA · THRÆ · EON · ZÆTH</span>
-      <span class="mantra-tr">«Dal silenzio nasce l'armonia eterna»</span>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-  <div class="how-inner">
-    <div class="section-label">Come Funziona</div>
-    <h2 class="section-title">Il Rituale</h2>
-    <p class="how-lead">Ogni lattina è un frammento di <span class="hl">ECLYSS</span>:<br>scoprila, rivela la tua creatura e aggiungila alla tua <span class="hl">collezione</span>.</p>
-
-    <div class="ritual-grid">
-      <div class="ritual-step">
-        <span class="ritual-num">01</span>
-        <div class="ritual-frame">
-          <div class="ritual-media"><img src="assets/istruzioni1.jpeg" alt="Acquista"></div>
-          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16 h6 l6 26 h22 l6 -20 h-30"/><circle cx="27" cy="50" r="3"/><circle cx="43" cy="50" r="3"/></svg></div>
-        </div>
-        <h3>Acquista</h3>
-        <p>Scegli la tua lattina ECLYSS da <span class="hl">collezione</span>. Ogni lattina contiene una <span class="hl">carta unica</span>.</p>
-      </div>
-
-      <div class="ritual-step">
-        <span class="ritual-num">02</span>
-        <div class="ritual-frame">
-          <div class="ritual-media"><img src="assets/istruzioni2.jpeg" alt="Stacca"></div>
-          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 14 L50 32 L32 50 L14 32 Z"/><path d="M32 14 L50 32 L32 50 Z" fill="currentColor" stroke="none" opacity=".85"/></svg></div>
-        </div>
-        <h3>rivela</h3>
-        <p>Rimuovi il <span class="hl">sigillo</span> e scopri la carta esclusiva sigillata sulla lattina. È parte della tua <span class="hl">collezione</span>.</p>
-      </div>
-
-      <div class="ritual-step">
-        <span class="ritual-num">03</span>
-        <div class="ritual-frame">
-          <div class="ritual-media"><img src="assets/istruzioni3.jpeg" alt="Scansiona"></div>
-          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22 v-8 h8 M42 14 h8 v8 M50 42 v8 h-8 M22 50 h-8 v-8"/><rect x="24" y="24" width="7" height="7"/><rect x="34" y="24" width="6" height="7"/><rect x="24" y="34" width="7" height="6"/><path d="M34 37 h6 M37 34 v6"/></svg></div>
-        </div>
-        <h3>Scansiona</h3>
-        <p>Inquadra il <span class="hl">QR Code</span> sulla tua carta. Accedi al mondo di <span class="hl">ECLYSS</span> e aggiungila alla tua collezione.</p>
-      </div>
-
-      <div class="ritual-step">
-        <span class="ritual-num">04</span>
-        <div class="ritual-frame">
-          <div class="ritual-media"><img src="assets/istruzioni4.jpeg" alt="Rivela"></div>
-          <div class="ritual-medal"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M32 10 C34.5 25 39 29.5 54 32 C39 34.5 34.5 39 32 54 C29.5 39 25 34.5 10 32 C25 29.5 29.5 25 32 10 Z"/></svg></div>
-        </div>
-        <h3>Colleziona</h3>
-        <p>La tua carta è ora nella tua <span class="hl">collezione digitale</span>. Ogni creatura, una storia. Ogni storia, il tuo legame.</p>
-      </div>
-    </div>
-
-    <div class="ritual-banner">
-      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M32 8 C34.8 25 39 29.2 56 32 C39 34.8 34.8 39 32 56 C29.2 39 25 34.8 8 32 C25 29.2 29.2 25 32 8 Z"/></svg></div>
-      <div class="rb-text">
-        <p>Colleziona. Connetti. Rivela il tuo legame con ECLYSS.<br>Ogni lattina, una storia. Ogni carta, un destino.</p>
-        <div class="rb-cta">Collezionale tutte.</div>
-      </div>
-      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><g transform="rotate(-16 22 38)"><rect x="12" y="22" width="19" height="28" rx="3"/></g><g transform="rotate(16 42 38)"><rect x="33" y="22" width="19" height="28" rx="3"/></g><rect x="23" y="17" width="19" height="28" rx="3" fill="#050008"/><path d="M32 26 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6 z" fill="currentColor" stroke="none"/></svg></div>
     </div>
   </div>
 </section>
