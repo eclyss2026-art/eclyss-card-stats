@@ -60,6 +60,69 @@ nav{
 .nav-links a.active{color:var(--purple-light)}
 .nav-links a.active::after{transform:scaleX(1)}
 
+/* ── CART ── */
+.nav-cart{position:relative;justify-self:end}
+.cart-btn{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+  color:var(--white);cursor:pointer;transition:background .2s,border-color .2s;
+}
+.cart-btn:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5)}
+.cart-btn svg{width:20px;height:20px}
+.cart-count{
+  position:absolute;top:-4px;right:-4px;
+  min-width:16px;height:16px;padding:0 3px;border-radius:8px;
+  background:var(--purple-light);color:#150022;
+  font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;line-height:16px;text-align:center;
+}
+.cart-count[data-empty="true"]{display:none}
+.cart-dropdown{
+  position:absolute;top:calc(100% + 16px);right:0;width:320px;
+  background:rgba(10,6,18,.92);backdrop-filter:blur(16px);
+  border:1px solid rgba(123,47,255,.22);border-radius:14px;
+  box-shadow:0 20px 50px rgba(0,0,0,.55);
+  padding:20px;
+  opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .2s ease,transform .2s ease,visibility .2s;
+  z-index:250;
+}
+.nav-cart.open .cart-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.cart-dropdown-header{
+  font-family:'Cinzel',serif;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--white);margin-bottom:14px;padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.cart-empty{
+  font-family:'Rajdhani',sans-serif;font-size:14px;line-height:1.6;color:var(--gray-light);
+  padding:8px 0 4px;
+}
+.cart-items{display:flex;flex-direction:column;gap:10px}
+.cart-item{display:flex;align-items:center;gap:12px}
+.cart-item img{width:44px;height:44px;object-fit:cover;border-radius:8px;background:rgba(255,255,255,.05)}
+.cart-item-info{display:flex;flex-direction:column;gap:4px}
+.cart-item-name{font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--white);font-weight:600}
+.cart-item-meta{font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--gray-light)}
+.cart-item-qty{display:flex;align-items:center;gap:6px}
+.cart-item-qty button{
+  width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.04);color:var(--white);font-size:12px;line-height:1;cursor:pointer;
+}
+.cart-item-qty button:hover{background:rgba(123,47,255,.28)}
+.cart-item-qty span{font-family:'Rajdhani',sans-serif;font-size:12px;min-width:14px;text-align:center}
+.cart-item-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.cart-item-price{font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--purple-light);font-weight:700}
+.cart-item-remove{background:none;border:none;color:var(--gray-light);font-size:11px;cursor:pointer;text-decoration:underline;padding:0}
+.cart-item-remove:hover{color:#ef4444}
+.cart-footer{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.cart-subtotal{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--white);
+  margin-bottom:14px;
+}
+.cart-subtotal span:last-child{font-weight:700;color:var(--purple-light);font-size:16px}
+.cart-checkout{display:block;text-align:center;width:100%}
+
 /* ── HERO ── */
 #scroll-stage{position:relative;height:600vh}
 .hero{
@@ -650,6 +713,20 @@ section[id]{scroll-margin-top:90px}
 .box-label::before{content:'';display:inline-block;width:18px;height:1px;background:linear-gradient(90deg,var(--purple),transparent)}
 .box-title{font-family:'Cinzel',serif;font-size:clamp(24px,3.2vw,38px);font-weight:900;letter-spacing:1px;text-transform:uppercase;line-height:1.1;margin-bottom:18px;text-shadow:0 0 30px rgba(123,47,255,.2)}
 .box-desc{font-size:21px;color:var(--gray-light);line-height:1.8;margin-bottom:30px}
+.box-price{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--purple-light);margin-bottom:20px}
+.box-buy{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.qty-stepper{
+  display:flex;align-items:center;gap:2px;
+  border:1px solid rgba(255,255,255,.16);border-radius:2px;overflow:hidden;
+}
+.qty-stepper .qty-btn{
+  width:40px;height:52px;background:rgba(255,255,255,.04);color:var(--white);
+  border:none;font-size:18px;cursor:pointer;transition:background .2s;
+}
+.qty-stepper .qty-btn:hover{background:rgba(123,47,255,.28)}
+.qty-stepper .qty-value{
+  min-width:36px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:600;
+}
 .btn-purple{
   display:inline-block;font-family:'Cinzel',serif;font-size:15px;font-weight:700;
   letter-spacing:3px;text-transform:uppercase;color:var(--white);
@@ -710,6 +787,21 @@ footer{
     <li><a href="#codex">Eclydex</a></li>
     <li><a href="#guardians">Collezione</a></li>
   </ul>
+  <div class="nav-cart">
+    <button class="cart-btn" id="cartBtn" type="button" aria-label="Apri il carrello" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <div class="cart-dropdown" id="cartDropdown">
+      <div class="cart-dropdown-header">Il tuo carrello</div>
+      <div class="cart-empty" id="cartEmpty">Il carrello è vuoto.<br>Aggiungi la tua prima ECLYSS Box.</div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer" id="cartFooter" hidden>
+        <div class="cart-subtotal"><span>Subtotale</span><span id="cartSubtotal">€0,00</span></div>
+        <a href="#box" class="btn-purple cart-checkout">Vai all'acquisto</a>
+      </div>
+    </div>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -1074,7 +1166,15 @@ footer{
       <span class="box-label">Eclyss Box</span>
       <h2 class="box-title">Un'Intera Collezione<br>Ti Aspetta</h2>
       <p class="box-desc">Ogni box racchiude 4 lattine ECLYSS in livrea iridescente. Sotto ogni sigillo, un QR code e una carta da rivelare: ogni carta è un frammento dell'Eclydex — il linguaggio segreto di ECLYSS, da decifrare lattina dopo lattina.</p>
-      <a href="#" class="btn-purple">Acquista Ora</a>
+      <div class="box-price" id="boxPrice">€19,99</div>
+      <div class="box-buy">
+        <div class="qty-stepper" id="boxQtyStepper">
+          <button type="button" class="qty-btn" data-step="-1" aria-label="Diminuisci quantità">−</button>
+          <span class="qty-value" id="boxQtyValue">1</span>
+          <button type="button" class="qty-btn" data-step="1" aria-label="Aumenta quantità">+</button>
+        </div>
+        <button type="button" class="btn-purple" id="addToCartBtn" data-product-id="eclyss-box">Aggiungi al Carrello</button>
+      </div>
     </div>
     <div class="box-feats">
       <div class="box-feat"><span class="box-feat-icon">🥫</span><span class="box-feat-text">4 Lattine ECLYSS</span></div>
@@ -1155,6 +1255,154 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
   });
 });
+
+// ── Carrello ──────────────────────────────────────────────────────────────────
+(function() {
+  const navCart  = document.querySelector('.nav-cart');
+  const cartBtn  = document.getElementById('cartBtn');
+  if (!navCart || !cartBtn) return;
+
+  const STORAGE_KEY = 'eclyssCart';
+  const PRODUCTS = {
+    'eclyss-box': { id: 'eclyss-box', name: 'ECLYSS Box', meta: '4 lattine + carte', price: 19.99, image: 'assets/logo-magenta.png' }
+  };
+
+  function formatPrice(n) {
+    return '€' + n.toFixed(2).replace('.', ',');
+  }
+
+  function loadCart() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function saveCart(cart) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch (e) {}
+  }
+
+  let cart = loadCart();
+
+  function setQty(productId, qty) {
+    if (qty <= 0) delete cart[productId];
+    else cart[productId] = qty;
+    saveCart(cart);
+    render();
+  }
+  function addToCart(productId, qty) {
+    cart[productId] = (cart[productId] || 0) + qty;
+    saveCart(cart);
+    render();
+  }
+
+  const cartCountEl = document.getElementById('cartCount');
+  const cartEmptyEl = document.getElementById('cartEmpty');
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartFooterEl = document.getElementById('cartFooter');
+  const cartSubtotalEl = document.getElementById('cartSubtotal');
+
+  function render() {
+    const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
+    const totalCount = entries.reduce((sum, id) => sum + cart[id], 0);
+    const subtotal = entries.reduce((sum, id) => sum + cart[id] * PRODUCTS[id].price, 0);
+
+    if (cartCountEl) {
+      cartCountEl.textContent = String(totalCount);
+      cartCountEl.dataset.empty = totalCount === 0 ? 'true' : 'false';
+    }
+
+    if (cartEmptyEl) cartEmptyEl.hidden = entries.length > 0;
+    if (cartFooterEl) cartFooterEl.hidden = entries.length === 0;
+    if (cartSubtotalEl) cartSubtotalEl.textContent = formatPrice(subtotal);
+
+    if (cartItemsEl) {
+      cartItemsEl.innerHTML = entries.map(id => {
+        const p = PRODUCTS[id];
+        const qty = cart[id];
+        return `<div class="cart-item" data-product-id="${id}">` +
+          `<img src="${p.image}" alt="${p.name}">` +
+          `<div class="cart-item-info">` +
+            `<span class="cart-item-name">${p.name}</span>` +
+            `<span class="cart-item-meta">${p.meta}</span>` +
+            `<span class="cart-item-qty">` +
+              `<button type="button" data-cart-step="-1">−</button>` +
+              `<span>${qty}</span>` +
+              `<button type="button" data-cart-step="1">+</button>` +
+            `</span>` +
+          `</div>` +
+          `<div class="cart-item-right">` +
+            `<span class="cart-item-price">${formatPrice(p.price * qty)}</span>` +
+            `<button type="button" class="cart-item-remove" data-cart-remove>Rimuovi</button>` +
+          `</div>` +
+        `</div>`;
+      }).join('');
+    }
+  }
+
+  if (cartItemsEl) {
+    cartItemsEl.addEventListener('click', e => {
+      const row = e.target.closest('.cart-item');
+      if (!row) return;
+      const id = row.dataset.productId;
+      const stepBtn = e.target.closest('[data-cart-step]');
+      if (stepBtn) {
+        setQty(id, (cart[id] || 0) + Number(stepBtn.dataset.cartStep));
+      } else if (e.target.closest('[data-cart-remove]')) {
+        setQty(id, 0);
+      }
+    });
+  }
+
+  // ── Selettore quantita' + Aggiungi al carrello (sezione Box) ──
+  const boxQtyStepper = document.getElementById('boxQtyStepper');
+  const boxQtyValueEl = document.getElementById('boxQtyValue');
+  const addToCartBtn  = document.getElementById('addToCartBtn');
+  let boxQty = 1;
+  const BOX_QTY_MAX = 10;
+
+  if (boxQtyStepper && boxQtyValueEl) {
+    boxQtyStepper.addEventListener('click', e => {
+      const btn = e.target.closest('[data-step]');
+      if (!btn) return;
+      boxQty = Math.min(BOX_QTY_MAX, Math.max(1, boxQty + Number(btn.dataset.step)));
+      boxQtyValueEl.textContent = String(boxQty);
+    });
+  }
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', () => {
+      addToCart(addToCartBtn.dataset.productId, boxQty);
+      boxQty = 1;
+      if (boxQtyValueEl) boxQtyValueEl.textContent = '1';
+      navCart.classList.add('open');
+      cartBtn.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  // ── Apertura/chiusura dropdown ──
+  function closeCart() {
+    navCart.classList.remove('open');
+    cartBtn.setAttribute('aria-expanded', 'false');
+  }
+  function toggleCart() {
+    const isOpen = navCart.classList.toggle('open');
+    cartBtn.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  cartBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleCart();
+  });
+  document.addEventListener('click', e => {
+    if (!navCart.contains(e.target)) closeCart();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCart();
+  });
+
+  render();
+})();
 
 // ── Three.js — REAL ECLYSS CAN (importata da index.html: rotazione da scroll) ──
 (function() {
