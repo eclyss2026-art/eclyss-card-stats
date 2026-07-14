@@ -1,9 +1,8 @@
-*
-!.gitignore
-!README.md
-!eclyss_card_stats (1).html
-!faq.html
-!assets/
-!assets/Scritta Eclyss.png
-!assets/faq-can-front.png
-!assets/faq-can-34.png
+# Materiale di backup, prove e archivi storici — non fa parte del sito live
+_archive/
+migliore back up/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+desktop.ini
