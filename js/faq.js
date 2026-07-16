@@ -3,6 +3,37 @@
    Logica accordion + mini-carrello nella nav, estratta da faq.html.
    ============================================================ */
 
+// ── Menu mobile (hamburger) ────────────────────────────────────────────────────
+(function() {
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinksPanel = document.getElementById('navLinks');
+  if (!menuToggle || !navLinksPanel) return;
+
+  function closeMenu() {
+    navLinksPanel.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+  function toggleMenu() {
+    const isOpen = navLinksPanel.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+  }
+  menuToggle.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+  navLinksPanel.addEventListener('click', e => {
+    if (e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('click', e => {
+    if (!navLinksPanel.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
 // ── Accordion FAQ: apre/chiude una risposta alla volta al click sulla domanda ──
 document.querySelectorAll('.faq-item').forEach(item => {
   const btn = item.querySelector('.faq-q');

@@ -4,6 +4,37 @@
    estratta da entra-nel-nostro-mondo.html.
    ============================================================ */
 
+// ── Menu mobile (hamburger) ────────────────────────────────────────────────────
+(function() {
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinksPanel = document.getElementById('navLinks');
+  if (!menuToggle || !navLinksPanel) return;
+
+  function closeMenu() {
+    navLinksPanel.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+  function toggleMenu() {
+    const isOpen = navLinksPanel.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+  }
+  menuToggle.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+  navLinksPanel.addEventListener('click', e => {
+    if (e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('click', e => {
+    if (!navLinksPanel.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
 // ── Smooth scroll per ancore interne (es. nav -> #lore, #codex, ecc.) ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {

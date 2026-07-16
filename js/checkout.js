@@ -6,6 +6,37 @@
    mostrato e modificato — non re-inizializzato da zero.
    ============================================================ */
 
+// ── Menu mobile (hamburger) ────────────────────────────────────────────────────
+(function() {
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinksPanel = document.getElementById('navLinks');
+  if (!menuToggle || !navLinksPanel) return;
+
+  function closeMenu() {
+    navLinksPanel.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+  function toggleMenu() {
+    const isOpen = navLinksPanel.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+  }
+  menuToggle.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+  navLinksPanel.addEventListener('click', e => {
+    if (e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('click', e => {
+    if (!navLinksPanel.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
 (function() {
   const navCart  = document.querySelector('.nav-cart');
   const cartBtn  = document.getElementById('cartBtn');
