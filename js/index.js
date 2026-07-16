@@ -45,6 +45,21 @@ if (window.location.hash) {
   }
 }
 
+// ── Riapertura a metà intro: la rotazione della lattina riparte da 0 ──
+// Se il browser ripristina uno scroll che cade dentro lo scroll-stage (l'intro
+// con la lattina che ruota), si riparte dalla cima: l'intro ha senso solo da 0.
+// Oltre lo stage (es. #how o piu' giu') la posizione ripristinata resta valida.
+if (!window.location.hash) {
+  window.addEventListener('load', () => setTimeout(() => {
+    const stage = document.getElementById('scroll-stage');
+    if (!stage) return;
+    const stageEnd = stage.offsetHeight - window.innerHeight;
+    if (window.scrollY > 0 && window.scrollY < stageEnd) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, 100));
+}
+
 // ── Menu mobile (hamburger) ────────────────────────────────────────────────────
 (function() {
   const menuToggle = document.getElementById('menuToggle');
