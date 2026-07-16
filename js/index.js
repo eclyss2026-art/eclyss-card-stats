@@ -27,6 +27,18 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
   });
 });
 
+// ── Atterraggio da un'altra pagina (es. entra-nel-nostro-mondo.html -> index.html#how) ──
+// Il browser salta all'ancora sul primo layout, ma font, immagini e modelli 3D
+// caricati dopo spostano le sezioni: a caricamento completo si riallinea sull'ancora.
+if (window.location.hash) {
+  const realign = () => {
+    const t = document.querySelector(window.location.hash);
+    if (t) t.scrollIntoView({ behavior: 'auto' });
+  };
+  if (document.readyState === 'complete') realign();
+  else window.addEventListener('load', () => setTimeout(realign, 100));
+}
+
 // ── Menu mobile (hamburger) ────────────────────────────────────────────────────
 (function() {
   const menuToggle = document.getElementById('menuToggle');
