@@ -30,13 +30,19 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
 // ── Atterraggio da un'altra pagina (es. entra-nel-nostro-mondo.html -> index.html#how) ──
 // Il browser salta all'ancora sul primo layout, ma font, immagini e modelli 3D
 // caricati dopo spostano le sezioni: a caricamento completo si riallinea sull'ancora.
+// Solo alla prima navigazione: su refresh e back/forward il browser ripristina da solo
+// la posizione di scroll dell'utente e non va scavalcato.
 if (window.location.hash) {
-  const realign = () => {
-    const t = document.querySelector(window.location.hash);
-    if (t) t.scrollIntoView({ behavior: 'auto' });
-  };
-  if (document.readyState === 'complete') realign();
-  else window.addEventListener('load', () => setTimeout(realign, 100));
+  const navEntry = performance.getEntriesByType('navigation')[0];
+  const isFreshNavigation = !navEntry || navEntry.type === 'navigate';
+  if (isFreshNavigation) {
+    const realign = () => {
+      const t = document.querySelector(window.location.hash);
+      if (t) t.scrollIntoView({ behavior: 'auto' });
+    };
+    if (document.readyState === 'complete') realign();
+    else window.addEventListener('load', () => setTimeout(realign, 100));
+  }
 }
 
 // ── Menu mobile (hamburger) ────────────────────────────────────────────────────
