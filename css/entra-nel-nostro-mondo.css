@@ -212,8 +212,9 @@ section[id]{scroll-margin-top:90px}
 
 /* ── LORE / UNIVERSO ── */
 .lore{background:var(--black);border-bottom:1px solid rgba(255,255,255,.05)}
-.lore-inner{max-width:1420px;margin:0 auto}
-.lore-lead{font-size:22px;color:var(--gray-light);line-height:1.85;max-width:1050px;margin:0 auto 22px;text-align:center}
+.lore-inner{max-width:1280px;margin:0 auto}
+/* righe da ~70 caratteri: oltre i 900px il testo lungo diventa faticoso da seguire */
+.lore-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.85;max-width:760px;margin:0 auto 22px;text-align:center}
 .txt-purple{color:var(--purple-light);font-weight:700}
 .txt-red{color:#ef4444;font-weight:700}
 .era-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:70px}
@@ -236,8 +237,8 @@ section[id]{scroll-margin-top:90px}
 
 /* ── ECLYDEX (glifi/simboli) ── */
 .codex{background:var(--dark);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.codex-inner{max-width:1420px;margin:0 auto}
-.codex-lead{font-size:22px;color:var(--gray-light);line-height:1.8;max-width:1050px;margin:0 auto 54px;text-align:center}
+.codex-inner{max-width:1280px;margin:0 auto}
+.codex-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;max-width:760px;margin:0 auto 48px;text-align:center}
 .codex-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
 .glyph-card{
   border:1px solid rgba(192,132,252,.18);border-radius:4px;padding:22px 12px 18px;text-align:center;
@@ -252,7 +253,7 @@ section[id]{scroll-margin-top:90px}
 }
 .glyph-svg svg{width:100%;height:100%}
 .glyph-name{display:block;font-family:'Asul',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--white);margin-bottom:6px}
-.glyph-mean{display:block;font-size:15.5px;color:var(--gray-light);line-height:1.6}
+.glyph-mean{display:block;font-size:16px;color:var(--gray-light);line-height:1.6}
 .glyph-int{color:#ef4488;border-color:rgba(239,68,136,.22);background:rgba(239,68,136,.05)}
 .glyph-int:hover{border-color:rgba(239,68,136,.6);box-shadow:0 8px 30px rgba(239,68,136,.22)}
 .codex-mantra{margin-top:54px;text-align:center;display:flex;flex-direction:column;gap:10px}
@@ -271,11 +272,11 @@ section[id]{scroll-margin-top:90px}
 .risk-purple{color:var(--purple-light);text-shadow:0 0 18px rgba(192,132,252,.6);}
 .risk-red{color:#ef4444;text-shadow:0 0 18px rgba(239,68,68,.6);}
 .risk-vs{font-family:'Asul',sans-serif;font-size:19px;font-weight:500;color:var(--gray);font-style:italic}
-.risk-sub{font-size:18px;color:var(--gray-light);letter-spacing:.5px}
-.guardians-inner{display:block;max-width:none;margin:0}
-.guardians-text{max-width:980px;margin:0 auto 60px;text-align:center}
+.risk-sub{font-size:18px;color:rgba(255,255,255,.72);letter-spacing:.5px;max-width:680px;margin:0 auto}
+.guardians-inner{display:block;max-width:1280px;margin:0 auto}
+.guardians-text{max-width:760px;margin:0 auto 48px;text-align:center}
 .guardians-text .section-title{white-space:nowrap}
-.guardians-text p{font-size:22px;color:var(--gray-light);line-height:1.8;margin:0 auto 32px;max-width:980px}
+.guardians-text p{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;margin:0 auto;max-width:760px}
 .cards-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:start}
 .more-tag{
   text-align:center;margin-top:40px;
@@ -392,9 +393,19 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   /* Le due citazioni decorative in corsivo, su un banner cosi' compatto,
      si accavallavano al testo sopra: tolte di mezzo per restare puliti. */
   .world-hero-quotes{display:none}
-  .era-grid{grid-template-columns:repeat(2,1fr)}
+  /* Su telefono i testi lunghi scendono a 17px: a 19-22px una riga contiene
+     4-5 parole e il paragrafo diventa una colonna infinita. */
+  .lore-lead,.codex-lead,.guardians-text p{font-size:17px;line-height:1.75}
+  .guardians-text{margin-bottom:36px}
+  .codex-lead{margin-bottom:36px}
+  .lore-mantra{font-size:19px;margin-top:34px}
+  .era-grid{grid-template-columns:repeat(2,1fr);gap:12px;margin-top:44px}
+  .era{padding:18px 16px}
+  .era-name{min-height:0}
   .codex-grid{grid-template-columns:repeat(3,1fr)}
   .cards-row{grid-template-columns:repeat(3,1fr)}
+  .more-tag{margin-top:30px;letter-spacing:2.5px}
+  .risk-divider{padding:30px 24px}
   .footer-grid{grid-template-columns:1fr 1fr;max-width:none}
   .footer-bottom{flex-direction:column;gap:14px;text-align:center}
   .footer-mantra{flex-direction:column;gap:10px}
@@ -402,7 +413,14 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .fm-line{flex:0 0 60px}
 }
 @media (max-width:560px){
+  section{padding:48px 20px}
   .era-grid{grid-template-columns:1fr}
-  .codex-grid{grid-template-columns:repeat(2,1fr)}
-  .cards-row{grid-template-columns:repeat(2,1fr)}
+  .codex-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .glyph-card{padding:18px 10px 14px}
+  .cards-row{grid-template-columns:repeat(2,1fr);gap:12px}
+  /* Il titolo "Gli Interferenti" col nowrap ereditato sborderebbe a 360px */
+  .guardians-text .section-title{white-space:normal}
+  .risk-divider-inner{gap:12px}
+  .risk-side{font-size:17px;letter-spacing:2px}
+  .mantra-glifi{letter-spacing:5px}
 }
