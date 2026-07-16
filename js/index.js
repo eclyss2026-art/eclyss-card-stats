@@ -27,6 +27,37 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
   });
 });
 
+// ── Menu mobile (hamburger) ────────────────────────────────────────────────────
+(function() {
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinksPanel = document.getElementById('navLinks');
+  if (!menuToggle || !navLinksPanel) return;
+
+  function closeMenu() {
+    navLinksPanel.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+  function toggleMenu() {
+    const isOpen = navLinksPanel.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+  }
+  menuToggle.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+  navLinksPanel.addEventListener('click', e => {
+    if (e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('click', e => {
+    if (!navLinksPanel.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
 // ── Voce di menu attiva: al click e durante lo scroll ─────────────────────────
 (function() {
   const navLinks = [...document.querySelectorAll('.nav-links a[href^="#"]')];
@@ -48,8 +79,19 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
     sections.forEach(sec => { if (sec.offsetTop <= pos) current = sec; });
     if (current) setActive(navLinks.find(a => a.getAttribute('href') === '#' + current.id));
   }
+
+  function updateActiveFromHash() {
+    if (window.location.hash) {
+      const hashLink = navLinks.find(a => a.getAttribute('href') === window.location.hash);
+      if (hashLink) setActive(hashLink);
+    } else {
+      updateActive();
+    }
+  }
+
+  updateActiveFromHash();
   window.addEventListener('scroll', updateActive, { passive: true });
-  updateActive();
+  window.addEventListener('hashchange', updateActiveFromHash);
 })();
 
 // ── Salta introduzione: scroll diretto, senza animazione, per uscire subito dallo scroll-stage ──
@@ -223,13 +265,30 @@ if (skipIntroBtn) {
   const pixelRatio = Math.min(devicePixelRatio, 3.5);
   canvas.width  = W * pixelRatio;
   canvas.height = H * pixelRatio;
-  // dimensioni a schermo proporzionate (mai schiacciate, mai tagliate dal riquadro hero)
+  // dimensioni a schermo proporzionate (mai schiacciate, mai tagliate dal riquadro hero,
+  // e mai piu' larghe del viewport: su mobile la larghezza disponibile e' il vincolo)
   function applyCanvasDisplaySize() {
+    // clientWidth/clientHeight riflettono la larghezza reale del layout CSS;
+    // window.innerWidth puo' non coincidere (zoom/DPR) e far sbordare il canvas.
+    const viewportW = document.documentElement.clientWidth;
+    const viewportH = document.documentElement.clientHeight;
+
     // spazio verticale riservato a nav (72px) + scroll hint sotto la lattina
     const reserved = 210;
-    const available = window.innerHeight - reserved;
+    const available = viewportH - reserved;
     const dispH = Math.max(320, Math.min(H, available));
-    const dispW = Math.round(dispH * (W / H));
+    let dispW = Math.round(dispH * (W / H));
+
+    const maxW = viewportW <= 900
+      ? viewportW - 48   // hero-content passa sopra: la lattina resta centrata su una colonna
+      : viewportW * 0.55; // due colonne affiancate: la lattina occupa la sua meta'
+    if (dispW > maxW) {
+      dispW = Math.round(maxW);
+      canvas.style.height = Math.round(dispW * (H / W)) + 'px';
+      canvas.style.width  = dispW + 'px';
+      return;
+    }
+
     canvas.style.width  = dispW + 'px';
     canvas.style.height = dispH + 'px';
   }
@@ -254,7 +313,7 @@ if (skipIntroBtn) {
   applyCanvasDisplaySize();
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 1.4;
 
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
