@@ -27,38 +27,45 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
   });
 });
 
-// ── Atterraggio da un'altra pagina (es. entra-nel-nostro-mondo.html -> index.html#how) ──
-// Il browser salta all'ancora sul primo layout, ma font, immagini e modelli 3D
-// caricati dopo spostano le sezioni: a caricamento completo si riallinea sull'ancora.
-// Solo alla prima navigazione: su refresh e back/forward il browser ripristina da solo
-// la posizione di scroll dell'utente e non va scavalcato.
-if (window.location.hash) {
+// ── Gestione manuale dello scroll al caricamento ──────────────────────────────
+// Il ripristino automatico del browser e' differito e puo' scattare DOPO i
+// nostri scrollTo (la lattina ricompariva a meta' rotazione): quindi la
+// posizione di partenza la decidiamo noi ('manual').
+// - prima navigazione con ancora (es. index.html#how da un'altra pagina):
+//   si atterra sull'ancora, riallineando a caricamento completo perche'
+//   font, immagini e modelli 3D spostano il layout
+// - refresh o back/forward: si torna dov'era l'utente, MA se quella posizione
+//   cade dentro l'intro (scroll-stage) si riparte da 0 con la lattina a
+//   rotazione zero: l'intro ha senso solo dall'inizio
+(function() {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  const SCROLL_KEY = 'eclyssIndexScrollY';
+  window.addEventListener('pagehide', () => {
+    try { sessionStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch (e) {}
+  });
+
   const navEntry = performance.getEntriesByType('navigation')[0];
   const isFreshNavigation = !navEntry || navEntry.type === 'navigate';
-  if (isFreshNavigation) {
-    const realign = () => {
-      const t = document.querySelector(window.location.hash);
-      if (t) t.scrollIntoView({ behavior: 'auto' });
-    };
-    if (document.readyState === 'complete') realign();
-    else window.addEventListener('load', () => setTimeout(realign, 100));
-  }
-}
 
-// ── Riapertura a metà intro: la rotazione della lattina riparte da 0 ──
-// Se il browser ripristina uno scroll che cade dentro lo scroll-stage (l'intro
-// con la lattina che ruota), si riparte dalla cima: l'intro ha senso solo da 0.
-// Oltre lo stage (es. #how o piu' giu') la posizione ripristinata resta valida.
-if (!window.location.hash) {
-  window.addEventListener('load', () => setTimeout(() => {
-    const stage = document.getElementById('scroll-stage');
-    if (!stage) return;
-    const stageEnd = stage.offsetHeight - window.innerHeight;
-    if (window.scrollY > 0 && window.scrollY < stageEnd) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+  function position() {
+    if (isFreshNavigation) {
+      const t = window.location.hash && document.querySelector(window.location.hash);
+      if (t) t.scrollIntoView({ behavior: 'auto' });
+      return;
     }
-  }, 100));
-}
+    let saved = 0;
+    try { saved = Number(sessionStorage.getItem(SCROLL_KEY)) || 0; } catch (e) {}
+    const stage = document.getElementById('scroll-stage');
+    const stageEnd = stage ? stage.offsetHeight - window.innerHeight : 0;
+    window.scrollTo({ top: saved > stageEnd ? saved : 0, behavior: 'auto' });
+  }
+
+  // subito, per ridurre il flash; e di nuovo a layout definitivo
+  position();
+  if (document.readyState === 'complete') setTimeout(position, 100);
+  else window.addEventListener('load', () => setTimeout(position, 100));
+})();
 
 // ── Menu mobile (hamburger) ────────────────────────────────────────────────────
 (function() {
