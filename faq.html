@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FAQ — Domande Frequenti · ECLYSS</title>
 <meta name="description" content="Domande frequenti su ECLYSS: produzione, acquisto, pagamenti, assistenza clienti e privacy.">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Archivo+Black&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/faq.css">
 </head>
 <body>
@@ -13,13 +12,16 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo"><img src="assets/Scritta Eclyss.png" alt="ECLYSS"></a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="index.html#home">Home</a></li>
     <li><a href="index.html#how">Come Funziona</a></li>
     <li><a href="entra-nel-nostro-mondo.html">L'Universo</a></li>
     <li><a href="index.html#box">Acquista</a></li>
   </ul>
   <div class="nav-cart">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Apri il menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
     <button class="cart-btn" id="cartBtn" type="button" aria-label="Apri il carrello" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
       <span class="cart-count" id="cartCount">0</span>
@@ -169,7 +171,7 @@
         <div class="faq-a">
           <div class="faq-a-inner">
             <p>Per qualsiasi domanda, informazione o richiesta di assistenza puoi scriverci all'indirizzo:</p>
-            <p><a href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a></p>
+            <p><a href="mailto:hello@eclyssdrink.com">hello@eclyssdrink.com</a></p>
             <p>Ti risponderemo nel più breve tempo possibile.</p>
           </div>
         </div>
@@ -208,7 +210,7 @@
         <div class="faq-a">
           <div class="faq-a-inner">
             <p>Sì. Valutiamo collaborazioni con rivenditori e realtà commerciali interessate alla distribuzione del marchio.</p>
-            <p>Per ricevere maggiori informazioni puoi contattarci via e-mail all'indirizzo <a href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a>, indicando la tua attività e la tua richiesta.</p>
+            <p>Per ricevere maggiori informazioni puoi contattarci via e-mail all'indirizzo <a href="mailto:hello@eclyssdrink.com">hello@eclyssdrink.com</a>, indicando la tua attività e la tua richiesta.</p>
           </div>
         </div>
       </div>
@@ -216,7 +218,7 @@
     </div>
 
     <div class="faq-cta">
-      <p>Non hai trovato la risposta che cercavi?<br>Scrivici a <a class="mail" href="mailto:eclyss@lacommerciale.it">eclyss@lacommerciale.it</a>, ti risponderemo il prima possibile.</p>
+      <p>Non hai trovato la risposta che cercavi?<br>Scrivici a <a class="mail" href="mailto:hello@eclyssdrink.com">hello@eclyssdrink.com</a>, ti risponderemo il prima possibile.</p>
       <a href="index.html#box" class="btn-purple">Torna al Sito</a>
     </div>
 
@@ -234,15 +236,15 @@
     <div><img src="assets/Scritta Eclyss.png" alt="ECLYSS" style="height:32px;filter:invert(1);opacity:.65"></div>
     <div>
       <div class="footer-col-title">ECLYSS</div>
-      <ul class="footer-links"><li><a href="entra-nel-nostro-mondo.html#lore">L'Universo</a></li><li><a href="entra-nel-nostro-mondo.html#codex">L'Eclydex</a></li><li><a href="index.html#box">Acquista</a></li></ul>
+      <ul class="footer-links"><li><a href="index.html#home">Home</a></li><li><a href="index.html#how">Come Funziona</a></li><li><a href="entra-nel-nostro-mondo.html">L'Universo</a></li><li><a href="index.html#box">Acquista</a></li></ul>
     </div>
     <div>
       <div class="footer-col-title">Collezione</div>
-      <ul class="footer-links"><li><a href="entra-nel-nostro-mondo.html#guardians">I Custodi</a></li><li><a href="entra-nel-nostro-mondo.html#interferenti">Gli Interferenti</a></li><li><a href="index.html#how">Come funziona</a></li></ul>
+      <ul class="footer-links"><li><a href="entra-nel-nostro-mondo.html">Esplora</a></li><li><a href="entra-nel-nostro-mondo.html#guardians">I Custodi</a></li><li><a href="entra-nel-nostro-mondo.html#interferenti">Gli Interferenti</a></li><li><a href="entra-nel-nostro-mondo.html#codex">L'Eclydex</a></li></ul>
     </div>
     <div>
       <div class="footer-col-title">Supporto</div>
-      <ul class="footer-links"><li><a href="faq.html">FAQ</a></li><li><a href="#">Spedizioni</a></li><li><a href="#">Contatti</a></li></ul>
+      <ul class="footer-links"><li><a href="faq.html">FAQ</a></li><li><a href="#">Spedizioni</a></li><li><a href="mailto:hello@eclyssdrink.com">Contatti</a></li></ul>
     </div>
     <div>
       <div class="footer-col-title">Seguici</div>
