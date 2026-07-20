@@ -775,6 +775,9 @@ footer{
   .section-nums span::before{display:none}
   .num-line{display:none}
   .scroll-hint{display:none}
+  /* L'anello di avanzamento finiva alla stessa altezza dei numeri 01/02
+     e ci si sovrapponeva: su telefono e' solo ornamento, via anche lui. */
+  #progress-ring{display:none}
 
   .ritual-grid{grid-template-columns:repeat(2,1fr);gap:28px 20px}
 
