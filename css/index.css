@@ -312,7 +312,6 @@ nav{
   background:rgba(123,47,255,.16);box-shadow:0 0 18px rgba(123,47,255,.35);
 }
 .section-nums span[data-covered].active::before{color:rgba(192,132,252,.7)}
-.num-line{display:block;width:22px;height:1px;background:var(--purple);margin-bottom:2px;margin-left:auto}
 
 /* Scroll hint */
 .scroll-hint{
