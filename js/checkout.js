@@ -194,17 +194,26 @@
     });
   }
 
-  // ── Conferma ordine (simulata: nessun pagamento reale, solo svuota il carrello) ──
+  // ── Conferma ordine: apre Snipcart per il pagamento ──
   const confirmBtn = document.getElementById('confirmOrderBtn');
   const orderView = document.getElementById('orderView');
   const orderConfirmed = document.getElementById('orderConfirmed');
   if (confirmBtn) {
     confirmBtn.addEventListener('click', () => {
-      cart = {};
-      saveCart(cart);
-      render();
-      if (orderView) orderView.style.display = 'none';
-      if (orderConfirmed) orderConfirmed.classList.add('show');
+      // Apri il checkout di Snipcart
+      if (window.Snipcart && window.Snipcart.api) {
+        window.Snipcart.api.modal.open();
+      }
+
+      // Dopo il pagamento, svuota il carrello e mostra conferma
+      // (Snipcart farà il reset automaticamente dopo pagamento completato)
+      setTimeout(() => {
+        cart = {};
+        saveCart(cart);
+        render();
+        if (orderView) orderView.style.display = 'none';
+        if (orderConfirmed) orderConfirmed.classList.add('show');
+      }, 500);
     });
   }
 
