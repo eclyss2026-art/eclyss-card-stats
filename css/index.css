@@ -287,10 +287,16 @@ nav{
   position:absolute;right:72px;top:50%;transform:translateY(-50%);
   z-index:10;display:flex;flex-direction:column;align-items:flex-end;gap:14px;
 }
-.section-nums span{
+/* Pillole-bottone: bordo e sfondo come i bottoni della nav, cosi' si capisce
+   subito che 01/02 sono cliccabili (scelta della lattina).
+   [data-covered] = solo i numeri veri, non il trattino decorativo. */
+.section-nums span[data-covered]{
   font-family:'Asul',sans-serif;font-size:17px;font-weight:600;
-  color:var(--gray);letter-spacing:1px;cursor:pointer;transition:color .2s;
+  color:var(--gray-light);letter-spacing:1px;cursor:pointer;
   position:relative;display:flex;align-items:center;gap:10px;
+  padding:8px 16px;border-radius:999px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);
+  transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
 }
 .section-nums span::before{
   content:attr(data-label);
@@ -299,10 +305,13 @@ nav{
   color:rgba(255,255,255,0);white-space:nowrap;
   transition:color .2s;
 }
-.section-nums span:hover::before{color:rgba(255,255,255,.5)}
-.section-nums span:hover{color:var(--white)}
-.section-nums span.active{color:var(--purple-light)}
-.section-nums span.active::before{color:rgba(192,132,252,.7)}
+.section-nums span[data-covered]:hover::before{color:rgba(255,255,255,.5)}
+.section-nums span[data-covered]:hover{color:var(--white);border-color:rgba(155,95,255,.5);background:rgba(123,47,255,.14)}
+.section-nums span[data-covered].active{
+  color:var(--purple-light);border-color:rgba(155,95,255,.65);
+  background:rgba(123,47,255,.16);box-shadow:0 0 18px rgba(123,47,255,.35);
+}
+.section-nums span[data-covered].active::before{color:rgba(192,132,252,.7)}
 .num-line{display:block;width:22px;height:1px;background:var(--purple);margin-bottom:2px;margin-left:auto}
 
 /* Scroll hint */
