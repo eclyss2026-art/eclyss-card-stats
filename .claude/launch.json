@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "static-server",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8092"],
+      "port": 8092,
+      "autoPort": true
+    }
+  ]
+}

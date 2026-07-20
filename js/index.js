@@ -151,9 +151,8 @@ if (skipIntroBtn) {
   if (!navCart || !cartBtn) return;
 
   const STORAGE_KEY = 'eclyssCart';
-  const PRODUCTS = {
-    'eclyss-box': { id: 'eclyss-box', name: 'ECLYSS Box', meta: '4 lattine + carte', price: 9.96, image: 'assets/logo-magenta.png' }
-  };
+  // Catalogo condiviso tra tutte le pagine: definito in js/catalogo.js
+  const PRODUCTS = window.ECLYSS_PRODUCTS || {};
 
   function formatPrice(n) {
     return '€' + n.toFixed(2).replace('.', ',');
@@ -302,7 +301,10 @@ if (skipIntroBtn) {
   if (!canvas || !stage || typeof THREE === 'undefined') return;
 
   const W = 480, H = 700;
-  const pixelRatio = Math.min(devicePixelRatio, 3.5);
+  // Cap del pixel ratio: oltre 2 il guadagno visivo e' nullo ma il costo GPU
+  // quadruplica — sui telefoni (DPR 3+) era la causa principale dei blocchi.
+  const isSmallScreen = matchMedia('(max-width: 900px)').matches;
+  const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.6 : 2);
   canvas.width  = W * pixelRatio;
   canvas.height = H * pixelRatio;
   // dimensioni a schermo proporzionate (mai schiacciate, mai tagliate dal riquadro hero,
@@ -341,7 +343,7 @@ if (skipIntroBtn) {
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false }); // No antialias: risparmia GPU
   } catch (e) {
     console.error('WebGL non disponibile:', e);
     if (loadingEl) loadingEl.innerHTML = '<span style="color:#ff6b6b">WebGL non disponibile</span>';
@@ -405,9 +407,10 @@ if (skipIntroBtn) {
   const revealedRoots = new Array(REVEALED_URLS.length).fill(null);
   let activeRevealed = 0;
   let modelsLoaded = 0;
-  const TOTAL_MODELS = REVEALED_URLS.length + 1;
+  const TOTAL_MODELS = 1; // Solo il covered: i revealed caricano lazy
   let modelLoaded  = false;
   let modelSwapped = false;
+  let revealedModelsLoading = false; // Lazy load i modelli rivelati al primo interagire
 
   function onModelReady() {
     modelsLoaded++;
@@ -507,24 +510,26 @@ if (skipIntroBtn) {
     }
   );
 
-  // Varianti rivelate — nascoste finché non scatta lo swap allo scroll.
-  REVEALED_URLS.forEach((url, i) => {
-    loader.load(
-      url,
-      (gltf) => {
-        const root = prepareModel(gltf);
-        canGroup.add(root);
-        root.visible = false;
-        revealedRoots[i] = root;
-        onModelReady();
-      },
-      undefined,
-      (error) => {
-        console.error('Errore caricamento modello (revealed ' + i + '):', error);
-        loadingEl.innerHTML = '<span style="color:#ff6b6b">Errore caricamento modello</span>';
-      }
-    );
-  });
+  // Varianti rivelate — caricate lazy al primo interagire (click/rotazione)
+  function loadRevealedModels() {
+    if (revealedModelsLoading || revealedRoots[0] !== null) return; // Già caricate o in progress
+    revealedModelsLoading = true;
+    REVEALED_URLS.forEach((url, i) => {
+      loader.load(
+        url,
+        (gltf) => {
+          const root = prepareModel(gltf);
+          canGroup.add(root);
+          root.visible = false;
+          revealedRoots[i] = root;
+        },
+        undefined,
+        (error) => {
+          console.error('Errore caricamento modello (revealed ' + i + '):', error);
+        }
+      );
+    });
+  }
 
   canGroup.rotation.x = 0.05; // slight Apple-style tilt
 
@@ -535,6 +540,7 @@ if (skipIntroBtn) {
     canVariantPicker.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-covered]');
       if (!btn) return;
+      loadRevealedModels(); // Lazy load i modelli al primo click
       setRevealedVariant(Number(btn.dataset.covered));
       canVariantPicker.querySelectorAll('[data-covered]').forEach(el => el.classList.toggle('active', el === btn));
       if (eclipseRing && btn.dataset.eclipse) {
@@ -570,11 +576,27 @@ if (skipIntroBtn) {
 
   /* ── ANIMATE LOOP ── */
   const SWAP_RAD = (SWAP_PROGRESS * TOTAL * Math.PI) / 180; // soglia in radianti, sulla rotazione realmente renderizzata
+
+  // Renderizza solo quando il canvas e' davvero in vista e la tab e' attiva:
+  // fuori dall'hero la GPU resta libera per il resto della pagina.
+  let canvasInView = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      canvasInView = entries[0].isIntersecting;
+    }).observe(canvas);
+  }
+
   function animate() {
     requestAnimationFrame(animate);
+    if (!canvasInView || document.hidden) return;
 
     currentRotY += (targetRotY - currentRotY) * 0.18;
     canGroup.rotation.y = currentRotY;
+
+    // Lazy load i modelli rivelati quando la rotazione si avvicina (50° prima dello swap)
+    if (!revealedModelsLoading && revealedRoots[0] === null && currentRotY >= (SWAP_RAD * 0.5)) {
+      loadRevealedModels();
+    }
 
     // Swap covered -> revealed (creatura scelta) sincronizzato con la rotazione visibile,
     // non con lo scroll grezzo: così non "salta" mai anche scorrendo molto in fretta.
@@ -597,3 +619,36 @@ if (skipIntroBtn) {
   }
   animate();
 })();
+
+
+
+
+/*
+PANTE
+
+    :~-._                                                 _.-~:
+    : :.~^o._        ________---------________        _.o^~.:.:
+     : ::.`?88booo~~~.::::::::...::::::::::::..~~oood88P'.::.:
+     :  ::: `?88P .:::....         ........:::::. ?88P' :::. :
+      :  :::. `? .::.            . ...........:::. P' .:::. :
+       :  :::   ... ..  ...       .. .::::......::.   :::. :
+       `  :' .... ..  .:::::.     . ..:::::::....:::.  `: .'
+        :..    ____:::::::::.  . . ....:::::::::____  ... :
+       :... `:~    ^~-:::::..  .........:::::-~^    ~::.::::
+       `.::. `\   (8)  \b:::..::.:.:::::::d/  (8)   /'.::::'
+        ::::.  ~-._v    |b.::::::::::::::d|    v_.-~..:::::
+        `.:::::... ~~^?888b..:::::::::::d888P^~...::::::::'
+         `.::::::::::....~~~ .:::::::::~~~:::::::::::::::'
+          `..:::::::::::   .   ....::::    ::::::::::::,'
+            `. .:::::::    .      .::::.    ::::::::'.'
+              `._ .:::    .        :::::.    :::::_.'
+                 `-. :    .        :::::      :,-'
+                    :.   :___     .:::___   .::
+          ..--~~~~--:+::. ~~^?b..:::dP^~~.::++:--~~~~--..
+            ___....--`+:::.    `~8~'    .:::+'--....___
+          ~~   __..---`_=:: ___gd8bg___ :==_'---..__   ~~
+           -~~~  _.--~~`-.~~~~~~~~~~~~~~~,-' ~~--._ ~~~-
+              -~~            ~~~~~~~~~   _ Seal _  ~~-
+
+
+*/

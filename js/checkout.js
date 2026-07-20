@@ -42,10 +42,8 @@
   const cartBtn  = document.getElementById('cartBtn');
 
   const STORAGE_KEY = 'eclyssCart';
-  // Catalogo prodotti minimo: qui c'è solo la Box, coerente con le altre pagine.
-  const PRODUCTS = {
-    'eclyss-box': { id: 'eclyss-box', name: 'ECLYSS Box', meta: '4 lattine + carte', price: 19.99, image: 'assets/logo-magenta.png' }
-  };
+  // Catalogo condiviso tra tutte le pagine: definito in js/catalogo.js
+  const PRODUCTS = window.ECLYSS_PRODUCTS || {};
 
   function formatPrice(n) {
     return '€' + n.toFixed(2).replace('.', ',');

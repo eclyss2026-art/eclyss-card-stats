@@ -1,0 +1,4 @@
+# Cache Netlify: gli asset (modelli 3D, immagini, font, HDR) restano in cache
+# del browser per una settimana — le visite successive non li riscaricano.
+/assets/*
+  Cache-Control: public, max-age=604800

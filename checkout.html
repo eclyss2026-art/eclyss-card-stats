@@ -28,7 +28,7 @@
     </button>
     <div class="cart-dropdown" id="cartDropdown">
       <div class="cart-dropdown-header">Il tuo carrello</div>
-      <div class="cart-empty" id="cartEmpty">Il carrello è vuoto.<br>Aggiungi la tua prima ECLYSS Box.</div>
+      <div class="cart-empty" id="cartEmpty">Il carrello è vuoto.<br>Aggiungi la tua prima <span class="hl">ECLYSS</span> Box.</div>
       <div class="cart-items" id="cartItems"></div>
       <div class="cart-footer" id="cartFooter" hidden>
         <div class="cart-subtotal"><span>Subtotale</span><span id="cartSubtotal">€0,00</span></div>
@@ -71,6 +71,18 @@
           <a href="index.html#box" class="btn-ghost">Continua lo shopping</a>
         </div>
 
+        <div class="payment-methods">
+          <span class="pm-label">Metodi di pagamento accettati</span>
+          <div class="pm-badges">
+            <span class="pm-badge" title="Visa" aria-label="Visa">
+              <svg viewBox="0 0 48 16" xmlns="http://www.w3.org/2000/svg" role="img"><text x="24" y="13" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-style="italic" font-weight="bold" fill="#1A1F71">VISA</text></svg>
+            </span>
+            <span class="pm-badge" title="Mastercard" aria-label="Mastercard">
+              <svg viewBox="0 0 48 30" xmlns="http://www.w3.org/2000/svg" role="img"><circle cx="18" cy="15" r="12" fill="#EB001B"/><circle cx="30" cy="15" r="12" fill="#F79E1B"/><path d="M24 4.61 A12 12 0 0 1 24 25.39 A12 12 0 0 1 24 4.61 Z" fill="#FF5F00"/></svg>
+            </span>
+          </div>
+        </div>
+
         <p class="order-note">Pagamento simulato a scopo dimostrativo — nessun addebito reale verrà effettuato.</p>
       </div>
 
@@ -91,13 +103,13 @@
 <footer>
   <div class="footer-mantra">
     <span class="fm-line"></span>
-    <span class="fm-txt">ÆRA · THRÆ · EON · ZÆTH — «Dal silenzio nasce l'armonia eterna»</span>
+    <span class="fm-txt">Ricomponi il Respiro Originario</span>
     <span class="fm-line fm-line-r"></span>
   </div>
   <div class="footer-grid">
     <div><img src="assets/Scritta Eclyss.png" alt="ECLYSS" style="height:16px;filter:invert(1);opacity:.65"></div>
     <div>
-      <div class="footer-col-title">ECLYSS</div>
+      <div class="footer-col-title"><span class="hl">ECLYSS</span></div>
       <ul class="footer-links"><li><a href="index.html#home">Home</a></li><li><a href="index.html#how">Come Funziona</a></li><li><a href="entra-nel-nostro-mondo.html">L'Universo</a></li><li><a href="index.html#box">Acquista</a></li></ul>
     </div>
     <div>
@@ -124,7 +136,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 ECLYSS. Tutti i diritti riservati.</span>
+    <span class="footer-copy">© 2026 <span class="hl">ECLYSS</span>. Tutti i diritti riservati.</span>
     <div class="footer-legal">
       <a href="#">Termini e condizioni</a>
       <a href="#">Privacy Policy</a>
@@ -132,6 +144,7 @@
   </div>
 </footer>
 
+<script src="js/catalogo.js"></script>
 <script src="js/checkout.js"></script>
 </body>
 </html>
