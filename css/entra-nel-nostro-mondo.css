@@ -462,7 +462,8 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .cards-row{grid-template-columns:repeat(3,1fr)}
   .more-tag{margin-top:30px;letter-spacing:2.5px}
   .risk-divider{padding:30px 24px}
-  .footer-grid{grid-template-columns:1fr 1fr;max-width:none}
+  .footer-grid{grid-template-columns:1fr 1fr;max-width:none;text-align:left}
+  .footer-grid > div:first-child{grid-column:1 / -1;text-align:center;margin-bottom:8px}
   .footer-bottom{flex-direction:column;gap:14px;text-align:center}
   .footer-mantra{flex-direction:column;gap:10px}
   .fm-txt{white-space:normal}

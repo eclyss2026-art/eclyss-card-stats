@@ -280,7 +280,8 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .faq-hero-text{text-align:center}
   .faq-hero-text .section-label,.faq-hero-text .section-title{justify-content:center;text-align:center}
   .faq-hero-lead{margin:0 auto}
-  .footer-grid{grid-template-columns:1fr 1fr;max-width:none}
+  .footer-grid{grid-template-columns:1fr 1fr;max-width:none;text-align:left}
+  .footer-grid > div:first-child{grid-column:1 / -1;text-align:center;margin-bottom:8px}
   .footer-bottom{flex-direction:column;gap:14px;text-align:center}
   .footer-mantra{flex-direction:column;gap:10px}
   .fm-txt{white-space:normal}
