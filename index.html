@@ -6,6 +6,8 @@
 <title>ECLYSS — Collectible Energy Drink · Le Voci del Silenzio</title>
 <meta name="description" content="ECLYSS è l'energy drink collezionabile: ogni lattina custodisce un Custode o un Interferente e un frammento dell'Eclydex. Dal silenzio nasce l'armonia eterna.">
 <link rel="stylesheet" href="css/index.css">
+<!-- Snipcart eCommerce -->
+<link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
 </head>
 <body>
 
@@ -210,7 +212,14 @@ Custode o Interferente. Scopri il tuo legame.-->
           <span class="qty-value" id="boxQtyValue">1</span>
           <button type="button" class="qty-btn" data-step="1" aria-label="Aumenta quantità">+</button>
         </div>
-        <button type="button" class="btn-purple" id="addToCartBtn" data-product-id="eclyss-box">Aggiungi al Carrello</button>
+        <button type="button" class="btn-purple snipcart-add-item"
+          data-item-id="eclyss-box"
+          data-item-name="ECLYSS Box"
+          data-item-price="9.96"
+          data-item-description="4 lattine collezionabili ECLYSS con carte originali rivelatrici"
+          data-item-image="https://eclyssdrink.com/assets/prodotto-edizione01.jpg"
+          data-item-url="https://eclyssdrink.com/index.html"
+          id="addToCartBtn">Aggiungi al Carrello</button>
       </div>
     </div>
     <div class="box-feats">
@@ -297,5 +306,8 @@ Custode o Interferente. Scopri il tuo legame.-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/index-scroll-animations.js"></script>
+<!-- Snipcart -->
+<script async src="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.js"></script>
+<div hidden id="snipcart" data-api-key="API_KEY_PLACEHOLDER"></div>
 </body>
 </html>
