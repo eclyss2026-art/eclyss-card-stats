@@ -799,3 +799,8 @@ footer{
   .footer-grid{grid-template-columns:1fr;text-align:center}
   .footer-grid > div:first-child{text-align:center}
 }
+/* Blocco del dezoom: nessun elemento puo' allargare la pagina oltre lo schermo */
+@media (max-width:900px){
+  html{overflow-x:hidden}
+}
+
