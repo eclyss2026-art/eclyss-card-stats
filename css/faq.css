@@ -260,7 +260,7 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
 
 /* ── RESPONSIVE ── */
 @media (max-width:900px){
-  nav{padding:12px 24px}
+  nav{padding:12px 24px;grid-template-columns:1fr auto}
   .menu-toggle{display:flex}
   .nav-links{
     display:none;flex-direction:column;gap:0;
