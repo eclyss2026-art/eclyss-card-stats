@@ -778,6 +778,10 @@ footer{
   /* L'anello di avanzamento finiva alla stessa altezza dei numeri 01/02
      e ci si sovrapponeva: su telefono e' solo ornamento, via anche lui. */
   #progress-ring{display:none}
+  /* Su telefono "Peel to reveal" e il sottotitolo finiscono sopra il bagliore
+     lilla dell'eclissi: in lilla/grigio non si leggevano, bianco con ombra. */
+  .hero-quote{color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85)}
+  .hero-sub{color:rgba(255,255,255,.92);text-shadow:0 2px 14px rgba(0,0,0,.85)}
 
   .ritual-grid{grid-template-columns:repeat(2,1fr);gap:28px 20px}
 
