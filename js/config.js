@@ -60,10 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ── Tasto "Torna allo shopping" ──────────────────────────────────────────────
-  // Un nostro pulsante, sempre visibile e in stile ECLYSS, sopra il carrello
-  // Snipcart: chiude il carrello e riporta al sito. Indipendente dai controlli
-  // interni di Snipcart (che sul tema scuro erano poco evidenti).
+  // Un nostro pulsante in stile ECLYSS inserito DENTRO il carrello Snipcart,
+  // subito sotto il tasto "Pagamento". Chiude il carrello e riporta al sito.
+  // Snipcart usa Vue e ridisegna il DOM: un MutationObserver lo re-inserisce
+  // se viene rimosso.
   let backBtn = null;
+  let backObserver = null;
+
   function buildBackButton() {
     if (backBtn) return backBtn;
     backBtn = document.createElement('button');
@@ -71,30 +74,53 @@ document.addEventListener('DOMContentLoaded', function() {
     backBtn.id = 'snipcartBackBtn';
     backBtn.setAttribute('aria-label', 'Torna allo shopping');
     backBtn.innerHTML = '<span aria-hidden="true">&larr;</span> Torna allo shopping';
-    // In basso al centro: non copre mai il logo/nav in alto ed è comodo da
-    // raggiungere col pollice su mobile.
+    // Bottone secondario (outline viola) a tutta larghezza, sotto "Pagamento".
     Object.assign(backBtn.style, {
-      position: 'fixed', bottom: '22px', left: '50%', transform: 'translateX(-50%)',
-      zIndex: '2147483000',
-      display: 'none', alignItems: 'center', gap: '8px',
-      padding: '12px 22px', border: '1px solid rgba(192,132,252,.55)',
-      borderRadius: '999px', cursor: 'pointer',
-      background: 'rgba(123,47,255,.95)', color: '#fff',
-      font: '600 15px/1 Asul, system-ui, sans-serif', letterSpacing: '.5px',
-      boxShadow: '0 10px 30px rgba(0,0,0,.45), 0 6px 22px rgba(123,47,255,.5)',
-      backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)'
+      display: 'block', width: '100%', marginTop: '10px',
+      padding: '13px 18px', border: '1px solid rgba(192,132,252,.5)',
+      borderRadius: '6px', cursor: 'pointer',
+      background: 'transparent', color: '#c9a8ff',
+      font: '600 15px/1.2 Asul, system-ui, sans-serif', letterSpacing: '.5px',
+      textAlign: 'center'
     });
+    backBtn.addEventListener('mouseenter', function(){ backBtn.style.background = 'rgba(123,47,255,.14)'; backBtn.style.color = '#fff'; });
+    backBtn.addEventListener('mouseleave', function(){ backBtn.style.background = 'transparent'; backBtn.style.color = '#c9a8ff'; });
     backBtn.addEventListener('click', function() {
       if (window.Snipcart && window.Snipcart.api) {
         window.Snipcart.api.theme.cart.close();
       }
       hideBackButton();
     });
-    document.body.appendChild(backBtn);
     return backBtn;
   }
-  function showBackButton() { buildBackButton().style.display = 'inline-flex'; }
-  function hideBackButton() { if (backBtn) backBtn.style.display = 'none'; }
+
+  // Inserisce il pulsante subito dopo il tasto "Pagamento", se presente.
+  function injectBackButton() {
+    const payBtn = document.querySelector('.snipcart button.snipcart-button-primary');
+    if (!payBtn) return false;
+    const b = buildBackButton();
+    if (payBtn.nextElementSibling !== b) {
+      payBtn.parentNode.insertBefore(b, payBtn.nextElementSibling);
+    }
+    return true;
+  }
+
+  function showBackButton() {
+    injectBackButton();
+    // Osserva il carrello: se Vue lo ridisegna, re-inserisce il pulsante.
+    if (!backObserver) {
+      const root = document.getElementById('snipcart') || document.body;
+      backObserver = new MutationObserver(function() {
+        if (location.hash.indexOf('#/') === 0) injectBackButton();
+      });
+      backObserver.observe(root, { childList: true, subtree: true });
+    }
+  }
+
+  function hideBackButton() {
+    if (backObserver) { backObserver.disconnect(); backObserver = null; }
+    if (backBtn && backBtn.parentNode) backBtn.parentNode.removeChild(backBtn);
+  }
 
   // Tiene il tasto sincronizzato: se il carrello viene chiuso in altri modi
   // (tasto interno di Snipcart, Esc, fine ordine), la route esce da "#/..." e
