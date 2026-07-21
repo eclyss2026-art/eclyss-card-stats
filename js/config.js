@@ -71,14 +71,17 @@ document.addEventListener('DOMContentLoaded', function() {
     backBtn.id = 'snipcartBackBtn';
     backBtn.setAttribute('aria-label', 'Torna allo shopping');
     backBtn.innerHTML = '<span aria-hidden="true">&larr;</span> Torna allo shopping';
+    // In basso al centro: non copre mai il logo/nav in alto ed è comodo da
+    // raggiungere col pollice su mobile.
     Object.assign(backBtn.style, {
-      position: 'fixed', top: '18px', left: '18px', zIndex: '2147483000',
+      position: 'fixed', bottom: '22px', left: '50%', transform: 'translateX(-50%)',
+      zIndex: '2147483000',
       display: 'none', alignItems: 'center', gap: '8px',
-      padding: '11px 18px', border: '1px solid rgba(192,132,252,.55)',
+      padding: '12px 22px', border: '1px solid rgba(192,132,252,.55)',
       borderRadius: '999px', cursor: 'pointer',
-      background: 'rgba(123,47,255,.92)', color: '#fff',
+      background: 'rgba(123,47,255,.95)', color: '#fff',
       font: '600 15px/1 Asul, system-ui, sans-serif', letterSpacing: '.5px',
-      boxShadow: '0 8px 28px rgba(123,47,255,.45)',
+      boxShadow: '0 10px 30px rgba(0,0,0,.45), 0 6px 22px rgba(123,47,255,.5)',
       backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)'
     });
     backBtn.addEventListener('click', function() {
