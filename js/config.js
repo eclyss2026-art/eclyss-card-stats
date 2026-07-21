@@ -113,11 +113,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, true);
 
+  // Chiude il carrellino custom della nav (il dropdown), così cliccando
+  // "Vai all'acquisto" non resta aperto dietro l'overlay Snipcart.
+  function closeNavCart() {
+    const navCart = document.querySelector('.nav-cart');
+    if (navCart) navCart.classList.remove('open');
+    const cartBtn = document.getElementById('cartBtn');
+    if (cartBtn) cartBtn.setAttribute('aria-expanded', 'false');
+  }
+
   // Delegazione: qualsiasi ".cart-checkout" su qualsiasi pagina apre Snipcart.
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.cart-checkout');
     if (!btn) return;
     e.preventDefault();
+    closeNavCart();
     // Se Snipcart non è ancora pronto, aspetta l'evento e poi apri.
     if (window.Snipcart && window.Snipcart.api) {
       openSnipcartCheckout();
