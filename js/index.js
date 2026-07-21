@@ -182,14 +182,6 @@ if (skipIntroBtn) {
     cart[productId] = (cart[productId] || 0) + qty;
     saveCart(cart);
     render();
-
-    // Aggiungi anche a Snipcart per i pagamenti
-    if (window.Snipcart && window.Snipcart.api) {
-      window.Snipcart.api.cart.items.add({
-        id: productId,
-        quantity: qty
-      });
-    }
   }
 
   const cartCountEl = document.getElementById('cartCount');

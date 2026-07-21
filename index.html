@@ -216,6 +216,17 @@ Custode o Interferente. Scopri il tuo legame.-->
           data-product-id="eclyss-box"
           id="addToCartBtn">Aggiungi al Carrello</button>
       </div>
+      <!-- Definizione prodotto per la validazione Snipcart (nascosta, non cliccabile).
+           Il crawler di Snipcart la legge per far combaciare id/prezzo quando il sito
+           è live; essendo hidden l'utente non può cliccarla, quindi non apre il carrello.
+           L'aggiunta al carrello Snipcart avviene via API in checkout.js. -->
+      <div hidden class="snipcart-add-item"
+        data-item-id="eclyss-box"
+        data-item-name="ECLYSS Box"
+        data-item-price="9.96"
+        data-item-url="/index.html"
+        data-item-description="4 lattine collezionabili ECLYSS con carte originali rivelatrici"
+        data-item-image="assets/logo-magenta.png"></div>
     </div>
     <div class="box-feats">
             <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M10 3 V1.6 M14 3 V1.6"/></svg></span><span class="box-feat-text">4 Energy Drink "Respiro Originario"</span></div>

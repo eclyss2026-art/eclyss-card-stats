@@ -194,28 +194,64 @@
     });
   }
 
-  // ── Conferma ordine: apre Snipcart per il pagamento ──
+  // ── Conferma ordine: SOLO qui entra Snipcart, per il pagamento ──
   const confirmBtn = document.getElementById('confirmOrderBtn');
   const orderView = document.getElementById('orderView');
   const orderConfirmed = document.getElementById('orderConfirmed');
-  if (confirmBtn) {
-    confirmBtn.addEventListener('click', () => {
-      // Apri il checkout di Snipcart
-      if (window.Snipcart && window.Snipcart.api) {
-        window.Snipcart.api.modal.open();
-      }
 
-      // Dopo il pagamento, svuota il carrello e mostra conferma
-      // (Snipcart farà il reset automaticamente dopo pagamento completato)
-      setTimeout(() => {
-        cart = {};
-        saveCart(cart);
-        render();
-        if (orderView) orderView.style.display = 'none';
-        if (orderConfirmed) orderConfirmed.classList.add('show');
-      }, 500);
+  // Copia il carrello custom dentro Snipcart, partendo da zero per non duplicare
+  // gli articoli se l'utente apre e chiude il pagamento più volte.
+  async function syncCartToSnipcart() {
+    const state = window.Snipcart.store.getState();
+    const existing = (state.cart && state.cart.items && state.cart.items.items) || [];
+    for (const it of existing) {
+      await window.Snipcart.api.cart.items.remove(it.uniqueId);
+    }
+    const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
+    for (const id of entries) {
+      const p = PRODUCTS[id];
+      await window.Snipcart.api.cart.items.add({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        url: '/index.html',
+        quantity: cart[id],
+        description: p.meta,
+        image: p.image
+      });
+    }
+  }
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
+      if (!entries.length) return;
+      if (!(window.Snipcart && window.Snipcart.api)) {
+        console.warn('Snipcart non ancora pronto.');
+        return;
+      }
+      confirmBtn.disabled = true;
+      try {
+        await syncCartToSnipcart();
+        await window.Snipcart.api.theme.cart.open();
+      } catch (e) {
+        console.error('Errore apertura pagamento Snipcart:', e);
+      } finally {
+        confirmBtn.disabled = false;
+      }
     });
   }
+
+  // Svuota il carrello e mostra la conferma SOLO dopo un pagamento riuscito.
+  document.addEventListener('snipcart.ready', () => {
+    window.Snipcart.events.on('order.completed', () => {
+      cart = {};
+      saveCart(cart);
+      render();
+      if (orderView) orderView.style.display = 'none';
+      if (orderConfirmed) orderConfirmed.classList.add('show');
+    });
+  });
 
   render();
 })();
