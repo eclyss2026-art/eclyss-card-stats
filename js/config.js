@@ -94,13 +94,47 @@ document.addEventListener('DOMContentLoaded', function() {
     return backBtn;
   }
 
-  // Inserisce il pulsante subito dopo il tasto "Pagamento", se presente.
+  // Bottone "Svuota carrello" — rimuove tutti gli articoli da Snipcart.
+  let emptyBtn = null;
+  function buildEmptyButton() {
+    if (emptyBtn) return emptyBtn;
+    emptyBtn = document.createElement('button');
+    emptyBtn.type = 'button';
+    emptyBtn.id = 'snipcartEmptyBtn';
+    emptyBtn.setAttribute('aria-label', 'Svuota carrello');
+    emptyBtn.innerHTML = '<span aria-hidden="true">🗑</span> Svuota carrello';
+    Object.assign(emptyBtn.style, {
+      display: 'block', width: '100%', marginTop: '8px',
+      padding: '13px 18px', border: '1px solid rgba(192,132,252,.3)',
+      borderRadius: '6px', cursor: 'pointer',
+      background: 'transparent', color: '#c9a8ff',
+      font: '600 15px/1.2 Asul, system-ui, sans-serif', letterSpacing: '.5px',
+      textAlign: 'center', opacity: '.8'
+    });
+    emptyBtn.addEventListener('mouseenter', function(){ emptyBtn.style.background = 'rgba(192,132,252,.08)'; emptyBtn.style.opacity = '1'; });
+    emptyBtn.addEventListener('mouseleave', function(){ emptyBtn.style.background = 'transparent'; emptyBtn.style.opacity = '.8'; });
+    emptyBtn.addEventListener('click', async function() {
+      if (!(window.Snipcart && window.Snipcart.api)) return;
+      const state = window.Snipcart.store.getState();
+      const items = (state.cart && state.cart.items && state.cart.items.items) || [];
+      for (const it of items) {
+        await window.Snipcart.api.cart.items.remove(it.uniqueId);
+      }
+    });
+    return emptyBtn;
+  }
+
+  // Inserisce i pulsanti subito dopo il tasto "Pagamento", se presente.
   function injectBackButton() {
     const payBtn = document.querySelector('.snipcart button.snipcart-button-primary');
     if (!payBtn) return false;
     const b = buildBackButton();
+    const e = buildEmptyButton();
     if (payBtn.nextElementSibling !== b) {
       payBtn.parentNode.insertBefore(b, payBtn.nextElementSibling);
+    }
+    if (b.nextElementSibling !== e) {
+      payBtn.parentNode.insertBefore(e, b.nextElementSibling);
     }
     return true;
   }
