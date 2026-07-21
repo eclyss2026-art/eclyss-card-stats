@@ -2,6 +2,11 @@
 _archive/
 migliore back up/
 
+# Environment variables (credenziali live - mai committare)
+.env
+.env.local
+.env.*.local
+
 # File di sistema
 .DS_Store
 Thumbs.db

@@ -1,5 +1,17 @@
 // Configurazione globale ECLYSS
-window.SNIPCART_API_KEY = 'MDVjMmQ2NmItODk2Zi00OTFkLWJmN2UtNGRhNzZhMTZhZDQxNjM5MjAxNTAzODExNjAwNDYz';
+// La API key di Snipcart viene iniettata da:
+// - Variabile d'ambiente VITE_SNIPCART_API_KEY durante il build (Netlify/CI)
+// - File .env locale durante lo sviluppo (mai committare .env!)
+// - Oppure settata manualmente su window.SNIPCART_API_KEY prima di loadare questo script
+if (!window.SNIPCART_API_KEY && typeof window.VITE_SNIPCART_API_KEY !== 'undefined') {
+  window.SNIPCART_API_KEY = window.VITE_SNIPCART_API_KEY;
+}
+
+// Link centralizzati per gli app store (modifica qui per aggiornarli ovunque)
+window.STORE_LINKS = {
+  appStore: 'https://apps.apple.com/it/',
+  googlePlay: 'https://play.google.com/store/apps/'
+};
 
 // Applica la API key al div Snipcart
 document.addEventListener('DOMContentLoaded', function() {
@@ -7,6 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (snipcart) {
     snipcart.setAttribute('data-api-key', window.SNIPCART_API_KEY);
   }
+
+  // Aggiorna i link agli app store su tutte le pagine
+  const appStoreBtn = document.querySelector('.app-buttons a[aria-label*="App Store"]');
+  const googlePlayBtn = document.querySelector('.app-buttons a[aria-label*="Google Play"]');
+  if (appStoreBtn) appStoreBtn.href = window.STORE_LINKS.appStore;
+  if (googlePlayBtn) googlePlayBtn.href = window.STORE_LINKS.googlePlay;
 });
 
 // ── "Vai all'acquisto": apre direttamente Snipcart, bypassando checkout.html ──
