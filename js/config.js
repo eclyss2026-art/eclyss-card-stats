@@ -55,8 +55,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const count = await syncCartToSnipcart();
     if (count > 0) {
       await window.Snipcart.api.theme.cart.open();
+      showBackButton();
     }
   }
+
+  // ── Tasto "Torna allo shopping" ──────────────────────────────────────────────
+  // Un nostro pulsante, sempre visibile e in stile ECLYSS, sopra il carrello
+  // Snipcart: chiude il carrello e riporta al sito. Indipendente dai controlli
+  // interni di Snipcart (che sul tema scuro erano poco evidenti).
+  let backBtn = null;
+  function buildBackButton() {
+    if (backBtn) return backBtn;
+    backBtn = document.createElement('button');
+    backBtn.type = 'button';
+    backBtn.id = 'snipcartBackBtn';
+    backBtn.setAttribute('aria-label', 'Torna allo shopping');
+    backBtn.innerHTML = '<span aria-hidden="true">&larr;</span> Torna allo shopping';
+    Object.assign(backBtn.style, {
+      position: 'fixed', top: '18px', left: '18px', zIndex: '2147483000',
+      display: 'none', alignItems: 'center', gap: '8px',
+      padding: '11px 18px', border: '1px solid rgba(192,132,252,.55)',
+      borderRadius: '999px', cursor: 'pointer',
+      background: 'rgba(123,47,255,.92)', color: '#fff',
+      font: '600 15px/1 Asul, system-ui, sans-serif', letterSpacing: '.5px',
+      boxShadow: '0 8px 28px rgba(123,47,255,.45)',
+      backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)'
+    });
+    backBtn.addEventListener('click', function() {
+      if (window.Snipcart && window.Snipcart.api) {
+        window.Snipcart.api.theme.cart.close();
+      }
+      hideBackButton();
+    });
+    document.body.appendChild(backBtn);
+    return backBtn;
+  }
+  function showBackButton() { buildBackButton().style.display = 'inline-flex'; }
+  function hideBackButton() { if (backBtn) backBtn.style.display = 'none'; }
+
+  // Tiene il tasto sincronizzato: se il carrello viene chiuso in altri modi
+  // (tasto interno di Snipcart, Esc, fine ordine), la route esce da "#/..." e
+  // noi nascondiamo il pulsante.
+  window.addEventListener('hashchange', function() {
+    if (location.hash.indexOf('#/') === 0) showBackButton();
+    else hideBackButton();
+  });
 
   // Delegazione: qualsiasi ".cart-checkout" su qualsiasi pagina apre Snipcart.
   document.addEventListener('click', function(e) {
