@@ -1,9 +1,10 @@
 // Configurazione globale ECLYSS
-// La API key di Snipcart viene iniettata da:
-// - Variabile d'ambiente VITE_SNIPCART_API_KEY durante il build (Netlify/CI)
-// - File .env locale durante lo sviluppo (mai committare .env!)
-// - Oppure settata manualmente su window.SNIPCART_API_KEY prima di loadare questo script
-if (!window.SNIPCART_API_KEY && typeof window.VITE_SNIPCART_API_KEY !== 'undefined') {
+// API key Snipcart (per development locale)
+// In produzione (Netlify): impostare la variabile d'ambiente VITE_SNIPCART_API_KEY nelle Netlify settings
+window.SNIPCART_API_KEY = 'MDVjMmQ2NmItODk2Zi00OTFkLWJmN2UtNGRhNzZhMTZhZDQxNjM5MjAxNTAzODExNjAwNDYz';
+
+// Se disponibile, usa la variabile d'ambiente da Netlify (sovrascrivi la chiave locale)
+if (typeof window.VITE_SNIPCART_API_KEY !== 'undefined' && window.VITE_SNIPCART_API_KEY) {
   window.SNIPCART_API_KEY = window.VITE_SNIPCART_API_KEY;
 }
 
