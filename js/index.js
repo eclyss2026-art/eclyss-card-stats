@@ -379,7 +379,9 @@ if (skipIntroBtn) {
         // l'HDR viene proiettato su una sfera ruotata e da lì si genera l'environment:
         // è il modo per orientare la luce, dato che r128 non ruota le equirect direttamente
         const envScene = new THREE.Scene();
-        const geo = new THREE.SphereGeometry(50, 64, 32);
+        // Ridotto da 64x32 a 32x16: è solo per l'illuminazione, non visibile all'utente.
+        // Questo dimezza il costo computazionale della sfera ambiente.
+        const geo = new THREE.SphereGeometry(50, 32, 16);
         geo.scale(-1, 1, 1); // vista dall'interno senza specchiare l'immagine
         const mat = new THREE.MeshBasicMaterial({ map: hdr });
         mat.toneMapped = false;
