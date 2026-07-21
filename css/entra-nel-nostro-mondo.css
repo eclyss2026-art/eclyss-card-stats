@@ -446,6 +446,11 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .world-hero-top .section-label{justify-content:center}
   .world-hero-top .section-title{text-align:center}
   .world-hero-lead{margin:0 auto}
+  /* Le etichette di sezione (Cronologia Cosmica, Il mantra di Eclyss, ...) usano
+     letter-spacing + maiuscolo: il box del testo risulta piu' largo delle lettere
+     e, con text-align di default, le lettere si incollavano a sinistra sembrando
+     scentrate. text-align:center le riporta al centro tra le due lineette. */
+  .section-label{text-align:center}
   /* Le due citazioni decorative in corsivo, su un banner cosi' compatto,
      si accavallavano al testo sopra: tolte di mezzo per restare puliti. */
   .world-hero-quotes{display:none}
