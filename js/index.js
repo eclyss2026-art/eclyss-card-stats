@@ -588,9 +588,15 @@ if (skipIntroBtn) {
     }).observe(canvas);
   }
 
+  // Frame throttling: renderizza 1 frame ogni 2 (60 FPS → 30 FPS).
+  // Riduce il carico GPU mantenendo l'animazione fluida visivamente.
+  let frameCount = 0;
+
   function animate() {
     requestAnimationFrame(animate);
     if (!canvasInView || document.hidden) return;
+    frameCount++;
+    if (frameCount % 2 !== 0) return; // Salta 1 frame ogni 2
 
     currentRotY += (targetRotY - currentRotY) * 0.18;
     canGroup.rotation.y = currentRotY;
