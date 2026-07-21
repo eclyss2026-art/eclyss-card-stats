@@ -166,3 +166,23 @@
   --shadow-buttonDanger-active: none;
   --shadow-buttonDanger-focus: 0px 0px 6px 2px hsla(6, 55%, 60%, 0.8);
 }
+
+/* Via d'uscita ben visibile: sul tema scuro il tasto "Continua con gli acquisti"
+   (che chiude il carrello) e la sua freccia rischiano di sparire. Qui lo
+   evidenziamo in viola chiaro così l'utente trova sempre come tornare al sito. */
+#snipcart .snipcart-cart-header__close-button,
+#snipcart .snipcart-modal__close {
+  color: hsl(270, 95%, 82%) !important;
+  opacity: 1 !important;
+  font-weight: 600;
+}
+#snipcart .snipcart-cart-header__close-button:hover,
+#snipcart .snipcart-modal__close:hover {
+  color: hsl(0, 0%, 100%) !important;
+}
+#snipcart .snipcart-cart-header__close-button svg,
+#snipcart .snipcart-modal__close svg {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}

@@ -70,4 +70,19 @@ document.addEventListener('DOMContentLoaded', function() {
       document.addEventListener('snipcart.ready', openSnipcartCheckout, { once: true });
     }
   });
+
+  // Uscita dal carrello/pagamento Snipcart: il tasto Esc lo chiude sempre.
+  // Il carrello Snipcart è un overlay a tutta pagina senza "clic fuori",
+  // quindi diamo una via d'uscita esplicita e familiare.
+  function isSnipcartOpen() {
+    return document.documentElement.classList.contains('snipcart-modal--opened') ||
+           !!document.querySelector('.snipcart-modal__container') ||
+           (location.hash && location.hash.indexOf('/') !== -1 && !!document.querySelector('.snipcart'));
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    if (window.Snipcart && window.Snipcart.api && isSnipcartOpen()) {
+      window.Snipcart.api.theme.cart.close();
+    }
+  });
 })();
