@@ -101,6 +101,18 @@ document.addEventListener('DOMContentLoaded', function() {
     else hideBackButton();
   });
 
+  // Anche i link della nav (Home, Come Funziona, L'Universo, Acquista, logo)
+  // devono far uscire dal carrello: se Snipcart è aperto quando ci si clicca,
+  // lo chiudiamo così la navigazione/scroll avviene sul sito, non sotto l'overlay.
+  document.addEventListener('click', function(e) {
+    const navLink = e.target.closest('nav a');
+    if (!navLink) return;
+    if (window.Snipcart && window.Snipcart.api && isSnipcartOpen()) {
+      window.Snipcart.api.theme.cart.close();
+      hideBackButton();
+    }
+  }, true);
+
   // Delegazione: qualsiasi ".cart-checkout" su qualsiasi pagina apre Snipcart.
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.cart-checkout');
