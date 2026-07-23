@@ -301,16 +301,9 @@ if (skipIntroBtn) {
   if (!canvas || !stage) return;
 
   // Senza WebGL (accelerazione hardware spenta, driver bloccati) niente errore
-  // a schermo: al posto del canvas 3D compare la foto del prodotto.
+  // a schermo: il canvas 3D sparisce e resta solo l'eclissi animata.
   function showStaticFallback() {
-    const img = document.createElement('img');
-    img.src = 'assets/prodotto-edizione01.jpg';
-    img.alt = 'Lattina ECLYSS — Il Respiro Originario';
-    // il canvas nascosto non dà più misura al wrapper: l'immagine porta la sua
-    // (stesse proporzioni del canvas 3D, 480x700, e mai più larga del viewport)
-    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;object-fit:cover;object-position:50% center;border-radius:18px;';
     canvas.style.display = 'none';
-    canvas.parentElement.appendChild(img);
     if (loadingEl) loadingEl.style.display = 'none';
 
     /* L'eclissi è CSS puro e vive anche senza 3D: senza questo listener --ecl
