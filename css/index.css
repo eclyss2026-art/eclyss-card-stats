@@ -908,10 +908,9 @@ footer{
 @media (max-width:560px){
   .ritual-grid{grid-template-columns:1fr;max-width:280px;margin:0 auto}
 }
-/* Blocco del dezoom: nessun elemento puo' allargare la pagina oltre lo schermo */
-@media (max-width:900px){
-  html{overflow-x:hidden}
-}
+/* Blocco del dezoom: a QUALSIASI larghezza (anche rimpicciolendo la pagina
+   col browser) nessun elemento puo' allargarla oltre lo schermo. */
+html{overflow-x:hidden}
 
 
 /* ── INGRANDIMENTO CONTENUTI (solo desktop) ──

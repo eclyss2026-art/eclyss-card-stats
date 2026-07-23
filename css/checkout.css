@@ -291,8 +291,7 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .fm-txt{white-space:normal}
   .fm-line{flex:0 0 60px}
 }
-/* Blocco del dezoom: nessun elemento puo' allargare la pagina oltre lo schermo */
-@media (max-width:900px){
-  html{overflow-x:hidden}
-}
+/* Blocco del dezoom: a QUALSIASI larghezza (anche rimpicciolendo la pagina
+   col browser) nessun elemento puo' allargarla oltre lo schermo. */
+html{overflow-x:hidden}
 
