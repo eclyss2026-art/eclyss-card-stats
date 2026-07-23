@@ -381,7 +381,9 @@ if (skipIntroBtn) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         img.style.cursor = 'grab';
       }
-      document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+      // come nel percorso 3D: reversibile finché non si completa, poi bloccata
+      document.documentElement.style.setProperty('--ecl',
+        fbRotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
       if (ringFb) {
         ringFb.style.strokeDasharray  = CIRC_FB;
         ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
@@ -730,9 +732,11 @@ if (skipIntroBtn) {
       canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
     }
 
-    // Eclissi che si forma: sole (da sx) e luna (da dx) scivolano al centro,
-    // e tornano indietro risalendo. Guardia anti-NaN.
-    document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+    // Eclissi: sole (da sx) e luna (da dx) scivolano al centro e tornano
+    // indietro risalendo, MA una volta completa resta completa (come la
+    // rotazione, che si completa nello stesso istante). Guardia anti-NaN.
+    document.documentElement.style.setProperty('--ecl',
+      rotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
 
     if (ringFg) {
       ringFg.style.strokeDasharray  = CIRCUMF;
