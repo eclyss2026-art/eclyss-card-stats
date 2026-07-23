@@ -143,7 +143,8 @@ nav{
 .cart-checkout{display:block;text-align:center;width:100%}
 
 /* ── HERO ── */
-#scroll-stage{position:relative;height:280vh}
+/* 280vh -> 190vh: giro completo della lattina con molto meno scroll */
+#scroll-stage{position:relative;height:190vh}
 .hero{
   position:sticky;top:0;height:100vh;overflow:hidden;padding:0;
   background:radial-gradient(ellipse 80% 80% at 58% 50%,#1a0533 0%,#0a0010 55%,#000 100%);
@@ -307,7 +308,8 @@ nav{
   .hero-title{margin-left:-0.1em}
 }
 .hero-title .eclipse{
-  color:var(--purple-light);display:block;
+  /* inline: "di ECLYSS" resta sulla stessa riga (3 righe totali, non 4) */
+  color:var(--purple-light);white-space:nowrap;
   /* Il glow viola piu' un'ombra scura: "DI ECLYSS" resta leggibile anche
      sopra la fiamma lilla della stessa famiglia di colore */
   text-shadow:0 4px 24px rgba(0,0,0,.95),0 0 50px rgba(192,132,252,.75);
