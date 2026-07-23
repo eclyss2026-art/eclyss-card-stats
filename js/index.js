@@ -677,7 +677,9 @@ if (skipIntroBtn) {
 
   /* ── NUMERI LATERALI → cambia disegno della lattina sigillata + tono dell'eclissi ── */
   const canVariantPicker = document.getElementById('canVariantPicker');
-  const eclipseRing = document.querySelector('.eclipse-center-ring');
+  // Il vecchio .eclipse-center-ring non esiste più: sole e luna stanno dentro
+  // .hero-center, quindi il tono dell'eclissi si cambia lì.
+  const eclipseRing = document.querySelector('.hero-center');
   if (canVariantPicker) {
     canVariantPicker.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-covered]');
