@@ -318,9 +318,14 @@ if (skipIntroBtn) {
     if (loadingEl) loadingEl.style.display = 'none';
 
     // fotogramma mostrato = base dallo scroll + giro manuale col dito
-    let fbBase = 0, fbOffset = 0;
+    let fbBase = 0, fbOffset = 0, fbRevealed = false;
+    const FB_SWAP = FALLBACK_FRAMES / 2; // dal 24 in poi la lattina è rivelata
     function applyFallbackFrame() {
-      const i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
+      let i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
+      // Rivelazione irreversibile, come nel percorso 3D: una volta vista la
+      // creatura non si torna ai fotogrammi sigillati (si resta almeno a 180°).
+      if (i >= FB_SWAP) fbRevealed = true;
+      else if (fbRevealed) i = FB_SWAP;
       img.src = fallbackFrameSrc(i);
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
@@ -736,15 +741,14 @@ if (skipIntroBtn) {
 
     // Swap covered -> revealed (creatura scelta) sincronizzato con la rotazione visibile,
     // non con lo scroll grezzo: così non "salta" mai anche scorrendo molto in fretta.
+    // Rivelazione irreversibile: come nel "peel to reveal" reale, una volta
+    // strappato il sigillo la creatura resta visibile anche riscendendo
+    // sotto i 180° (niente ramo di ritorno a modelSwapped=false).
     const revealedRoot = revealedRoots[activeRevealed];
     if (!modelSwapped && currentRotY >= SWAP_RAD && coveredRoot && revealedRoot) {
       modelSwapped = true;
       coveredRoot.visible = false;
       revealedRoot.visible = true;
-    } else if (modelSwapped && currentRotY < SWAP_RAD && coveredRoot && revealedRoot) {
-      modelSwapped = false;
-      coveredRoot.visible = true;
-      revealedRoot.visible = false;
     }
 
     if (modelLoaded) {
