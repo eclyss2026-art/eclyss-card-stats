@@ -311,10 +311,38 @@ if (skipIntroBtn) {
     const img = document.createElement('img');
     img.src = fallbackFrameSrc(0);
     img.alt = 'Lattina ECLYSS — Il Respiro Originario';
-    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;';
+    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;touch-action:pan-y;cursor:grab;';
+    img.draggable = false;
     canvas.style.display = 'none';
     canvas.parentElement.appendChild(img);
     if (loadingEl) loadingEl.style.display = 'none';
+
+    // fotogramma mostrato = base dallo scroll + giro manuale col dito
+    let fbBase = 0, fbOffset = 0;
+    function applyFallbackFrame() {
+      const i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
+      img.src = fallbackFrameSrc(i);
+    }
+    let fbDragging = false, fbLastX = 0, fbAccum = 0;
+    const FB_PX_PER_FRAME = 9; // pixel di trascinamento per passare al fotogramma dopo
+    img.addEventListener('pointerdown', (e) => {
+      fbDragging = true; fbLastX = e.clientX;
+      img.setPointerCapture(e.pointerId);
+      img.style.cursor = 'grabbing';
+    });
+    img.addEventListener('pointermove', (e) => {
+      if (!fbDragging) return;
+      fbAccum += e.clientX - fbLastX;
+      fbLastX = e.clientX;
+      const step = Math.trunc(fbAccum / FB_PX_PER_FRAME);
+      if (step !== 0) {
+        fbAccum -= step * FB_PX_PER_FRAME;
+        fbOffset += step;
+        applyFallbackFrame();
+      }
+    });
+    ['pointerup', 'pointercancel'].forEach(ev =>
+      img.addEventListener(ev, () => { fbDragging = false; img.style.cursor = 'grab'; }));
 
     // precarica tutti i fotogrammi: lo scroll non deve mai aspettare la rete
     const frameCache = [];
@@ -335,8 +363,8 @@ if (skipIntroBtn) {
       const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
       document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
       if (isFinite(p)) {
-        const frame = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
-        img.src = fallbackFrameSrc(frame);
+        fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
+        applyFallbackFrame();
       }
       if (ringFb) {
         ringFb.style.strokeDasharray  = CIRC_FB;
@@ -637,6 +665,27 @@ if (skipIntroBtn) {
   let targetRotY  = 0;
   let currentRotY = 0;
 
+  /* Rotazione con il dito (e col mouse): un trascinamento orizzontale sulla
+     lattina aggiunge un giro manuale a quello guidato dallo scroll.
+     touch-action:pan-y lascia libero lo scroll verticale della pagina. */
+  let dragRotY = 0;
+  let dragging = false, dragLastX = 0;
+  canvas.style.touchAction = 'pan-y';
+  canvas.style.cursor = 'grab';
+  canvas.addEventListener('pointerdown', (e) => {
+    dragging = true; dragLastX = e.clientX;
+    canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    dragRotY += (e.clientX - dragLastX) * 0.012;
+    dragLastX = e.clientX;
+    loadRevealedModels(); // chi trascina può superare i 180°: varianti pronte
+  });
+  ['pointerup', 'pointercancel'].forEach(ev =>
+    canvas.addEventListener(ev, () => { dragging = false; canvas.style.cursor = 'grab'; }));
+
   function onScroll() {
     const rect = stage.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
@@ -677,7 +726,7 @@ if (skipIntroBtn) {
     frameCount++;
     if (frameCount % 2 !== 0) return; // Salta 1 frame ogni 2
 
-    currentRotY += (targetRotY - currentRotY) * 0.18;
+    currentRotY += (targetRotY + dragRotY - currentRotY) * 0.18;
     canGroup.rotation.y = currentRotY;
 
     // Lazy load i modelli rivelati quando la rotazione si avvicina (50° prima dello swap)
