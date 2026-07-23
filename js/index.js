@@ -368,27 +368,33 @@ if (skipIntroBtn) {
     const ringFb  = document.getElementById('ring-fg');
     const hintFb  = document.querySelector('.scroll-hint');
     const CIRC_FB = 2 * Math.PI * 20;
-    let fbRingMax = 0; // l'anello di avanzamento non torna mai indietro
+    let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
     function onScrollLite() {
       const rect = stage.getBoundingClientRect();
       const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
-      // Dopo il primo giro completo lo scroll non guida più i fotogrammi:
-      // la base resta a fine giro e comanda solo il dito (fbOffset).
+      if (p >= 0.995) {
+        if (!fbRotationCompleted) {
+          fbRotationCompleted = true;   // da qui comanda il trascinamento
+          img.style.cursor = 'grab';
+        }
+        fbEclipseLocked = true;
+      } else if (fbRotationCompleted && p < 0.98) {
+        // come nel percorso 3D: niente "debito" di giri da disfare
+        fbRotationCompleted = false;
+        fbOffset = 0;
+        fbAccum = 0;
+        img.style.cursor = '';
+      }
+      // Finché comanda lo scroll, i fotogrammi lo seguono nei due versi
       if (isFinite(p) && !fbRotationCompleted) {
         fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
         applyFallbackFrame();
       }
-      if (p >= 0.995 && !fbRotationCompleted) {
-        fbRotationCompleted = true;   // da qui comanda il trascinamento
-        img.style.cursor = 'grab';
-      }
-      // come nel percorso 3D: reversibile finché non si completa, poi bloccata
       document.documentElement.style.setProperty('--ecl',
-        fbRotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
-      if (isFinite(p)) fbRingMax = Math.max(fbRingMax, p);
+        fbEclipseLocked ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
       if (ringFb) {
         ringFb.style.strokeDasharray  = CIRC_FB;
-        ringFb.style.strokeDashoffset = CIRC_FB * (1 - fbRingMax);
+        ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
       }
       if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
     }
@@ -723,30 +729,36 @@ if (skipIntroBtn) {
       if (rotationCompleted) canvas.style.cursor = 'grab';
     }));
 
-  let ringMax = 0; // l'anello di avanzamento non torna mai indietro
+  let eclipseLocked = false; // una volta completa, l'eclissi non si riapre più
 
   function onScroll() {
     const rect = stage.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
-    // Dopo il primo giro completo lo scroll non guida più la rotazione:
-    // resta ferma a fine giro e comanda solo il dito (dragRotY).
-    if (!rotationCompleted) targetRotY = (p * TOTAL * Math.PI) / 180;
-    if (p >= 0.995 && !rotationCompleted) {
-      rotationCompleted = true;      // da qui comanda il trascinamento
-      canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
+    if (p >= 0.995) {
+      if (!rotationCompleted) {
+        rotationCompleted = true;      // da qui comanda il trascinamento
+        canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
+      }
+      eclipseLocked = true;            // l'eclissi completa resta completa
+    } else if (rotationCompleted && p < 0.98) {
+      /* Tornando indietro lo scroll riprende subito il comando e il giro fatto
+         a mano viene azzerato: niente "debito" di giri da disfare prima di
+         poter riscorrere il sito. */
+      rotationCompleted = false;
+      dragRotY = 0;
+      canvas.style.cursor = '';
     }
+    // Finché comanda lo scroll, la rotazione lo segue nei due versi
+    if (!rotationCompleted) targetRotY = (p * TOTAL * Math.PI) / 180;
 
-    // Eclissi: sole (da sx) e luna (da dx) scivolano al centro e tornano
-    // indietro risalendo, MA una volta completa resta completa (come la
-    // rotazione, che si completa nello stesso istante). Guardia anti-NaN.
+    // Eclissi: si forma e si riapre con lo scroll, ma una volta completa resta
+    // completa per sempre. Guardia anti-NaN.
     document.documentElement.style.setProperty('--ecl',
-      rotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
+      eclipseLocked ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
 
-    // L'anello avanza e basta: risalendo non torna indietro (niente giro a vuoto)
-    if (isFinite(p)) ringMax = Math.max(ringMax, p);
     if (ringFg) {
       ringFg.style.strokeDasharray  = CIRCUMF;
-      ringFg.style.strokeDashoffset = CIRCUMF * (1 - ringMax);
+      ringFg.style.strokeDashoffset = CIRCUMF * (1 - p);
     }
     if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
   }
