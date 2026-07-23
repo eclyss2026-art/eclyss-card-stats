@@ -368,6 +368,7 @@ if (skipIntroBtn) {
     const ringFb  = document.getElementById('ring-fg');
     const hintFb  = document.querySelector('.scroll-hint');
     const CIRC_FB = 2 * Math.PI * 20;
+    let fbRingMax = 0; // l'anello di avanzamento non torna mai indietro
     function onScrollLite() {
       const rect = stage.getBoundingClientRect();
       const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
@@ -384,9 +385,10 @@ if (skipIntroBtn) {
       // come nel percorso 3D: reversibile finché non si completa, poi bloccata
       document.documentElement.style.setProperty('--ecl',
         fbRotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
+      if (isFinite(p)) fbRingMax = Math.max(fbRingMax, p);
       if (ringFb) {
         ringFb.style.strokeDasharray  = CIRC_FB;
-        ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
+        ringFb.style.strokeDashoffset = CIRC_FB * (1 - fbRingMax);
       }
       if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
     }
@@ -721,6 +723,8 @@ if (skipIntroBtn) {
       if (rotationCompleted) canvas.style.cursor = 'grab';
     }));
 
+  let ringMax = 0; // l'anello di avanzamento non torna mai indietro
+
   function onScroll() {
     const rect = stage.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
@@ -738,9 +742,11 @@ if (skipIntroBtn) {
     document.documentElement.style.setProperty('--ecl',
       rotationCompleted ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
 
+    // L'anello avanza e basta: risalendo non torna indietro (niente giro a vuoto)
+    if (isFinite(p)) ringMax = Math.max(ringMax, p);
     if (ringFg) {
       ringFg.style.strokeDasharray  = CIRCUMF;
-      ringFg.style.strokeDashoffset = CIRCUMF * (1 - p);
+      ringFg.style.strokeDashoffset = CIRCUMF * (1 - ringMax);
     }
     if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
   }
