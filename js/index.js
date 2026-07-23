@@ -377,12 +377,14 @@ if (skipIntroBtn) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         fbEclipseLocked = true;
         img.style.cursor = 'grab';
-        // via la zona morta dell'hero incollato (come nel percorso 3D)
-        const top = stage.offsetTop;
-        const rangeOld = stage.offsetHeight - window.innerHeight;
-        stage.style.height = window.innerHeight + 'px';
-        window.scrollTo({ top: Math.max(top, window.scrollY - rangeOld), behavior: 'instant' });
-        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        // via la zona morta dell'hero incollato (come nel percorso 3D, solo desktop)
+        if (!isMobileLayout()) {
+          const top = stage.offsetTop;
+          const rangeOld = stage.offsetHeight - window.innerHeight;
+          stage.style.height = '100vh'; // relativa: regge zoom e ridimensionamenti
+          window.scrollTo({ top: Math.max(top, window.scrollY - rangeOld), behavior: 'instant' });
+          if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        }
       }
       // finito il giro comanda solo la mano
       if (isFinite(p) && !fbRotationCompleted) {
@@ -458,6 +460,14 @@ if (skipIntroBtn) {
       return new THREE.WebGLRenderer({ canvas: cv, context: ctx, alpha: true, antialias: false });
     },
   ];
+  // Layout mobile: hero non incollato, stage ad altezza automatica
+  const isMobileLayout = () => window.matchMedia('(max-width:900px)').matches;
+  /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
+     lasciata dallo sgancio: e' valida solo per il layout desktop. */
+  window.addEventListener('resize', () => {
+    if (isMobileLayout() && stage.style.height) stage.style.height = '';
+  });
+
   let renderer = null;
   // ?nowebgl nell'URL: simula un PC senza WebGL per collaudare il fallback foto
   if (new URLSearchParams(location.search).has('nowebgl')) rendererAttempts.length = 0;
@@ -738,9 +748,16 @@ if (skipIntroBtn) {
      sembra bloccata. La vista non cambia: l'hero riempie lo schermo prima e
      dopo, e il contenuto successivo resta esattamente sotto il bordo. */
   function unpinStage() {
+    /* Solo desktop: da mobile l'hero non e' incollato e lo stage e' ad altezza
+       automatica (l'hero e' piu' alto dello schermo). Forzarlo a 100vh lo
+       accorcerebbe e le sezioni successive gli finirebbero sopra. */
+    if (isMobileLayout()) return;
     const top = stage.offsetTop;
     const range = stage.offsetHeight - window.innerHeight;
-    stage.style.height = window.innerHeight + 'px';
+    /* 100vh e non un valore in px: un'altezza fissa diventerebbe obsoleta al
+       primo cambio di zoom o ridimensionamento, lasciando lo stage più corto
+       dell'hero — e le sezioni successive gli finirebbero sopra. */
+    stage.style.height = '100vh';
     /* Il contenuto sotto risale di `range`: compenso lo scroll della stessa
        quantità così la vista non salta — né completando il giro con la rotella,
        né arrivandoci di colpo (ancora del menu, ricerca nella pagina). */
