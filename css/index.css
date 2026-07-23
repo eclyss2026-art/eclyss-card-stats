@@ -825,23 +825,28 @@ footer{
     filter:blur(16px);
     inset:-40px;
   }
+  /* Impilato come una volta: testo in alto, lattina INTERA sotto (mai
+     sovrapposta a scritte e pulsanti). L'eclissi resta centrata sulla
+     lattina perche' sole/luna sono assoluti dentro .hero-center. */
   .hero-row{
     display:block;position:relative;
-    min-height:100vh;padding:0;
+    min-height:100vh;padding:96px 0 0;
   }
-  /* Testo sopra la lattina, in alto, centrato */
   .hero-content{
-    position:absolute;top:70px;left:0;right:0;z-index:10;
-    padding:0 24px;text-align:center;
+    position:static;padding:0 24px;text-align:center;
   }
   .hero-eyebrow{margin-left:auto;margin-right:auto}
   .btn-hero{margin:0 auto}
+  .hero-center{
+    /* annulla il centraggio assoluto desktop: qui sta in flusso, sotto il testo */
+    position:relative;top:auto;left:auto;transform:none;
+    margin:28px auto 0;display:flex;justify-content:center;
+  }
   .section-nums{
-    /* top:auto annulla il top:50% desktop: senza, il box si stirava fino a
-       bottom coprendo la lattina e bloccando il drag col dito */
-    position:absolute;top:auto;bottom:22px;left:0;right:0;transform:none;
+    /* in flusso sotto la lattina, come prima */
+    position:static;transform:none;
     flex-direction:row;justify-content:center;align-items:center;
-    margin-top:0;z-index:11;
+    margin-top:32px;padding-bottom:36px;z-index:11;
   }
   .section-nums span::before{display:none}
   .num-line{display:none}
