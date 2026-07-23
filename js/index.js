@@ -378,14 +378,8 @@ if (skipIntroBtn) {
           img.style.cursor = 'grab';
         }
         fbEclipseLocked = true;
-      } else if (fbRotationCompleted && p < 0.98) {
-        // come nel percorso 3D: niente "debito" di giri da disfare
-        fbRotationCompleted = false;
-        fbOffset = 0;
-        fbAccum = 0;
-        img.style.cursor = '';
       }
-      // Finché comanda lo scroll, i fotogrammi lo seguono nei due versi
+      // come nel percorso 3D: finito il giro comanda solo la mano
       if (isFinite(p) && !fbRotationCompleted) {
         fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
         applyFallbackFrame();
@@ -740,15 +734,10 @@ if (skipIntroBtn) {
         canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
       }
       eclipseLocked = true;            // l'eclissi completa resta completa
-    } else if (rotationCompleted && p < 0.98) {
-      /* Tornando indietro lo scroll riprende subito il comando e il giro fatto
-         a mano viene azzerato: niente "debito" di giri da disfare prima di
-         poter riscorrere il sito. */
-      rotationCompleted = false;
-      dragRotY = 0;
-      canvas.style.cursor = '';
     }
-    // Finché comanda lo scroll, la rotazione lo segue nei due versi
+    /* Finito il giro la lattina passa definitivamente alla mano: lo scroll non
+       la tocca più (resta dove l'utente la lascia) e la pagina scorre libera,
+       senza dover rimettere la lattina in nessuna posizione. */
     if (!rotationCompleted) targetRotY = (p * TOTAL * Math.PI) / 180;
 
     // Eclissi: si forma e si riapre con lo scroll, ma una volta completa resta
