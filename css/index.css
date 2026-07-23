@@ -837,7 +837,9 @@ footer{
   .hero-eyebrow{margin-left:auto;margin-right:auto}
   .btn-hero{margin:0 auto}
   .section-nums{
-    position:absolute;bottom:22px;left:0;right:0;transform:none;
+    /* top:auto annulla il top:50% desktop: senza, il box si stirava fino a
+       bottom coprendo la lattina e bloccando il drag col dito */
+    position:absolute;top:auto;bottom:22px;left:0;right:0;transform:none;
     flex-direction:row;justify-content:center;align-items:center;
     margin-top:0;z-index:11;
   }
