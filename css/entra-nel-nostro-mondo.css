@@ -486,9 +486,13 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .risk-side{font-size:17px;letter-spacing:2px}
   .mantra-glifi{letter-spacing:5px}
 }
-/* Blocco del dezoom: a QUALSIASI larghezza (anche rimpicciolendo la pagina
-   col browser) nessun elemento puo' allargarla oltre lo schermo. */
-html{overflow-x:hidden}
+/* Blocco del dezoom: il clipping orizzontale sta su body (vedi sopra) e vale
+   a qualsiasi larghezza. Su html invece va messo SOLO da mobile in giu':
+   con overflow diverso da visible su html, position:sticky smette di
+   funzionare e l'hero della home non si incollerebbe piu'. */
+@media (max-width:900px){
+  html{overflow-x:hidden}
+}
 
 
 /* ── INGRANDIMENTO CONTENUTI (solo desktop) ──

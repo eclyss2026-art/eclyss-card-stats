@@ -908,9 +908,13 @@ footer{
 @media (max-width:560px){
   .ritual-grid{grid-template-columns:1fr;max-width:280px;margin:0 auto}
 }
-/* Blocco del dezoom: a QUALSIASI larghezza (anche rimpicciolendo la pagina
-   col browser) nessun elemento puo' allargarla oltre lo schermo. */
-html{overflow-x:hidden}
+/* Blocco del dezoom: il clipping orizzontale sta su body (vedi sopra) e vale
+   a qualsiasi larghezza. Su html invece va messo SOLO da mobile in giu':
+   con overflow diverso da visible su html, position:sticky smette di
+   funzionare e l'hero della home non si incollerebbe piu'. */
+@media (max-width:900px){
+  html{overflow-x:hidden}
+}
 
 
 /* ── INGRANDIMENTO CONTENUTI (solo desktop) ──
