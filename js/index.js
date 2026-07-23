@@ -457,6 +457,18 @@ if (skipIntroBtn) {
     showStaticFallback();
     return;
   }
+
+  /* Su macchine con driver instabili il browser può PERDERE il contesto WebGL
+     a metà sessione: il canvas resta vuoto e la lattina "scompare". In quel
+     caso si passa ai fotogrammi pre-renderizzati, senza buchi visivi. */
+  let contextLost = false;
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    if (contextLost) return;
+    contextLost = true;
+    console.warn('Contesto WebGL perso: passo ai fotogrammi pre-renderizzati');
+    showStaticFallback();
+  }, false);
   renderer.setPixelRatio(pixelRatio);
   // false: la dimensione a schermo resta quella di applyCanvasDisplaySize (setSize altrimenti la sovrascrive)
   renderer.setSize(W, H, false);
@@ -726,6 +738,7 @@ if (skipIntroBtn) {
   let frameCount = 0;
 
   function animate() {
+    if (contextLost) return; // il fallback a fotogrammi ha preso il posto del 3D
     requestAnimationFrame(animate);
     if (!canvasInView || document.hidden) return;
     frameCount++;
