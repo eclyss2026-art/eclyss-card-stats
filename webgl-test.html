@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnosi WebGL — ECLYSS</title>
+<style>
+  body{background:#0a0010;color:#fff;font-family:monospace;padding:24px;line-height:1.7}
+  h1{font-size:18px;color:#C084FC}
+  .ok{color:#4ade80}.no{color:#f87171}
+  #out div{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 0}
+  canvas{display:block;margin-top:16px;border:1px solid #C084FC;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>Diagnosi WebGL — apri questa pagina e mandami una foto/screenshot</h1>
+<div id="out"></div>
+<canvas id="cv" width="200" height="120"></canvas>
+<script>
+const out=document.getElementById('out');
+function row(label,val,good){
+  const d=document.createElement('div');
+  d.innerHTML=label+': <span class="'+(good?'ok':'no')+'">'+val+'</span>';
+  out.appendChild(d);
+}
+row('Browser',navigator.userAgent,true);
+
+function testCtx(type){
+  try{
+    const c=document.createElement('canvas');
+    const gl=c.getContext(type,{alpha:true});
+    return gl||null;
+  }catch(e){return null}
+}
+const gl2=testCtx('webgl2');
+const gl1=testCtx('webgl');
+const glx=testCtx('experimental-webgl');
+row('WebGL2',gl2?'DISPONIBILE':'NON DISPONIBILE',!!gl2);
+row('WebGL1',gl1?'DISPONIBILE':'NON DISPONIBILE',!!gl1);
+row('WebGL sperimentale',glx?'DISPONIBILE':'NON DISPONIBILE',!!glx);
+
+const gl=gl2||gl1||glx;
+if(gl){
+  const dbg=gl.getExtension('WEBGL_debug_renderer_info');
+  row('Scheda video vista dal browser',dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),true);
+  // triangolo viola: se lo vedi, WebGL disegna davvero
+  const cv=document.getElementById('cv');
+  const g=cv.getContext(gl2?'webgl2':'webgl');
+  if(g){
+    g.clearColor(0.04,0,0.06,1);g.clear(g.COLOR_BUFFER_BIT);
+    const vs=g.createShader(g.VERTEX_SHADER);
+    g.shaderSource(vs,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}');g.compileShader(vs);
+    const fs=g.createShader(g.FRAGMENT_SHADER);
+    g.shaderSource(fs,'void main(){gl_FragColor=vec4(.75,.52,.99,1.);}');g.compileShader(fs);
+    const pr=g.createProgram();g.attachShader(pr,vs);g.attachShader(pr,fs);g.linkProgram(pr);g.useProgram(pr);
+    const b=g.createBuffer();g.bindBuffer(g.ARRAY_BUFFER,b);
+    g.bufferData(g.ARRAY_BUFFER,new Float32Array([0,.8,-.8,-.8,.8,-.8]),g.STATIC_DRAW);
+    const loc=g.getAttribLocation(pr,'p');g.enableVertexAttribArray(loc);g.vertexAttribPointer(loc,2,g.FLOAT,false,0,0);
+    g.drawArrays(g.TRIANGLES,0,3);
+    row('Triangolo di prova','disegnato qui sotto (se lo vedi viola, WebGL funziona)',true);
+  }
+}else{
+  row('Conclusione','NESSUN contesto WebGL: accelerazione bloccata a livello browser/driver/desktop remoto',false);
+}
+</script>
+</body>
+</html>
