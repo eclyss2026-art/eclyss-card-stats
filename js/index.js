@@ -311,7 +311,7 @@ if (skipIntroBtn) {
     const img = document.createElement('img');
     img.src = fallbackFrameSrc(0);
     img.alt = 'Lattina ECLYSS — Il Respiro Originario';
-    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;touch-action:pan-y;cursor:grab;';
+    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;touch-action:pan-y;';
     img.draggable = false;
     canvas.style.display = 'none';
     canvas.parentElement.appendChild(img);
@@ -331,9 +331,9 @@ if (skipIntroBtn) {
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
     const FB_PX_PER_FRAME = 9; // pixel di trascinamento per passare al fotogramma dopo
     img.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return; // solo dito/penna: da desktop niente drag
       fbDragging = true; fbLastX = e.clientX;
       img.setPointerCapture(e.pointerId);
-      img.style.cursor = 'grabbing';
     });
     img.addEventListener('pointermove', (e) => {
       if (!fbDragging) return;
@@ -347,7 +347,7 @@ if (skipIntroBtn) {
       }
     });
     ['pointerup', 'pointercancel'].forEach(ev =>
-      img.addEventListener(ev, () => { fbDragging = false; img.style.cursor = 'grab'; }));
+      img.addEventListener(ev, () => { fbDragging = false; }));
 
     // precarica tutti i fotogrammi: lo scroll non deve mai aspettare la rete
     const frameCache = [];
@@ -688,11 +688,10 @@ if (skipIntroBtn) {
   let dragRotY = 0;
   let dragging = false, dragLastX = 0;
   canvas.style.touchAction = 'pan-y';
-  canvas.style.cursor = 'grab';
   canvas.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse') return; // solo dito/penna: da desktop niente drag
     dragging = true; dragLastX = e.clientX;
     canvas.setPointerCapture(e.pointerId);
-    canvas.style.cursor = 'grabbing';
   });
   canvas.addEventListener('pointermove', (e) => {
     if (!dragging) return;
@@ -701,7 +700,7 @@ if (skipIntroBtn) {
     loadRevealedModels(); // chi trascina può superare i 180°: varianti pronte
   });
   ['pointerup', 'pointercancel'].forEach(ev =>
-    canvas.addEventListener(ev, () => { dragging = false; canvas.style.cursor = 'grab'; }));
+    canvas.addEventListener(ev, () => { dragging = false; }));
 
   function onScroll() {
     const rect = stage.getBoundingClientRect();
