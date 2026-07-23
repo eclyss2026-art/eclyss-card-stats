@@ -300,11 +300,29 @@ if (skipIntroBtn) {
   const stage     = document.getElementById('scroll-stage');
   if (!canvas || !stage) return;
 
-  // Senza WebGL (accelerazione hardware spenta, driver bloccati) niente errore
-  // a schermo: il canvas 3D sparisce e resta solo l'eclissi animata.
+  /* Senza WebGL (browser che rifiuta il contesto grafico) la lattina ruota
+     comunque: 48 fotogrammi pre-renderizzati dalla stessa scena 3D (0-23
+     sigillata, 24-47 rivelata, come lo swap a 180° del percorso WebGL),
+     scelti in base allo stesso progresso di scroll che guida rotazione ed
+     eclissi. Rigenerabili con render-frames.html (utensile interno). */
+  const FALLBACK_FRAMES = 48;
+  const fallbackFrameSrc = (i) => 'assets/can-frames/frame-' + String(i).padStart(2, '0') + '.webp';
   function showStaticFallback() {
+    const img = document.createElement('img');
+    img.src = fallbackFrameSrc(0);
+    img.alt = 'Lattina ECLYSS — Il Respiro Originario';
+    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;';
     canvas.style.display = 'none';
+    canvas.parentElement.appendChild(img);
     if (loadingEl) loadingEl.style.display = 'none';
+
+    // precarica tutti i fotogrammi: lo scroll non deve mai aspettare la rete
+    const frameCache = [];
+    for (let i = 0; i < FALLBACK_FRAMES; i++) {
+      const im = new Image();
+      im.src = fallbackFrameSrc(i);
+      frameCache.push(im);
+    }
 
     /* L'eclissi è CSS puro e vive anche senza 3D: senza questo listener --ecl
        resterebbe a 0 e sole/luna non entrerebbero mai (il percorso 3D, che
@@ -316,6 +334,10 @@ if (skipIntroBtn) {
       const rect = stage.getBoundingClientRect();
       const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
       document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+      if (isFinite(p)) {
+        const frame = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
+        img.src = fallbackFrameSrc(frame);
+      }
       if (ringFb) {
         ringFb.style.strokeDasharray  = CIRC_FB;
         ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
