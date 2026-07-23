@@ -379,8 +379,9 @@ if (skipIntroBtn) {
         img.style.cursor = 'grab';
         // via la zona morta dell'hero incollato (come nel percorso 3D)
         const top = stage.offsetTop;
+        const rangeOld = stage.offsetHeight - window.innerHeight;
         stage.style.height = window.innerHeight + 'px';
-        window.scrollTo({ top: top, behavior: 'instant' });
+        window.scrollTo({ top: Math.max(top, window.scrollY - rangeOld), behavior: 'instant' });
         if (window.ScrollTrigger) window.ScrollTrigger.refresh();
       }
       // finito il giro comanda solo la mano
@@ -736,8 +737,12 @@ if (skipIntroBtn) {
      dopo, e il contenuto successivo resta esattamente sotto il bordo. */
   function unpinStage() {
     const top = stage.offsetTop;
+    const range = stage.offsetHeight - window.innerHeight;
     stage.style.height = window.innerHeight + 'px';
-    window.scrollTo({ top: top, behavior: 'instant' });
+    /* Il contenuto sotto risale di `range`: compenso lo scroll della stessa
+       quantità così la vista non salta — né completando il giro con la rotella,
+       né arrivandoci di colpo (ancora del menu, ricerca nella pagina). */
+    window.scrollTo({ top: Math.max(top, window.scrollY - range), behavior: 'instant' });
     if (window.ScrollTrigger) window.ScrollTrigger.refresh();
   }
 

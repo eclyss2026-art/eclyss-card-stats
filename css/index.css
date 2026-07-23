@@ -888,3 +888,15 @@ footer{
   html{overflow-x:hidden}
 }
 
+
+/* ── INGRANDIMENTO CONTENUTI (solo desktop) ──
+   Tutto leggermente piu' grande, "Il Respiro Originario" un po' di piu'.
+   L'hero e' escluso di proposito: la sua altezza e' legata al viewport
+   (100vh sticky) e lo zoom la sfalserebbe, rompendo rotazione ed eclissi. */
+@media (min-width:901px){
+  .edition-showcase{zoom:1.12}
+  .how,
+  .box-section,
+  .app-download,
+  footer{zoom:1.06}
+}
