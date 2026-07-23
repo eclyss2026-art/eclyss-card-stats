@@ -329,11 +329,13 @@ if (skipIntroBtn) {
       img.src = fallbackFrameSrc(i);
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
+    let fbRotationCompleted = false; // drag col dito solo dopo il giro completo da scroll
     const FB_PX_PER_FRAME = 9; // pixel di trascinamento per passare al fotogramma dopo
     img.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse') return; // solo dito/penna: da desktop niente drag
+      if (!fbRotationCompleted) return;      // prima si completa il giro con lo scroll
       fbDragging = true; fbLastX = e.clientX;
-      img.setPointerCapture(e.pointerId);
+      try { img.setPointerCapture(e.pointerId); } catch (err) {}
     });
     img.addEventListener('pointermove', (e) => {
       if (!fbDragging) return;
@@ -363,10 +365,13 @@ if (skipIntroBtn) {
     const ringFb  = document.getElementById('ring-fg');
     const hintFb  = document.querySelector('.scroll-hint');
     const CIRC_FB = 2 * Math.PI * 20;
+    let fbEclMax = 0; // l'eclissi non torna mai indietro
     function onScrollLite() {
       const rect = stage.getBoundingClientRect();
       const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
-      document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+      if (p >= 0.995) fbRotationCompleted = true;
+      if (isFinite(p)) fbEclMax = Math.max(fbEclMax, p);
+      document.documentElement.style.setProperty('--ecl', fbEclMax.toFixed(4));
       if (isFinite(p)) {
         fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
         applyFallbackFrame();
@@ -682,16 +687,19 @@ if (skipIntroBtn) {
   let targetRotY  = 0;
   let currentRotY = 0;
 
-  /* Rotazione con il dito (e col mouse): un trascinamento orizzontale sulla
-     lattina aggiunge un giro manuale a quello guidato dallo scroll.
+  /* Rotazione con il dito: un trascinamento orizzontale sulla lattina
+     aggiunge un giro manuale a quello guidato dallo scroll. Si attiva SOLO
+     a rotazione da scroll completata (giro intero fatto almeno una volta).
      touch-action:pan-y lascia libero lo scroll verticale della pagina. */
   let dragRotY = 0;
   let dragging = false, dragLastX = 0;
+  let rotationCompleted = false; // diventa true al primo giro completo da scroll
   canvas.style.touchAction = 'pan-y';
   canvas.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse') return; // solo dito/penna: da desktop niente drag
+    if (!rotationCompleted) return;        // prima si completa il giro con lo scroll
     dragging = true; dragLastX = e.clientX;
-    canvas.setPointerCapture(e.pointerId);
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
   });
   canvas.addEventListener('pointermove', (e) => {
     if (!dragging) return;
@@ -702,14 +710,18 @@ if (skipIntroBtn) {
   ['pointerup', 'pointercancel'].forEach(ev =>
     canvas.addEventListener(ev, () => { dragging = false; }));
 
+  let eclMax = 0; // l'eclissi non torna mai indietro: tiene il massimo raggiunto
+
   function onScroll() {
     const rect = stage.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
     targetRotY = (p * TOTAL * Math.PI) / 180;
+    if (p >= 0.995) rotationCompleted = true; // da qui in poi il drag col dito è attivo
 
     // Eclissi che si forma: sole (da sx) e luna (da dx) scivolano al centro.
-    // Usa lo stesso progresso di scroll della rotazione. Guardia anti-NaN.
-    document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+    // Una volta formata resta formata (monotona). Guardia anti-NaN.
+    if (isFinite(p)) eclMax = Math.max(eclMax, p);
+    document.documentElement.style.setProperty('--ecl', eclMax.toFixed(4));
 
     if (ringFg) {
       ringFg.style.strokeDasharray  = CIRCUMF;
