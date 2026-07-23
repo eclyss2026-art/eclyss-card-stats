@@ -371,19 +371,17 @@ if (skipIntroBtn) {
     let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
     function onScrollLite() {
       const rect = stage.getBoundingClientRect();
-      const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
-      if (p >= 0.995) {
-        if (!fbRotationCompleted) {
-          fbRotationCompleted = true;   // da qui comanda il trascinamento
-          img.style.cursor = 'grab';
-        }
+      const range = stage.offsetHeight - window.innerHeight;
+      const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+      if (p >= 0.995 && !fbRotationCompleted) {
+        fbRotationCompleted = true;   // da qui comanda il trascinamento
         fbEclipseLocked = true;
-      } else if (fbRotationCompleted && p <= 0.02) {
-        // come nel percorso 3D: in cima l'animazione si riarma da sola
-        fbRotationCompleted = false;
-        fbOffset = 0;
-        fbAccum = 0;
-        img.style.cursor = '';
+        img.style.cursor = 'grab';
+        // via la zona morta dell'hero incollato (come nel percorso 3D)
+        const top = stage.offsetTop;
+        stage.style.height = window.innerHeight + 'px';
+        window.scrollTo({ top: top, behavior: 'instant' });
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
       }
       // finito il giro comanda solo la mano
       if (isFinite(p) && !fbRotationCompleted) {
@@ -731,22 +729,28 @@ if (skipIntroBtn) {
 
   let eclipseLocked = false; // una volta completa, l'eclissi non si riapre più
 
+  /* A giro finito l'hero smette di essere "incollato": lo scroll-stage torna
+     alto quanto il viewport. Senza questo restano 90vh di zona morta da
+     riattraversare (in su e in giù) in cui non succede nulla e la pagina
+     sembra bloccata. La vista non cambia: l'hero riempie lo schermo prima e
+     dopo, e il contenuto successivo resta esattamente sotto il bordo. */
+  function unpinStage() {
+    const top = stage.offsetTop;
+    stage.style.height = window.innerHeight + 'px';
+    window.scrollTo({ top: top, behavior: 'instant' });
+    if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+  }
+
   function onScroll() {
     const rect = stage.getBoundingClientRect();
-    const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
-    if (p >= 0.995) {
-      if (!rotationCompleted) {
-        rotationCompleted = true;      // da qui comanda il trascinamento
-        canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
-      }
-      eclipseLocked = true;            // l'eclissi completa resta completa
-    } else if (rotationCompleted && p <= 0.02) {
-      /* Tornati in cima l'animazione si riarma da sola: il giro fatto a mano
-         viene dimenticato e lo scroll torna a comandare. Non serve rigirare
-         la lattina per "sbloccarla". */
-      rotationCompleted = false;
-      dragRotY = 0;
-      canvas.style.cursor = '';
+    const range = stage.offsetHeight - window.innerHeight;
+    // range 0 = hero già sganciato: il giro è concluso
+    const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+    if (p >= 0.995 && !rotationCompleted) {
+      rotationCompleted = true;      // da qui comanda il trascinamento
+      eclipseLocked = true;          // l'eclissi completa resta completa
+      canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
+      unpinStage();                  // via la zona morta: la pagina scorre libera
     }
     /* Finito il giro la lattina passa alla mano: lo scroll non la tocca più
        (resta dove l'utente la lascia) e la pagina scorre libera. */
