@@ -10,6 +10,11 @@
 :root{
   --black:#000;--dark:#07070a;--purple:#7B2FFF;--purple-glow:#9B5FFF;--purple-light:#C084FC;
   --white:#fff;--gray:#666;--gray-light:#999;--gold:#F59E0B;
+  /* Eclissi che si forma con lo scroll: --ecl va da 0 (sole e luna separati)
+     a 1 (sovrapposti al centro). --ecl-gap = distanza di partenza dai due lati. */
+  /* +360px oltre il mezzo-schermo: a --ecl 0 sole e luna sono del tutto fuori
+     dai bordi (invisibili), entrano solo quando parte lo scroll/rotazione. */
+  --ecl:0;--ecl-gap:calc(50vw + 360px);
 }
 html{scroll-behavior:smooth}
 body{background:var(--black);color:var(--white);font-family:'Asul',sans-serif;overflow-x:hidden}
@@ -179,7 +184,8 @@ nav{
 .eclipse-center-ring{
   position:absolute;
   top:50%;left:50%;
-  transform:translate(-50%,-50%);
+  /* Parte spostato a destra (+gap) e scivola al centro col crescere di --ecl */
+  transform:translate(-50%,-50%) translateX(calc((1 - var(--ecl)) * var(--ecl-gap)));
   width:460px;height:460px;border-radius:50%;
   /* Disco nero pieno con bordo luminoso sottile (lilla ECLYSS) */
   background:#020103;
@@ -232,6 +238,52 @@ nav{
   50%{transform:rotate(180deg) scale(.98);opacity:.85}
   75%{transform:rotate(270deg) scale(1.06);opacity:1}
   100%{transform:rotate(360deg) scale(1);opacity:.85}
+}
+
+/* Lattina + eclissi al centro ESATTO dello schermo (desktop e mobile).
+   L'eclissi (sole/luna) si centra su questo contenitore, la lattina ci sta
+   sopra (z-index 8 > eclissi). Il testo dell'hero resta a sinistra su desktop. */
+.hero-center{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:1;
+}
+
+/* ── ECLISSI SUL SCROLL: SOLE + LUNA ──
+   Due dischi guidati da --ecl (0 = ai bordi, sole a sx e luna a dx;
+   1 = sovrapposti al centro dietro la lattina). La LUNA passa DAVANTI al
+   sole (z-index maggiore). Entrambi stanno dietro la lattina (z-index 8). */
+.eclipse-sun{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) translateX(calc((1 - var(--ecl)) * var(--ecl-gap) * -1));
+  width:460px;height:460px;border-radius:50%;
+  pointer-events:none;z-index:0;will-change:transform;
+  /* nucleo bianco che sfuma nel viola ECLYSS (niente giallo) */
+  background:radial-gradient(circle,
+    #fff 0%,#fff 42%,rgba(206,160,255,.6) 57%,rgba(123,47,255,.28) 70%,transparent 80%);
+  box-shadow:0 0 70px 24px rgba(155,95,255,.4);
+}
+/* Fiamme del sole: due anelli viola in controfase sfrangiati dal filtro SVG #flameFilter */
+.eclipse-sun::before,
+.eclipse-sun::after{
+  content:'';position:absolute;inset:-46px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,
+    transparent 44%,rgba(216,180,255,.95) 54%,rgba(155,95,255,.75) 64%,
+    rgba(123,47,255,.45) 73%,transparent 82%);
+  filter:url(#flameFilter) blur(7px);
+  animation:flameSpin 11s linear infinite;
+}
+.eclipse-sun::after{animation-delay:-2.75s}
+
+.eclipse-moon{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) translateX(calc((1 - var(--ecl)) * var(--ecl-gap)));
+  width:400px;height:400px;border-radius:50%;
+  pointer-events:none;z-index:1;will-change:transform;
+  /* cerchio nero dai bordi sfumati (non netti): sfuma nel trasparente */
+  background:radial-gradient(circle,
+    #000 0%,#000 52%,rgba(0,0,0,.9) 68%,rgba(0,0,0,.45) 84%,transparent 100%);
+  filter:blur(5px);
 }
 
 /* Hero left content */
@@ -437,13 +489,15 @@ section[id]{scroll-margin-top:90px}
 /* ── EDIZIONE 01 — Il Respiro Originario ── */
 .edition-showcase{background:var(--black);border-bottom:1px solid rgba(255,255,255,.05)}
 .edition-hero-wrap{
-  /* colonne a misura di contenuto e blocco centrato: niente vuoti ai lati */
-  display:grid;grid-template-columns:minmax(320px,580px) 490px;
+  /* colonne a misura di contenuto e blocco centrato: niente vuoti ai lati.
+     Invertite: foto a sinistra, testo a destra (order:-1 sulla foto). */
+  display:grid;grid-template-columns:490px minmax(320px,580px);
   align-items:center;justify-content:center;gap:72px;
   max-width:1200px;margin:0 auto;position:relative;
 }
 .edition-grid{
   /* foto verticale (768x1024): riquadro 3/4, contenuto e centrato nella colonna */
+  order:-1; /* foto prima del testo: colonna sinistra */
   position:relative;aspect-ratio:3/4;width:100%;max-width:490px;
   margin:0 auto;
   border-radius:16px;overflow:hidden;
@@ -485,13 +539,6 @@ section[id]{scroll-margin-top:90px}
   font-family:'Asul',sans-serif;font-size:15px;font-weight:800;
   letter-spacing:1.1px;text-transform:uppercase;color:var(--white);line-height:1.25;
   box-shadow:0 10px 30px rgba(0,0,0,.4);
-  transition:border-color .25s ease,background .25s ease,transform .25s ease,box-shadow .25s ease;
-}
-.edition-specs li:hover{
-  border-color:rgba(192,132,252,.75);
-  background:linear-gradient(135deg,rgba(123,47,255,.3),rgba(255,255,255,.05));
-  transform:translateX(6px);
-  box-shadow:0 10px 40px rgba(123,47,255,.4);
 }
 .edition-specs .spec-body{display:flex;flex-direction:column;gap:3px}
 .edition-specs .spec-body small{
@@ -509,12 +556,14 @@ section[id]{scroll-margin-top:90px}
 /* Finestre medie: resta affiancato, ma le colonne si restringono invece di
    impilarsi di colpo (prima il breakpoint stackava gia' sotto i 1100px). */
 @media (max-width:1100px){
-  .edition-hero-wrap{grid-template-columns:minmax(240px,1fr) minmax(260px,340px);gap:32px}
+  .edition-hero-wrap{grid-template-columns:minmax(260px,340px) minmax(240px,1fr);gap:32px}
   .edition-specs li{padding:9px 14px;font-size:13px;gap:10px}
   .edition-specs .spec-icon{width:32px;height:32px}
 }
 @media (max-width:820px){
   .edition-hero-wrap{grid-template-columns:1fr;justify-items:center;text-align:center;gap:32px}
+  /* impilati: torna l'ordine originale, testo sopra e foto sotto */
+  .edition-grid{order:0}
   .edition-text{max-width:500px;width:100%}
   .edition-desc{margin:0 auto}
   .edition-specs{display:grid;grid-template-columns:repeat(2,1fr);max-width:420px;margin:24px auto 0}
@@ -593,10 +642,10 @@ section[id]{scroll-margin-top:90px}
 }
 .ritual-frame{
   position:relative;height:300px;
-  border:1.5px solid rgba(150,80,255,.55);border-radius:16px;
-  background:linear-gradient(180deg,rgba(123,47,255,.05),rgba(0,0,0,.3));
-  box-shadow:0 0 30px rgba(123,47,255,.12),inset 0 0 46px rgba(123,47,255,.05);
-  transition:border-color .25s ease,box-shadow .25s ease;
+  /* Stato "acceso" fisso (niente più hover a effetto bottone) */
+  border:1.5px solid rgba(192,132,252,.9);border-radius:16px;
+  background:linear-gradient(180deg,rgba(123,47,255,.08),rgba(0,0,0,.25));
+  box-shadow:0 0 40px rgba(123,47,255,.26),inset 0 0 46px rgba(123,47,255,.08);
 }
 .ritual-media{
   position:absolute;inset:10px;border-radius:8px;overflow:hidden;
@@ -604,19 +653,18 @@ section[id]{scroll-margin-top:90px}
 }
 /* contain, non cover: le foto sono verticali (lattina, carta, telefono) — cover le
    tagliava in alto/basso. Il gradiente della frame fa da cornice dietro l'immagine. */
-.ritual-media img{width:100%;height:100%;object-fit:contain;transition:filter .25s ease,transform .25s ease}
-.ritual-step:hover .ritual-media img{transform:scale(1.035)}
+.ritual-media img{width:100%;height:100%;object-fit:contain}
 .ritual-media::after{
   content:'';position:absolute;inset:0;
-  background:rgba(0,0,0,.32);transition:background .25s ease;
+  /* overlay molto leggero: le foto restano vive, non spente */
+  background:rgba(0,0,0,.1);
 }
 .ritual-medal{
   position:absolute;bottom:-27px;left:50%;transform:translateX(-50%);
-  width:54px;height:54px;border:1.5px solid rgba(150,80,255,.7);border-radius:50%;
+  width:54px;height:54px;border:1.5px solid rgba(192,132,252,.9);border-radius:50%;
   background:#050008;display:flex;align-items:center;justify-content:center;
   color:var(--purple-light);z-index:2;
-  filter:drop-shadow(0 0 14px rgba(123,47,255,.45));
-  transition:color .25s ease,border-color .25s ease;
+  filter:drop-shadow(0 0 14px rgba(123,47,255,.5));
 }
 .ritual-medal svg{width:26px;height:26px}
 .ritual-step h3{
@@ -626,15 +674,7 @@ section[id]{scroll-margin-top:90px}
   letter-spacing:4px;text-transform:uppercase;color:var(--purple-light);
   transition:color .25s ease;
 }
-.ritual-step p{font-size:16px;color:#cfc4e0;line-height:1.35;max-width:260px;margin:0 auto;transition:color .25s ease}
-.ritual-step:hover .ritual-frame{
-  border-color:rgba(192,132,252,.95);
-  box-shadow:0 0 40px rgba(123,47,255,.28),inset 0 0 46px rgba(123,47,255,.08);
-}
-.ritual-step:hover .ritual-media::after{background:rgba(0,0,0,.12)}
-.ritual-step:hover .ritual-medal{color:var(--white);border-color:rgba(192,132,252,.95)}
-.ritual-step:hover h3{color:var(--white)}
-.ritual-step:hover p{color:var(--white)}
+.ritual-step p{font-size:16px;color:#e8dff7;line-height:1.35;max-width:260px;margin:0 auto}
 .ritual-banner{
   margin-top:50px;border:1.5px solid rgba(150,80,255,.5);border-radius:18px;
   padding:30px 48px;display:flex;align-items:center;justify-content:center;gap:44px;
@@ -756,14 +796,25 @@ footer{
      della lattina veniva tagliata via dal clip della sezione. Impilando in
      flusso normale (altezza automatica) si vede tutta, semplicemente
      scorrendo un po' di piu'. */
+  /* Su mobile l'hero è una schermata piena (non-sticky, affidabile).
+     Lattina + eclissi già formata e centrata; lo scivolamento resta desktop. */
   #scroll-stage{height:auto}
   .hero{
     position:relative;top:auto;height:auto;min-height:100vh;
-    overflow:visible;padding-bottom:40px;
+    overflow:hidden;padding-bottom:0;
   }
   /* L'alone dietro la lattina era pensato per un riquadro clippato (100vh):
      va ristretto qui, altrimenti sui telefoni sborda ai lati della pagina. */
   .eclipse-center-ring{width:320px;height:320px}
+  .eclipse-sun{width:300px;height:300px}
+  .eclipse-moon{width:262px;height:262px}
+  /* Su mobile niente scivolamento da scroll: eclissi già formata e centrata
+     dietro la lattina (lo scivolamento resta l'effetto desktop). */
+  .eclipse-sun,.eclipse-moon{transform:translate(-50%,-50%)}
+  /* Il filtro SVG di turbolenza scatta sui telefoni: qui il fuoco resta solo
+     sfocato (blur puro, GPU) ma continua a ruotare e pulsare. */
+  .eclipse-sun::before,
+  .eclipse-sun::after{filter:blur(12px);inset:-30px}
   /* Il filtro SVG di turbolenza e' calcolato dalla CPU: sui telefoni fa
      scattare tutta la pagina. Qui la fiamma resta solo sfocata (blur puro,
      GPU) e continua a ruotare e pulsare via transform, che costa nulla. */
@@ -773,21 +824,20 @@ footer{
     inset:-40px;
   }
   .hero-row{
-    grid-template-columns:1fr;
-    padding-top:96px;
-    min-height:auto;
-    row-gap:24px;
+    display:block;position:relative;
+    min-height:100vh;padding:0;
   }
+  /* Testo sopra la lattina, in alto, centrato */
   .hero-content{
-    padding:0 24px;text-align:center;order:1;
+    position:absolute;top:70px;left:0;right:0;z-index:10;
+    padding:0 24px;text-align:center;
   }
   .hero-eyebrow{margin-left:auto;margin-right:auto}
   .btn-hero{margin:0 auto}
-  .hero-center{order:2}
   .section-nums{
-    position:static;transform:none;
+    position:absolute;bottom:22px;left:0;right:0;transform:none;
     flex-direction:row;justify-content:center;align-items:center;
-    margin-top:48px;
+    margin-top:0;z-index:11;
   }
   .section-nums span::before{display:none}
   .num-line{display:none}

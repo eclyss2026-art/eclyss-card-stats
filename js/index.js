@@ -295,10 +295,45 @@ if (skipIntroBtn) {
 
 // ── Three.js — REAL ECLYSS CAN (importata da index.html: rotazione da scroll) ──
 (function() {
-  const canvas    = document.getElementById('can-canvas');
+  let canvas      = document.getElementById('can-canvas');
   const loadingEl = document.getElementById('loading-indicator');
   const stage     = document.getElementById('scroll-stage');
-  if (!canvas || !stage || typeof THREE === 'undefined') return;
+  if (!canvas || !stage) return;
+
+  // Senza WebGL (accelerazione hardware spenta, driver bloccati) niente errore
+  // a schermo: al posto del canvas 3D compare la foto del prodotto.
+  function showStaticFallback() {
+    const img = document.createElement('img');
+    img.src = 'assets/prodotto-edizione01.jpg';
+    img.alt = 'Lattina ECLYSS — Il Respiro Originario';
+    // il canvas nascosto non dà più misura al wrapper: l'immagine porta la sua
+    // (stesse proporzioni del canvas 3D, 480x700, e mai più larga del viewport)
+    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;object-fit:cover;object-position:50% center;border-radius:18px;';
+    canvas.style.display = 'none';
+    canvas.parentElement.appendChild(img);
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    /* L'eclissi è CSS puro e vive anche senza 3D: senza questo listener --ecl
+       resterebbe a 0 e sole/luna non entrerebbero mai (il percorso 3D, che
+       normalmente aggiorna --ecl, qui non parte affatto). */
+    const ringFb  = document.getElementById('ring-fg');
+    const hintFb  = document.querySelector('.scroll-hint');
+    const CIRC_FB = 2 * Math.PI * 20;
+    function onScrollLite() {
+      const rect = stage.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
+      document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
+      if (ringFb) {
+        ringFb.style.strokeDasharray  = CIRC_FB;
+        ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
+      }
+      if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
+    }
+    window.addEventListener('scroll', onScrollLite, { passive: true });
+    onScrollLite();
+  }
+
+  if (typeof THREE === 'undefined') { showStaticFallback(); return; }
 
   const W = 480, H = 700;
   // Cap del pixel ratio: oltre 2 il guadagno visivo e' nullo ma il costo GPU
@@ -341,12 +376,37 @@ if (skipIntroBtn) {
     resizeTimer = setTimeout(applyCanvasDisplaySize, 120);
   });
 
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false }); // No antialias: risparmia GPU
-  } catch (e) {
-    console.error('WebGL non disponibile:', e);
-    if (loadingEl) loadingEl.innerHTML = '<span style="color:#ff6b6b">WebGL non disponibile</span>';
+  /* WebGL a volte fallisce solo in certe configurazioni (es. WebGL2 bloccato
+     dai driver ma WebGL1 funzionante): si riprova con opzioni via via più
+     prudenti, su un canvas nuovo a ogni tentativo — un tentativo fallito può
+     "avvelenare" il canvas per quelli successivi. Solo se falliscono tutti
+     si ripiega sulla foto statica. */
+  const rendererAttempts = [
+    (cv) => new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false }), // No antialias: risparmia GPU
+    (cv) => new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: false, powerPreference: 'low-power' }),
+    (cv) => { // ultima spiaggia: contesto WebGL1 esplicito (salta del tutto WebGL2)
+      const ctx = cv.getContext('webgl', { alpha: true }) || cv.getContext('experimental-webgl', { alpha: true });
+      if (!ctx) throw new Error('nessun contesto WebGL1 disponibile');
+      return new THREE.WebGLRenderer({ canvas: cv, context: ctx, alpha: true, antialias: false });
+    },
+  ];
+  let renderer = null;
+  // ?nowebgl nell'URL: simula un PC senza WebGL per collaudare il fallback foto
+  if (new URLSearchParams(location.search).has('nowebgl')) rendererAttempts.length = 0;
+  for (const makeRenderer of rendererAttempts) {
+    try {
+      renderer = makeRenderer(canvas);
+      break;
+    } catch (e) {
+      console.warn('Tentativo WebGL fallito, riprovo con opzioni più prudenti:', e);
+      const fresh = canvas.cloneNode(false);
+      canvas.parentElement.replaceChild(fresh, canvas);
+      canvas = fresh;
+    }
+  }
+  if (!renderer) {
+    console.error('WebGL non disponibile con nessuna configurazione, mostro la foto statica');
+    showStaticFallback();
     return;
   }
   renderer.setPixelRatio(pixelRatio);
@@ -566,6 +626,10 @@ if (skipIntroBtn) {
     const rect = stage.getBoundingClientRect();
     const p = Math.max(0, Math.min(1, -rect.top / (stage.offsetHeight - window.innerHeight)));
     targetRotY = (p * TOTAL * Math.PI) / 180;
+
+    // Eclissi che si forma: sole (da sx) e luna (da dx) scivolano al centro.
+    // Usa lo stesso progresso di scroll della rotazione. Guardia anti-NaN.
+    document.documentElement.style.setProperty('--ecl', (isFinite(p) ? p : 0).toFixed(4));
 
     if (ringFg) {
       ringFg.style.strokeDasharray  = CIRCUMF;
