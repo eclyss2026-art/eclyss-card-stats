@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Render fotogrammi lattina (utensile interno, non pubblicare)</title>
+</head>
+<body style="background:#111;color:#fff;font-family:monospace">
+<div id="status">avvio…</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+<script>
+/* Replica la scena di js/index.js e salva N fotogrammi della rotazione in
+   window.FRAMES (dataURL webp). Poi vengono estratti e salvati come file. */
+const W=480,H=700,N=48;
+window.FRAMES=null; window.RENDER_ERROR=null;
+const status=document.getElementById('status');
+
+const canvas=document.createElement('canvas');
+canvas.width=W;canvas.height=H;
+document.body.appendChild(canvas);
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);
+renderer.setSize(W,H,false);
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.4;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,W/H,0.1,100);
+camera.position.set(0,0.9,7.3);
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+const ENV_ROTATION_Y=Math.PI/2;
+
+function prepareModel(gltf){
+  const root=gltf.scene;
+  const box=new THREE.Box3().setFromObject(root);
+  const size=new THREE.Vector3();box.getSize(size);
+  const center=new THREE.Vector3();box.getCenter(center);
+  root.position.sub(center);
+  const scaleFactor=3.5/size.y;
+  root.scale.setScalar(scaleFactor);
+  root.position.y-=0.45;
+  const maxAniso=renderer.capabilities.getMaxAnisotropy();
+  root.traverse(n=>{
+    if(n.isMesh&&n.material){
+      const mats=Array.isArray(n.material)?n.material:[n.material];
+      mats.forEach(m=>{
+        ['map','normalMap','roughnessMap','metalnessMap','emissiveMap','aoMap'].forEach(s=>{
+          if(m[s]){m[s].anisotropy=maxAniso;m[s].needsUpdate=true;}
+        });
+        if(m.transmission!==undefined&&m.transmission>0)m.transmission=0;
+        if(m.name==='label'){
+          if(m.clearcoat!==undefined){m.clearcoat=1.0;m.clearcoatRoughness=0.18;}
+          m.metalness=1.0;
+          if(m.roughness!==undefined)m.roughness=Math.min(m.roughness,0.22);
+          m.envMapIntensity=1.3;
+        }else{
+          if(m.roughness!==undefined)m.roughness=Math.min(m.roughness*0.75,0.3);
+          m.envMapIntensity=2.2;
+        }
+        m.needsUpdate=true;
+      });
+    }
+  });
+  return root;
+}
+
+const loadHDR=()=>new Promise((res,rej)=>{
+  new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load('assets/brown_photostudio_02_1k.hdr',hdr=>{
+    const envScene=new THREE.Scene();
+    const geo=new THREE.SphereGeometry(50,16,8);
+    geo.scale(-1,1,1);
+    const mat=new THREE.MeshBasicMaterial({map:hdr});mat.toneMapped=false;
+    const sphere=new THREE.Mesh(geo,mat);sphere.rotation.y=ENV_ROTATION_Y;
+    envScene.add(sphere);
+    scene.environment=pmrem.fromScene(envScene,0).texture;
+    hdr.dispose();res();
+  },undefined,rej);
+});
+const loadGLB=url=>new Promise((res,rej)=>new THREE.GLTFLoader().load(url,res,undefined,rej));
+
+(async()=>{
+  try{
+    status.textContent='carico HDR + modelli…';
+    await loadHDR();
+    const [covered,revealed]=await Promise.all([loadGLB('assets/eclyss-can2.glb'),loadGLB('assets/eclyss-can2-v2.glb')]);
+    const group=new THREE.Group();scene.add(group);
+    const rootC=prepareModel(covered),rootR=prepareModel(revealed);
+    group.add(rootC);group.add(rootR);
+    group.rotation.x=0.05;
+    const frames=[];
+    const SWAP=N/2; // 180°: sigillata -> rivelata, come nel flusso 3D
+    for(let i=0;i<N;i++){
+      rootC.visible=i<SWAP;
+      rootR.visible=i>=SWAP;
+      group.rotation.y=(i/N)*Math.PI*2;
+      renderer.render(scene,camera);
+      frames.push(canvas.toDataURL('image/webp',0.82));
+      status.textContent='fotogramma '+(i+1)+'/'+N;
+    }
+    window.FRAMES=frames;
+    status.textContent='FATTO: '+N+' fotogrammi pronti in window.FRAMES';
+  }catch(e){
+    window.RENDER_ERROR=String(e&&e.message||e);
+    status.textContent='ERRORE: '+window.RENDER_ERROR;
+  }
+})();
+</script>
+</body>
+</html>
