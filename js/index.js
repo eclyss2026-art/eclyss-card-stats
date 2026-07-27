@@ -300,6 +300,32 @@ if (skipIntroBtn) {
   const stage     = document.getElementById('scroll-stage');
   if (!canvas || !stage) return;
 
+  /* ── PAUSA A ECLISSI CHIUSA ──
+     Appena l'eclissi si completa si tiene un istante fermi prima di liberare
+     lo scroll: il momento di eclissi totale respira invece di scivolare via
+     subito. Blocco rotella/touch/tasti e ri-ancoro alla posizione corrente per
+     la durata dell'attesa, poi eseguo lo sgancio (done). */
+  const ECLIPSE_HOLD_MS = 750;
+  /* Tiene fermi un istante annullando solo gli input di scroll (rotella/touch/
+     tasti): la pagina non si muove e non c'è nessun reflow al rilascio, così
+     non fa scatti. Lo sgancio (unpinStage) va eseguito PRIMA di questa pausa,
+     mentre lo scroll è ancora attivo, così il suo riallineamento si fonde col
+     movimento invece di comparire isolato dopo l'attesa. */
+  function blockScrollBriefly() {
+    const block = (e) => { e.preventDefault(); };
+    const blockKeys = (e) => {
+      if (['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' ','Spacebar'].includes(e.key)) e.preventDefault();
+    };
+    window.addEventListener('wheel',     block,     { passive:false });
+    window.addEventListener('touchmove', block,     { passive:false });
+    window.addEventListener('keydown',   blockKeys, false);
+    setTimeout(() => {
+      window.removeEventListener('wheel',     block);
+      window.removeEventListener('touchmove', block);
+      window.removeEventListener('keydown',   blockKeys);
+    }, ECLIPSE_HOLD_MS);
+  }
+
   /* Senza WebGL (browser che rifiuta il contesto grafico) la lattina ruota
      comunque: 48 fotogrammi pre-renderizzati dalla stessa scena 3D (0-23
      sigillata, 24-47 rivelata, come lo swap a 180° del percorso WebGL),
@@ -381,9 +407,11 @@ if (skipIntroBtn) {
         if (!isMobileLayout()) {
           const top = stage.offsetTop;
           const rangeOld = stage.offsetHeight - window.innerHeight;
+          // sgancio ORA (fuso col movimento), poi la pausa "eclissi totale"
           stage.style.height = '100vh'; // relativa: regge zoom e ridimensionamenti
           window.scrollTo({ top: Math.max(top, window.scrollY - rangeOld), behavior: 'instant' });
           if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+          blockScrollBriefly();
         }
       }
       // finito il giro comanda solo la mano
@@ -577,13 +605,14 @@ if (skipIntroBtn) {
   // cambia subito la creatura visibile mantenendo la rotazione corrente di canGroup; se è ancora
   // sigillata, memorizza solo la scelta e si vedrà al momento della rivelazione.
   function setRevealedVariant(index) {
-    if (index === activeRevealed || !revealedRoots[index]) return;
-    if (modelSwapped) {
-      if (revealedRoots[activeRevealed]) revealedRoots[activeRevealed].visible = false;
-      activeRevealed = index;
-      revealedRoots[activeRevealed].visible = true;
-    } else {
-      activeRevealed = index;
+    if (index === activeRevealed) return;
+    // Registra SEMPRE la scelta, anche se il modello non è ancora caricato:
+    // altrimenti cliccando 02 prima di ruotare la scelta andava persa e alla
+    // rivelazione compariva la 01. La visibilità si applica solo se già rivelata
+    // e il modello scelto è pronto; il resto lo gestisce lo swap / il load.
+    activeRevealed = index;
+    if (modelSwapped && revealedRoots[index]) {
+      revealedRoots.forEach((r, i) => { if (r) r.visible = (i === index); });
     }
   }
 
@@ -672,8 +701,10 @@ if (skipIntroBtn) {
         (gltf) => {
           const root = prepareModel(gltf);
           canGroup.add(root);
-          root.visible = false;
           revealedRoots[i] = root;
+          // Se la rivelazione è già avvenuta, mostra subito la variante scelta
+          // (il modello poteva finire di caricare dopo il click/lo swap).
+          root.visible = (modelSwapped && i === activeRevealed);
         },
         undefined,
         (error) => {
@@ -774,7 +805,8 @@ if (skipIntroBtn) {
       rotationCompleted = true;      // da qui comanda il trascinamento
       eclipseLocked = true;          // l'eclissi completa resta completa
       canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
-      unpinStage();                  // via la zona morta: la pagina scorre libera
+      unpinStage();                  // sgancio ORA, fuso col movimento in corso
+      blockScrollBriefly();          // poi un istante fermi: l'eclissi respira
     }
     /* Finito il giro la lattina passa alla mano: lo scroll non la tocca più
        (resta dove l'utente la lascia) e la pagina scorre libera. */

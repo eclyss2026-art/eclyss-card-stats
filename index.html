@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 <title>ECLYSS — Collectible Energy Drink · Le Voci del Silenzio</title>
 <meta name="description" content="ECLYSS è l'energy drink collezionabile: ogni lattina custodisce un Custode o un Interferente e un frammento dell'Eclydex. Dal silenzio nasce l'armonia eterna.">
-<link rel="stylesheet" href="css/index.css?v=6">
+<link rel="stylesheet" href="css/index.css?v=8">
 <!-- Snipcart eCommerce -->
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
 <link rel="stylesheet" href="css/snipcart-theme.css?v=2">
@@ -36,6 +36,7 @@
     <li><a href="#box">Acquista</a></li>
   </ul>
   <div class="nav-cart">
+    <button class="lang-toggle" type="button" aria-label="Switch to English">EN</button>
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Apri il menu" aria-expanded="false" aria-controls="navLinks">
       <span></span><span></span><span></span>
     </button>
@@ -89,8 +90,8 @@
 
   <!-- Right numbers: sceglie la creatura rivelata e il tono dell'eclissi -->
   <div class="section-nums" id="canVariantPicker">
-    <span class="active" data-label="voce del silenzio" data-covered="0" data-eclipse="light">01</span>
-    <span data-label="sussurro corrotto" data-covered="1" data-eclipse="dark">02</span>
+    <span class="active" data-label="voce del silenzio" data-i18n-attr="data-label" data-covered="0" data-eclipse="light">01</span>
+    <span data-label="sussurro corrotto" data-i18n-attr="data-label" data-covered="1" data-eclipse="dark">02</span>
   </div>
 
   <div class="scroll-hint">
@@ -119,7 +120,7 @@
         <li><span class="spec-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L4 14 h6 l-1 8 9 -12 h-6 z"/></svg></span><span class="spec-body">75 mg di Caffeina<small>Focus, resistenza e reattività al massimo.</small></span></li>
         <li><span class="spec-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3 C6 3 4 9 8 13 C11 16 11 20 8 21 C15 21 18 16 16 11 C14.5 7.5 9 6 6 3 Z"/></svg></span><span class="spec-body">Vitamine Gruppo B<small>Energia che sostiene corpo e mente.</small></span></li>
         <li><span class="spec-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 L20 7.5 V16.5 L12 21 L4 16.5 V7.5 Z"/><path d="M4 7.5 L12 12 L20 7.5 M12 12 V21"/></svg></span><span class="spec-body">Collezionabile<small>Ogni lattina contiene una carta unica: oltre 50 da collezionare.</small></span></li>
-        <li><span class="spec-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M10 3 V1.6 M14 3 V1.6"/></svg></span><span class="spec-body">250 ML<small>Formato slim, energia essenziale.</small></span></li>
+        <li><span class="spec-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="3.5" width="7" height="17" rx="2"/><path d="M8.5 7.2 H15.5"/><path d="M11 5.3 h2"/></svg></span><span class="spec-body">250 ML<small>Formato slim, energia essenziale.</small></span></li>
       </ul>
     </div>
     <div class="edition-grid">
@@ -186,9 +187,9 @@ Il primo energy drink davvero collezionabile.
 Custode o Interferente. Scopri il tuo legame.-->
 
     <div class="ritual-banner">
-      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="14" width="20" height="40" rx="5"/><path d="M27 14 V9.5 M37 14 V9.5"/></svg></div>
+      <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="12" width="20" height="42" rx="4.5"/><path d="M22 22 H42"/><path d="M29 17 h6"/></svg></div>
       <div class="rb-text">
-        <p>Nel caos delle Prime Risonanze nasce <span class="hl">ECLYSS</span>.<br>Il primo Energy drink davvero collezionabile.<br>Custode o Interferente. Scopri il tuo legame.</p>
+        <p>Nel caos delle Prime Risonanze nasce <span class="hl">ECLYSS</span>.<br>Il primo Energy drink davvero collezionabile.<br>Custode o Interferente? Scopri il tuo legame.</p>
         <div class="rb-cta">Peel to reveal</div>
       </div>
       <div class="rb-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><g transform="rotate(-16 22 38)"><rect x="12" y="22" width="19" height="28" rx="3"/></g><g transform="rotate(16 42 38)"><rect x="33" y="22" width="19" height="28" rx="3"/></g><rect x="23" y="17" width="19" height="28" rx="3" fill="#050008"/><path d="M32 26 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6 z" fill="currentColor" stroke="none"/></svg></div>
@@ -231,7 +232,7 @@ Custode o Interferente. Scopri il tuo legame.-->
         data-item-image="assets/logo-magenta.png"></div>
     </div>
     <div class="box-feats">
-            <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M10 3 V1.6 M14 3 V1.6"/></svg></span><span class="box-feat-text">4 Energy Drink "Respiro Originario"</span></div>
+            <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="3.5" width="7" height="17" rx="2"/><path d="M8.5 7.2 H15.5"/><path d="M11 5.3 h2"/></svg></span><span class="box-feat-text">4 Energy Drink Collezionabili "Respiro Originario"</span></div>
       <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 L14.5 9.5 L21.5 10 L16 14.3 L17.8 21 L12 17.2 L6.2 21 L8 14.3 L2.5 10 L9.5 9.5 Z"/></svg></span><span class="box-feat-text">Carte originali e rare</span></div>
       <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><path d="M15 15h2v2h-2z M19 15h2 M15 19h2 M19 19h2v2h-2z"/></svg></span><span class="box-feat-text">Raccolta digitale nell'App</span></div>
       <div class="box-feat"><span class="box-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L3.83 3A1 1 0 0 0 3 3.83l.24 5.76a2 2 0 0 0 .59 1.41l9.59 9.59a2 2 0 0 0 2.83 0l4.34-4.34a2 2 0 0 0 0-2.84Z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg></span><span class="box-feat-text">Gadget a sorpresa</span></div>
@@ -312,12 +313,14 @@ Custode o Interferente. Scopri il tuo legame.-->
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
 <script src="js/catalogo.js"></script>
-<script src="js/index.js?v=14"></script>
+<script src="js/i18n-dict.js?v=2"></script>
+<script src="js/i18n.js?v=2"></script>
+<script src="js/index.js?v=15"></script>
 
 <!-- GSAP ScrollTrigger — animazioni di reveal sullo scroll -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="js/index-scroll-animations.js"></script>
+<script src="js/index-scroll-animations.js?v=2"></script>
 <!-- Carica variabili d'ambiente (per development locale e build) -->
 <script src="js/env-loader.js"></script>
 <!-- Config Snipcart -->

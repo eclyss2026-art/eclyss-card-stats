@@ -13,7 +13,14 @@
   --white:#fff;--gray:#666;--gray-light:#999;--gold:#F59E0B;
 }
 html{scroll-behavior:smooth}
-body{background:var(--black);color:var(--white);font-family:'Asul',sans-serif;overflow-x:hidden}
+body{
+  /* Sfondo unico continuo nei toni viola-nero del sito: le sezioni sono
+     trasparenti sopra questo, così i blocchi sfumano senza stacchi netti. */
+  background:#070010 linear-gradient(180deg,
+    #0b0018 0%, #160b30 18%, #0a0012 40%, #0f0820 62%, #0b0016 82%, #070010 100%) no-repeat;
+  background-size:100% 100%;
+  color:var(--white);font-family:'Asul',sans-serif;overflow-x:hidden;
+}
 
 /* ── NAV (identica al sito principale) ── */
 nav{
@@ -170,18 +177,24 @@ section[id]{scroll-margin-top:90px}
 
 /* ── HERO "MONDO" (immagine/video di sfondo + testo sovrapposto) ── */
 .world-hero{
-  position:relative;padding:0;overflow:hidden;background:#000;
-  border-bottom:1px solid rgba(255,255,255,.05);
+  position:relative;padding:0;overflow:hidden;background:transparent;
 }
 .world-hero-bg{position:relative;width:100%;line-height:0}
 .world-hero-bg img,.world-hero-bg video{display:block;width:100%;height:auto}
 .world-hero-bg::after{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.68) 0%,rgba(0,0,0,.08) 22%,transparent 52%,rgba(0,0,0,.18) 76%,rgba(0,0,0,.75) 100%);
+  background:linear-gradient(180deg,rgba(8,0,18,.68) 0%,rgba(8,0,18,.08) 22%,transparent 50%,rgba(11,0,24,.35) 78%,#0b0018 100%);
 }
 .world-hero-top{
   position:absolute;top:0;left:0;right:0;z-index:2;
   padding:150px 72px 0;max-width:640px;
+}
+/* Scrim scuro morbido dietro il testo: alza il contrasto sul video chiaro
+   senza bordi netti (sfuma in tutte le direzioni, più denso a sinistra). */
+.world-hero-top::before{
+  content:'';position:absolute;inset:-40px 0 -60px 0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 95% 115% at 22% 42%,
+    rgba(6,2,16,.78) 0%, rgba(6,2,16,.5) 42%, rgba(6,2,16,.15) 66%, transparent 80%);
 }
 .world-hero-top .section-label{justify-content:flex-start}
 .world-hero-top .section-title{
@@ -189,9 +202,12 @@ section[id]{scroll-margin-top:90px}
   text-shadow:0 4px 30px rgba(0,0,0,.9);
 }
 .world-hero-tagline{
-  font-family:'Asul',sans-serif;font-size:19px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;color:var(--purple-light);line-height:1.6;margin-bottom:26px;
-  text-shadow:0 2px 20px rgba(0,0,0,.9);
+  font-family:'Asul',sans-serif;font-size:20px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#e6ccff;line-height:1.6;margin-bottom:26px;
+  /* contorno scuro netto + alone: la tagline emerge anche sul video chiaro */
+  text-shadow:
+    0 0 2px rgba(0,0,0,.98), 0 1px 2px rgba(0,0,0,.95),
+    0 0 10px rgba(6,0,18,.9), 0 0 24px rgba(6,0,18,.75);
 }
 .world-hero-lead{
   font-size:19px;color:rgba(255,255,255,.85);line-height:1.8;max-width:480px;margin-bottom:34px;
@@ -209,9 +225,11 @@ section[id]{scroll-margin-top:90px}
   text-shadow:0 2px 14px rgba(0,0,0,.95);
 }
 .whq-right{text-align:right;margin-left:auto}
+/* la E iniziale di Eclydex nella scritta corsiva, piu' grande e marcata */
+.whq-ec{font-size:1.55em;color:rgba(255,255,255,.72)}
 
 /* ── LORE / UNIVERSO ── */
-.lore{background:var(--black);border-bottom:1px solid rgba(255,255,255,.05)}
+.lore{background:transparent}
 .lore-inner{max-width:1280px;margin:0 auto}
 /* righe da ~70 caratteri: oltre i 900px il testo lungo diventa faticoso da seguire */
 .lore-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.85;max-width:760px;margin:0 auto 22px;text-align:center}
@@ -236,7 +254,7 @@ section[id]{scroll-margin-top:90px}
 }
 
 /* ── ECLYDEX (glifi/simboli) ── */
-.codex{background:var(--dark);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
+.codex{background:transparent}
 .codex-inner{max-width:1280px;margin:0 auto}
 .codex-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;max-width:760px;margin:0 auto 48px;text-align:center}
 .codex-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
@@ -260,7 +278,7 @@ section[id]{scroll-margin-top:90px}
 
 /* ── SCARICA L'APP — copia della sezione di index ── */
 .app-download{
-  background:var(--black);border-bottom:1px solid rgba(255,255,255,.05);
+  background:transparent;
   text-align:center;position:relative;overflow:hidden;
 }
 .app-download::before{
@@ -309,9 +327,9 @@ section[id]{scroll-margin-top:90px}
 .mantra-tr{font-family:'Asul',sans-serif;font-style:italic;font-size:20px;letter-spacing:1.5px;color:var(--gray-light)}
 
 /* ── COLLEZIONE — CUSTODI / INTERFERENTI (carte creature) ── */
-.guardians{background:#0d0716;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.guardians.interferenti{background:var(--black);border-bottom:1px solid rgba(239,68,68,.08)}
-.risk-divider{background:#000;padding:34px 52px;text-align:center;border-bottom:1px solid rgba(255,255,255,.05)}
+.guardians{background:transparent}
+.guardians.interferenti{background:transparent}
+.risk-divider{background:transparent;padding:34px 52px;text-align:center}
 .risk-divider-inner{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:10px}
 .risk-side{font-family:'Asul',sans-serif;font-size:19px;font-weight:900;letter-spacing:3px;text-transform:uppercase}
 .risk-purple{color:var(--purple-light);text-shadow:0 0 18px rgba(192,132,252,.6);}
@@ -381,7 +399,7 @@ section[id]{scroll-margin-top:90px}
 .gi-wolf{background:linear-gradient(160deg,#1a003a,#3b0a6e,#0d001f)}
 
 /* ── FOOTER (identico al sito principale) ── */
-footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,255,.06)}
+footer{background:linear-gradient(180deg,transparent,rgba(0,0,0,.35));padding:70px 52px 30px}
 .footer-mantra{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:50px}
 .fm-line{flex:0 0 110px;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.55))}
 .fm-line-r{background:linear-gradient(90deg,rgba(192,132,252,.55),transparent)}
@@ -505,3 +523,14 @@ footer{background:#000;padding:70px 52px 30px;border-top:1px solid rgba(255,255,
   .app-download,
   footer{zoom:1.06}
 }
+
+/* Pulsante lingua IT/EN nella nav */
+.lang-toggle{
+  display:flex;align-items:center;justify-content:center;
+  min-width:40px;height:40px;padding:0 10px;border-radius:20px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);
+  color:#fff;cursor:pointer;
+  font-family:'Asul',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.lang-toggle:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5);color:#C084FC}

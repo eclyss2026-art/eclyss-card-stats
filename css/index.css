@@ -144,7 +144,7 @@ nav{
 
 /* ── HERO ── */
 /* 280vh -> 190vh: giro completo della lattina con molto meno scroll */
-#scroll-stage{position:relative;height:190vh}
+#scroll-stage{position:relative;height:160vh}
 .hero{
   position:sticky;top:0;height:100vh;overflow:hidden;padding:0;
   background:radial-gradient(ellipse 80% 80% at 58% 50%,#1a0533 0%,#0a0010 55%,#000 100%);
@@ -191,10 +191,10 @@ nav{
   /* Disco nero pieno con bordo luminoso sottile (lilla ECLYSS) */
   background:#020103;
   box-shadow:
-    0 0 5px 2px rgba(240,225,255,.85),
-    0 0 28px 8px rgba(155,95,255,.45),
-    0 0 90px 30px rgba(123,47,255,.2);
-  transition:box-shadow 1s ease;
+    0 0 4px 1px rgba(150,95,225,.22),
+    0 0 16px 4px rgba(155,95,255,.14),
+    0 0 54px 16px rgba(123,47,255,.08);
+  transition:transform .7s cubic-bezier(.22,.61,.36,1),box-shadow 1s ease;
   pointer-events:none;
   z-index:1;
 }
@@ -206,31 +206,32 @@ nav{
      ma abbastanza scuro da non rubare contrasto al titolo bianco */
   background:radial-gradient(circle,
     transparent 36%,
-    rgba(206,160,255,.95) 48%,
-    rgba(155,95,255,.85) 56%,
-    rgba(123,47,255,.55) 67%,
+    rgba(206,160,255,.5) 48%,
+    rgba(155,95,255,.42) 56%,
+    rgba(123,47,255,.26) 67%,
     transparent 78%);
   filter:url(#flameFilter) blur(8px);
-  animation:flameSpin 11s linear infinite;
+  animation:flameSpin 20s linear infinite;
 }
 /* Secondo livello identico, in controfase: quando uno divampa l'altro si ritira */
 .eclipse-center-ring::after{
-  animation-delay:-2.75s;
+  animation-delay:-5s;
 }
 .eclipse-center-ring.eclipse-dark{
   /* Variante "sussurro corrotto": bordo e fiamme viola profondo */
   box-shadow:
-    0 0 5px 2px rgba(196,120,255,.7),
-    0 0 28px 8px rgba(96,20,156,.55),
-    0 0 90px 30px rgba(66,14,116,.3);
+    0 0 8px 2px rgba(150,90,220,.14),
+    0 0 20px 5px rgba(96,20,156,.2),
+    0 0 60px 18px rgba(66,14,116,.12);
 }
 .eclipse-center-ring.eclipse-dark::before,
 .eclipse-center-ring.eclipse-dark::after{
   background:radial-gradient(circle,
     transparent 36%,
-    rgba(190,110,255,1) 48%,
-    rgba(123,30,220,.9) 56%,
-    rgba(66,14,116,.6) 67%,
+    rgba(205,170,250,.32) 44%,
+    rgba(190,110,255,.55) 50%,
+    rgba(123,30,220,.55) 58%,
+    rgba(66,14,116,.4) 68%,
     transparent 78%);
 }
 @keyframes flameSpin{
@@ -257,54 +258,66 @@ nav{
 .eclipse-sun{
   position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%) translateX(calc((1 - var(--ecl)) * var(--ecl-gap) * -1));
-  width:460px;height:460px;border-radius:50%;
+  width:410px;height:410px;border-radius:50%;
   pointer-events:none;z-index:0;will-change:transform;
+  /* Tutta la scena dell'eclissi (sole + corona) resa molto piu' trasparente;
+     il disco nero della luna resta pieno (elemento separato, non toccato). */
+  opacity:.45;
   /* nucleo bianco che sfuma nel viola ECLYSS (niente giallo) */
   background:radial-gradient(circle,
-    #fff 0%,#fff 42%,rgba(206,160,255,.6) 57%,rgba(123,47,255,.28) 70%,transparent 80%);
-  box-shadow:0 0 70px 24px rgba(155,95,255,.4);
+    rgba(189,168,226,.55) 0%,rgba(173,151,216,.4) 42%,rgba(165,128,220,.12) 57%,rgba(123,47,255,.05) 70%,transparent 80%);
+  box-shadow:0 0 26px 7px rgba(155,95,255,.06);
 }
 /* Fiamme del sole: due anelli viola in controfase sfrangiati dal filtro SVG #flameFilter */
 .eclipse-sun::before,
 .eclipse-sun::after{
   content:'';position:absolute;inset:-46px;border-radius:50%;z-index:-1;
   background:radial-gradient(circle,
-    transparent 44%,rgba(216,180,255,.95) 54%,rgba(155,95,255,.75) 64%,
-    rgba(123,47,255,.45) 73%,transparent 82%);
+    transparent 44%,rgba(200,165,245,.5) 54%,rgba(155,95,255,.42) 64%,
+    rgba(123,47,255,.26) 73%,transparent 82%);
   filter:url(#flameFilter) blur(7px);
-  animation:flameSpin 11s linear infinite;
+  animation:flameSpin 20s linear infinite;
 }
-.eclipse-sun::after{animation-delay:-2.75s}
+.eclipse-sun::after{animation-delay:-5s}
 
 /* ── Variante "sussurro corrotto" (tasto 02): il sole si spegne ──
    Niente nucleo bianco: grigio ferro che scivola nel viola cupo e nel nero.
    La classe la mette il JS su .hero-center al click sui numeri laterali. */
 .hero-center.eclipse-dark .eclipse-sun{
   background:radial-gradient(circle,
-    #3d3947 0%,#231e2c 30%,rgba(34,18,56,.8) 50%,rgba(16,7,30,.55) 68%,
-    rgba(6,2,12,.3) 80%,transparent 90%);
-  box-shadow:0 0 60px 18px rgba(26,12,46,.5);
+    #565160 0%,#403c48 50%,#2b2833 82%,#1c1a22 95%,
+    rgba(18,16,22,1) 99%,transparent 100%);
+  /* la spenta un po' meno trasparente della chiara */
+  opacity:.62;
+  box-shadow:
+    0 0 10px 2px rgba(130,95,190,.12),
+    0 0 40px 10px rgba(26,12,46,.3);
 }
 .hero-center.eclipse-dark .eclipse-sun::before,
 .hero-center.eclipse-dark .eclipse-sun::after{
   background:radial-gradient(circle,
-    transparent 44%,rgba(72,66,84,.55) 54%,rgba(44,26,70,.5) 64%,
-    rgba(14,6,26,.35) 73%,transparent 82%);
+    transparent 44%,rgba(198,190,214,.6) 50%,rgba(140,134,150,.55) 58%,
+    rgba(70,68,74,.45) 66%,rgba(24,23,26,.3) 75%,transparent 84%);
 }
 /* la corona spenta chiede una luna ancora più profonda, per staccare */
 .hero-center.eclipse-dark .eclipse-moon{
   background:radial-gradient(circle,
     #000 0%,#000 58%,rgba(0,0,0,.94) 72%,rgba(0,0,0,.5) 86%,transparent 100%);
 }
-/* transizione morbida fra le due voci invece di uno scatto secco */
-.eclipse-sun,.eclipse-sun::before,.eclipse-sun::after,.eclipse-moon{
+/* transizione morbida fra le due voci invece di uno scatto secco;
+   transform con easing lungo = lo spostamento sullo scroll scivola fluido */
+.eclipse-sun,.eclipse-moon{
+  transition:transform .7s cubic-bezier(.22,.61,.36,1),
+             background .45s ease,box-shadow .45s ease;
+}
+.eclipse-sun::before,.eclipse-sun::after{
   transition:background .45s ease,box-shadow .45s ease;
 }
 
 .eclipse-moon{
   position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%) translateX(calc((1 - var(--ecl)) * var(--ecl-gap)));
-  width:400px;height:400px;border-radius:50%;
+  width:356px;height:356px;border-radius:50%;
   pointer-events:none;z-index:1;will-change:transform;
   /* cerchio nero dai bordi sfumati (non netti): sfuma nel trasparente */
   background:radial-gradient(circle,
@@ -377,14 +390,15 @@ nav{
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);
   transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
 }
+/* Etichette 01/02 sempre visibili (statiche, senza comparsa su hover) */
 .section-nums span::before{
   content:attr(data-label);
   font-family:'Asul',sans-serif;font-size:16px;font-weight:600;
   letter-spacing:2px;text-transform:uppercase;
-  color:rgba(255,255,255,0);white-space:nowrap;
+  color:rgba(255,255,255,.45);white-space:nowrap;
   transition:color .2s;
 }
-.section-nums span[data-covered]:hover::before{color:rgba(255,255,255,.5)}
+.section-nums span[data-covered]:hover::before{color:rgba(255,255,255,.7)}
 .section-nums span[data-covered]:hover{color:var(--white);border-color:rgba(155,95,255,.5);background:rgba(123,47,255,.14)}
 .section-nums span[data-covered].active{
   color:var(--purple-light);border-color:rgba(155,95,255,.65);
@@ -928,3 +942,14 @@ footer{
   .app-download,
   footer{zoom:1.06}
 }
+
+/* Pulsante lingua IT/EN nella nav */
+.lang-toggle{
+  display:flex;align-items:center;justify-content:center;
+  min-width:40px;height:40px;padding:0 10px;border-radius:20px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);
+  color:#fff;cursor:pointer;
+  font-family:'Asul',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.lang-toggle:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5);color:#C084FC}
