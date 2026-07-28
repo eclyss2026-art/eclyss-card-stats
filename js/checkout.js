@@ -214,7 +214,7 @@
         id: p.id,
         name: p.name,
         price: p.price,
-        url: '/index.html',
+        url: '/prodotto.html',
         quantity: cart[id],
         description: p.meta,
         image: p.image

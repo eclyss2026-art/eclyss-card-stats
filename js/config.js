@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // e vi cerca la definizione .snipcart-add-item con id/prezzo). Deve essere
     // ASSOLUTO e raggiungibile: risolto rispetto alla pagina corrente, così è
     // corretto anche se il sito è deployato in una sottocartella.
-    const productUrl = new URL('index.html', document.baseURI).href;
+    const productUrl = new URL('prodotto.html', document.baseURI).href;
     const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
     for (const id of entries) {
       const p = PRODUCTS[id];
