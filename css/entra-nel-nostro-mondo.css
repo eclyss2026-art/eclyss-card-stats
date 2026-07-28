@@ -496,7 +496,16 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
 }
 @media (max-width:560px){
   section{padding:48px 20px}
-  .era-grid{grid-template-columns:1fr}
+  /* Timeline (Ere) scorribile in orizzontale su mobile, come le carte */
+  .era-grid{
+    display:flex;grid-template-columns:none;align-items:stretch;
+    gap:14px;overflow-x:auto;overflow-y:visible;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    scroll-padding-left:20px;padding:4px 20px 16px;margin:44px -20px 0;
+    scrollbar-width:none;
+  }
+  .era-grid::-webkit-scrollbar{display:none}
+  .era-grid>.era{flex:0 0 80%;scroll-snap-align:center}
   .codex-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .glyph-card{padding:18px 10px 14px}
   /* Carte scorribili in orizzontale su mobile: swipe naturale con snap dolce,
