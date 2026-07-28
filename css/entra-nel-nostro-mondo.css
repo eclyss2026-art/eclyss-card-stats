@@ -404,7 +404,7 @@ section[id]{scroll-margin-top:90px}
 
 /* ── FOOTER (identico al sito principale) ── */
 /* Fine pagina: sfuma dolcemente verso il nero campionato, come il passaggio in alto */
-footer{background:linear-gradient(180deg,transparent 0%,rgba(10,4,21,.45) 45%,#0a0415 100%);padding:70px 52px 30px}
+footer{background:linear-gradient(180deg,transparent 0%,rgba(9,4,20,.28) 30%,rgba(9,4,20,.6) 62%,#070010 100%);padding:100px 52px 30px;margin-top:-40px}
 .footer-mantra{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:50px}
 .fm-line{flex:0 0 110px;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.55))}
 .fm-line-r{background:linear-gradient(90deg,rgba(192,132,252,.55),transparent)}
@@ -502,7 +502,17 @@ footer{background:linear-gradient(180deg,transparent 0%,rgba(10,4,21,.45) 45%,#0
   .era-grid{grid-template-columns:1fr}
   .codex-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .glyph-card{padding:18px 10px 14px}
-  .cards-row{grid-template-columns:repeat(2,1fr);gap:12px}
+  /* Carte scorribili in orizzontale su mobile: swipe naturale con snap dolce,
+     niente griglia. Si intravede la carta successiva per invitare allo scroll. */
+  .cards-row{
+    display:flex;grid-template-columns:none;align-items:stretch;
+    gap:14px;overflow-x:auto;overflow-y:visible;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    scroll-padding-left:20px;padding:4px 20px 16px;margin:0 -20px;
+    scrollbar-width:none;
+  }
+  .cards-row::-webkit-scrollbar{display:none}
+  .cards-row>.gcard{flex:0 0 66%;scroll-snap-align:center}
   /* Il titolo "Gli Interferenti" col nowrap ereditato sborderebbe a 360px */
   .guardians-text .section-title{white-space:normal}
   .risk-divider-inner{gap:12px}

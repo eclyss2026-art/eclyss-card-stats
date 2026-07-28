@@ -27,9 +27,9 @@
   // vanno lasciati stare, altrimenti il motore ne "ripristina" il valore
   // catturato all'avvio (es. €0,00) sovrascrivendo quello reale.
   var NO_I18N = [
-    '.cart-item-price', '.cart-item-name', '.cart-item-meta', '.cart-item-qty',
+    '.cart-item-price', '.cart-item-name', '.cart-item-qty',
     '#cartSubtotal', '.cart-count',
-    '.order-item-price', '.order-item-name', '.order-item-meta', '.order-item-qty',
+    '.order-item-price', '.order-item-name', '.order-item-qty',
     '#orderSubtotal', '#orderTotal', '#boxPrice', '.box-price', '.qty-value',
     '[data-no-i18n]'
   ].join(',');
