@@ -8,8 +8,6 @@
    ============================================================ */
 (function () {
   var KEY = 'eclyssLang';
-  var EN = (window.ECLYSS_I18N && window.ECLYSS_I18N.en) || {};
-
   // Selettori "foglia" che contengono testo traducibile.
   var SEL = [
     'h1', 'h2', 'h3', 'h4',
@@ -21,8 +19,19 @@
     '.lore-mantra', '.codex-mantra', '.app-lead', '.app-title',
     '.cart-dropdown-header', '.cart-empty', '.qty-label',
     'button:not(.qty-btn):not(.menu-toggle):not(.cart-btn):not(.lang-toggle)',
-    '.faq-q', 'span', 'a', 'td', 'th', 'label', 'li',
+    '.faq-q', 'span', 'a', 'td', 'th', 'label',
     '.order-title', '.order-empty', '.cart-item-remove', '.cart-item-meta', '[data-i18n]'
+  ].join(',');
+
+  // Elementi con VALORI DINAMICI (prezzi, totali, quantità, dati prodotto):
+  // vanno lasciati stare, altrimenti il motore ne "ripristina" il valore
+  // catturato all'avvio (es. €0,00) sovrascrivendo quello reale.
+  var NO_I18N = [
+    '.cart-item-price', '.cart-item-name', '.cart-item-meta', '.cart-item-qty',
+    '#cartSubtotal', '.cart-count',
+    '.order-item-price', '.order-item-name', '.order-item-meta', '.order-item-qty',
+    '#orderSubtotal', '#orderTotal', '#boxPrice', '.box-price', '.qty-value',
+    '[data-no-i18n]'
   ].join(',');
 
   var curLang = 'it', obs = null, reTimer = null;
@@ -30,6 +39,7 @@
 
   function apply(lang) {
     curLang = lang;
+    var EN = (window.ECLYSS_I18N && window.ECLYSS_I18N.en) || {};
     if (obs) obs.disconnect(); // non reagire alle nostre stesse modifiche
     document.documentElement.setAttribute('lang', lang);
     // <title> della pagina
@@ -39,6 +49,8 @@
     var nodes = document.querySelectorAll(SEL);
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
+      // salta gli elementi a valore dinamico (prezzi/totali/quantità)
+      if (el.closest && el.closest(NO_I18N)) continue;
       // salva la sorgente IT una sola volta
       if (el.getAttribute('data-it') === null) el.setAttribute('data-it', el.innerHTML);
       var itHTML = el.getAttribute('data-it');
@@ -97,6 +109,10 @@
       });
       obs.observe(document.body, { childList: true, subtree: true });
     }
+    // Rete di sicurezza: ri-applica dopo che gli altri script hanno finito
+    // (nav/menu/carrello), così nulla resta non tradotto per questioni di timing.
+    setTimeout(function () { apply(curLang); }, 250);
+    window.addEventListener('load', function () { apply(curLang); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

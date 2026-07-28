@@ -53,6 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
     for (const it of existing) {
       await window.Snipcart.api.cart.items.remove(it.uniqueId);
     }
+    // URL che Snipcart usa per validare il prodotto (fa il crawl di questa pagina
+    // e vi cerca la definizione .snipcart-add-item con id/prezzo). Deve essere
+    // ASSOLUTO e raggiungibile: risolto rispetto alla pagina corrente, così è
+    // corretto anche se il sito è deployato in una sottocartella.
+    const productUrl = new URL('index.html', document.baseURI).href;
     const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
     for (const id of entries) {
       const p = PRODUCTS[id];
@@ -60,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         id: p.id,
         name: p.name,
         price: p.price,
-        url: '/index.html',
+        url: productUrl,
         quantity: cart[id],
         description: p.meta,
         image: p.image

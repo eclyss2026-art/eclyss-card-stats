@@ -222,13 +222,13 @@ section[id]{scroll-margin-top:90px}
   padding:0 64px;
 }
 .whq{
-  max-width:240px;font-family:'Yellowtail',cursive;font-size:24px;letter-spacing:.5px;
-  color:rgba(255,255,255,.55);line-height:1.5;
+  max-width:260px;font-family:'Asul',sans-serif;font-size:15px;font-weight:600;
+  letter-spacing:1px;font-style:italic;
+  color:rgba(255,255,255,.6);line-height:1.6;
   text-shadow:0 2px 14px rgba(0,0,0,.95);
 }
 .whq-right{text-align:right;margin-left:auto}
-/* la E iniziale di Eclydex nella scritta corsiva, piu' grande e marcata */
-.whq-ec{font-size:1.55em;color:rgba(255,255,255,.72)}
+.whq-ec{font-size:1.15em;color:rgba(255,255,255,.78)}
 
 /* ── LORE / UNIVERSO ── */
 .lore{background:transparent}
@@ -403,7 +403,8 @@ section[id]{scroll-margin-top:90px}
 .gi-wolf{background:linear-gradient(160deg,#1a003a,#3b0a6e,#0d001f)}
 
 /* ── FOOTER (identico al sito principale) ── */
-footer{background:linear-gradient(180deg,transparent,rgba(0,0,0,.35));padding:70px 52px 30px}
+/* Fine pagina: sfuma dolcemente verso il nero campionato, come il passaggio in alto */
+footer{background:linear-gradient(180deg,transparent 0%,rgba(10,4,21,.45) 45%,#0a0415 100%);padding:70px 52px 30px}
 .footer-mantra{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:50px}
 .fm-line{flex:0 0 110px;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.55))}
 .fm-line-r{background:linear-gradient(90deg,rgba(192,132,252,.55),transparent)}

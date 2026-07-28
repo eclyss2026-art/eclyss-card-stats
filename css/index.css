@@ -559,10 +559,12 @@ section[id]{scroll-margin-top:90px}
 .edition-num{font-family:'Asul',sans-serif;font-size:17px;font-weight:900;letter-spacing:2px;color:var(--white);text-shadow:0 2px 12px rgba(0,0,0,.8)}
 .edition-eyebrow .num-line{width:38px;height:2px;background:var(--purple-light);display:block}
 .edition-title{
-  font-family:'Asul',sans-serif;font-size:clamp(31px,3.9vw,49px);font-weight:700;
-  line-height:1.05;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px;
+  font-family:'Asul',sans-serif;font-size:clamp(38px,5vw,64px);font-weight:700;
+  line-height:1.04;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px;
   text-shadow:0 6px 34px rgba(0,0,0,.9),0 2px 10px rgba(0,0,0,.9);
 }
+/* chevron del bottone hero: staccato dal testo (gap del flex) e un po' piu' grande */
+.btn-arrow{font-size:1.28em;font-weight:400;line-height:1;opacity:.9}
 .edition-desc{font-size:19px;color:var(--white);line-height:1.6;font-weight:500;text-shadow:0 3px 18px rgba(0,0,0,.85)}
 /* Card caratteristiche: riga orizzontale a tutta larghezza sotto testo e immagine */
 .edition-specs{
