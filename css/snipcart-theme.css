@@ -9,8 +9,8 @@
 
 #snipcart {
   /* Colori testo/accenti */
-  --color-default: hsl(270, 20%, 92%);
-  --color-alt: hsl(265, 15%, 58%);
+  --color-default: hsl(270, 25%, 95%);
+  --color-alt: hsl(265, 22%, 76%);
   --color-icon: hsl(260, 100%, 68%);
   --color-success: hsl(144, 50%, 60%);
   --color-error: hsl(6, 70%, 65%);
