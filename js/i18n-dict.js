@@ -60,7 +60,7 @@ window.ECLYSS_I18N = { en: {
   "Inquadra la carta con l'app di Eclyss. Esplora l'Universo e aggiungila alla tua <span class=\"hl\">collezione digitale</span>.": "Frame the card with the Eclyss app. Explore the Universe and add it to your <span class=\"hl\">digital collection</span>.",
   "Colleziona": "Collect",
   "Ogni creatura, un <span class=\"hl\">frammento dell'Eclydex</span>. Ogni storia, il tuo legame.": "Every creature, a <span class=\"hl\">fragment of the Eclydex</span>. Every story, your bond.",
-  "Nel caos delle Prime Risonanze nasce <span class=\"hl\">ECLYSS</span>.<br>Il primo Energy drink davvero collezionabile.<br>Custode o Interferente? Scopri il tuo legame.": "From the chaos of the First Resonances, <span class=\"hl\">ECLYSS</span> is born.<br>The first truly collectible energy drink.<br>Guardian or Interferer? Discover your bond.",
+  "Nel caos delle Prime Risonanze nasce <span class=\"hl\">ECLYSS</span><br>Il primo Energy drink davvero collezionabile<br>Custode o Interferente? Scopri il tuo legame": "From the chaos of the First Resonances, <span class=\"hl\">ECLYSS</span> is born<br>The first truly collectible energy drink<br>Guardian or Interferer? Discover your bond",
   "Un'Intera Collezione<br>Ti Aspetta": "An Entire Collection<br>Awaits You",
   "Ogni box racchiude 4 lattine&nbsp;ECLYSS casuali. Sotto ogni sigillo, una carta da rivelare: ogni creatura è un frammento dell'<span class=\"hl\">Eclydex</span>, il linguaggio segreto di&nbsp;ECLYSS.": "Each box holds 4 random&nbsp;ECLYSS cans. Under every seal, a card to reveal: each creature is a fragment of the <span class=\"hl\">Eclydex</span>, the secret language of&nbsp;ECLYSS.",
   "ECLYSS “Respiro Originario” Box": "ECLYSS “Original Breath” Box",
