@@ -12,22 +12,22 @@
   // Ordine fisso: determina anche l'ordine delle barre di affinità
   var ELEMENTI = {
     silenzio: {
-      nome: 'Silenzio', colore: '#7EC8FF', icona: 'assets/TEMPO 2.png',
+      nome: 'Silenzio', colore: '#7EC8FF', icona: 'assets/sigillo-silenzio.png',
       testo: 'Sei guidato dal Silenzio. La tua forza nasce dalla lucidità, dall’empatia e dall’equilibrio. Preferisci comprendere prima di agire e trovi potere dove gli altri vedono solo calma.',
       poteri: ['Intuito', 'Protezione', 'Empatia', 'Quiete', 'Guarigione', 'Conoscenza']
     },
     tempo: {
-      nome: 'Tempo', colore: '#F5B942', icona: 'assets/SILENZIO 3.png',
+      nome: 'Tempo', colore: '#F5B942', icona: 'assets/sigillo-tempo.png',
       testo: 'Sei guidato dal Tempo. Guardi sempre oltre il presente. Crescita, trasformazione e perseveranza sono il cuore della tua essenza.',
       poteri: ['Rigenerazione', 'Resilienza', 'Coraggio', 'Evoluzione', 'Memoria']
     },
     caos: {
-      nome: 'Caos', colore: '#FF3B1F', icona: 'assets/CAOS.png',
+      nome: 'Caos', colore: '#FF3B1F', icona: 'assets/sigillo-caos.png',
       testo: 'Sei guidato dal Caos. Rompi gli schemi, trasformi ciò che tocchi e trovi opportunità dove gli altri vedono ostacoli.',
       poteri: ['Distorsione', 'Imprevedibilità', 'Astuzia', 'Illusione']
     },
     ombra: {
-      nome: 'Ombra', colore: '#A855F7', icona: 'assets/OMBRA 3.png',
+      nome: 'Ombra', colore: '#A855F7', icona: 'assets/sigillo-ombra.png',
       testo: 'Sei guidato dall’Ombra. Vedi ciò che rimane nascosto. Comprendi i segreti delle persone e sai muoverti dove gli altri esitano.',
       poteri: ['Inganno', 'Dissolvenza', 'Illusione', 'Conoscenza']
     }
@@ -166,7 +166,7 @@
 
     var html =
       '<div class="eltest-result" style="--c:' + el.colore + '">' +
-        '<div class="eltest-result-icon"><img src="' + el.icona + '" alt="Sigillo ' + esc(el.nome) + '"></div>' +
+        '<span class="eltest-result-icon el-sigillo"><img src="' + el.icona + '" alt="Sigillo ' + esc(el.nome) + '"></span>' +
         '<div class="eltest-result-label">Il tuo Elemento è</div>' +
         '<div class="eltest-result-name">' + esc(el.nome) + '</div>' +
         '<p class="eltest-result-text">' + esc(el.testo) + '</p>' +
@@ -205,4 +205,59 @@
   }
 
   renderDomanda();
+})();
+
+/* ============================================================
+   ECLYSS — Interazione della sezione "I Quattro Elementi"
+   Nodi del diagramma e carte sono le due facce dello stesso
+   elemento: selezionandone uno si accende anche l'altro e gli
+   altri tre si spengono. Click di nuovo (o Esc) per uscire.
+   ============================================================ */
+(function () {
+  var diagram = document.querySelector('.el-diagram');
+  var cards = document.querySelector('.el-cards');
+  if (!diagram || !cards) return;
+
+  var nodi = diagram.querySelectorAll('.el-node[data-el]');
+  var carte = cards.querySelectorAll('.el-card[data-el]');
+  var attivo = null;
+
+  function perOgni(lista, fn) { for (var i = 0; i < lista.length; i++) fn(lista[i]); }
+
+  function attiva(el) {
+    attivo = el;
+    perOgni(nodi, function (n) { n.classList.toggle('is-active', n.getAttribute('data-el') === el); });
+    perOgni(carte, function (c) { c.classList.toggle('is-active', c.getAttribute('data-el') === el); });
+    diagram.classList.toggle('has-active', !!el);
+    cards.classList.toggle('has-active', !!el);
+    perOgni(nodi, function (n) {
+      n.setAttribute('aria-pressed', n.getAttribute('data-el') === el ? 'true' : 'false');
+    });
+  }
+
+  function scegli(el, portaInVista) {
+    if (attivo === el) { attiva(null); return; }
+    attiva(el);
+    if (!portaInVista) return;
+    // Su telefono le carte stanno una sotto l'altra, lontane dal diagramma:
+    // senza questo salto il tocco sul nodo sembrerebbe non fare nulla.
+    var carta = cards.querySelector('.el-card[data-el="' + el + '"]');
+    if (!carta) return;
+    var r = carta.getBoundingClientRect();
+    if (r.top < 70 || r.bottom > window.innerHeight) {
+      window.scrollTo({ top: window.scrollY + r.top - 110, behavior: 'smooth' });
+    }
+  }
+
+  perOgni(nodi, function (n) {
+    n.setAttribute('aria-pressed', 'false');
+    n.addEventListener('click', function () { scegli(n.getAttribute('data-el'), true); });
+  });
+  perOgni(carte, function (c) {
+    c.addEventListener('click', function () { scegli(c.getAttribute('data-el'), false); });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && attivo) attiva(null);
+  });
 })();

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/entra-nel-nostro-mondo.css?v=13">
-<link rel="stylesheet" href="css/elementi.css?v=1">
+<link rel="stylesheet" href="css/elementi.css?v=2">
 <!-- Snipcart eCommerce -->
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
 <link rel="stylesheet" href="css/snipcart-theme.css?v=2">
@@ -98,46 +98,46 @@
 
         <div class="el-node el-node-center"><span>ECLYSS</span></div>
 
-        <div class="el-node el-node-top" style="--c:#7EC8FF">
-          <img src="assets/TEMPO 2.png" alt="Sigillo del Silenzio" loading="lazy" decoding="async">
+        <button type="button" class="el-node el-node-top" data-el="silenzio" style="--c:#7EC8FF" aria-label="Silenzio">
+          <span class="el-sigillo"><img src="assets/sigillo-silenzio.png" alt="" loading="lazy" decoding="async"></span>
           <span class="el-node-name">Silenzio</span>
-        </div>
-        <div class="el-node el-node-right" style="--c:#F5B942">
-          <img src="assets/SILENZIO 3.png" alt="Sigillo del Tempo" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="el-node el-node-right" data-el="tempo" style="--c:#F5B942" aria-label="Tempo">
+          <span class="el-sigillo"><img src="assets/sigillo-tempo.png" alt="" loading="lazy" decoding="async"></span>
           <span class="el-node-name">Tempo</span>
-        </div>
-        <div class="el-node el-node-bottom" style="--c:#FF3B1F">
-          <img src="assets/CAOS.png" alt="Sigillo del Caos" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="el-node el-node-bottom" data-el="caos" style="--c:#FF3B1F" aria-label="Caos">
+          <span class="el-sigillo"><img src="assets/sigillo-caos.png" alt="" loading="lazy" decoding="async"></span>
           <span class="el-node-name">Caos</span>
-        </div>
-        <div class="el-node el-node-left" style="--c:#A855F7">
-          <img src="assets/OMBRA 3.png" alt="Sigillo dell'Ombra" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="el-node el-node-left" data-el="ombra" style="--c:#A855F7" aria-label="Ombra">
+          <span class="el-sigillo"><img src="assets/sigillo-ombra.png" alt="" loading="lazy" decoding="async"></span>
           <span class="el-node-name">Ombra</span>
-        </div>
+        </button>
       </div>
     </div>
 
     <div class="el-cards">
-      <div class="el-card" style="--c:#7EC8FF">
-        <div class="el-card-icon"><img src="assets/TEMPO 2.png" alt="" loading="lazy" decoding="async"></div>
+      <div class="el-card" id="el-silenzio" data-el="silenzio" style="--c:#7EC8FF">
+        <span class="el-card-icon el-sigillo"><img src="assets/sigillo-silenzio.png" alt="" loading="lazy" decoding="async"></span>
         <span class="el-card-name">Silenzio</span>
         <p class="el-card-body"><strong>L'origine dell'equilibrio.</strong>Il Silenzio è lo spazio tra un pensiero e l'altro, dove ogni scelta prende forma. Non impone, non distrugge: osserva, comprende e protegge. Chi ne è legato domina la mente, l'intuito e l'energia invisibile che unisce ogni essere vivente.</p>
       </div>
 
-      <div class="el-card" style="--c:#FF3B1F">
-        <div class="el-card-icon"><img src="assets/CAOS.png" alt="" loading="lazy" decoding="async"></div>
+      <div class="el-card" id="el-caos" data-el="caos" style="--c:#FF3B1F">
+        <span class="el-card-icon el-sigillo"><img src="assets/sigillo-caos.png" alt="" loading="lazy" decoding="async"></span>
         <span class="el-card-name">Caos</span>
         <p class="el-card-body"><strong>L'origine della possibilità.</strong>Il Caos è la forza da cui nasce ogni creazione. È imprevedibile, mutevole e impossibile da dominare completamente. Rompe gli equilibri per generarne di nuovi, trasformando l'impossibile in realtà. Chi lo controlla possiede un potere senza confini, ma mai senza conseguenze.</p>
       </div>
 
-      <div class="el-card" style="--c:#A855F7">
-        <div class="el-card-icon"><img src="assets/OMBRA 3.png" alt="" loading="lazy" decoding="async"></div>
+      <div class="el-card" id="el-ombra" data-el="ombra" style="--c:#A855F7">
+        <span class="el-card-icon el-sigillo"><img src="assets/sigillo-ombra.png" alt="" loading="lazy" decoding="async"></span>
         <span class="el-card-name">Ombra</span>
         <p class="el-card-body"><strong>L'origine dell'ignoto.</strong>L'Ombra custodisce tutto ciò che il mondo nasconde: paure, desideri, segreti e ricordi dimenticati. Non appartiene all'oscurità, ma alla parte invisibile di ogni anima. Chi ne attinge il potere può manipolare ciò che gli altri non riescono a vedere… o ad accettare.</p>
       </div>
 
-      <div class="el-card" style="--c:#F5B942">
-        <div class="el-card-icon"><img src="assets/SILENZIO 3.png" alt="" loading="lazy" decoding="async"></div>
+      <div class="el-card" id="el-tempo" data-el="tempo" style="--c:#F5B942">
+        <span class="el-card-icon el-sigillo"><img src="assets/sigillo-tempo.png" alt="" loading="lazy" decoding="async"></span>
         <span class="el-card-name">Tempo</span>
         <p class="el-card-body"><strong>L'origine del cambiamento.</strong>Il Tempo non scorre: trasforma. Custodisce il passato, plasma il presente e apre infinite possibilità per il futuro. Chi ne possiede l'essenza può accelerare, rallentare o alterare il corso degli eventi, sapendo che ogni cambiamento lascia una traccia.</p>
       </div>
@@ -415,7 +415,7 @@
 
 <script src="js/catalogo.js"></script>
 <script src="js/entra-nel-nostro-mondo.js"></script>
-<script src="js/elementi-quiz.js?v=1"></script>
+<script src="js/elementi-quiz.js?v=2"></script>
 <!-- Carica variabili d'ambiente (per development locale e build) -->
 <script src="js/env-loader.js"></script>
 <!-- Config Snipcart -->

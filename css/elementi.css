@@ -81,28 +81,42 @@
   aspect-ratio:1/1;
 }
 .el-diagram-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* Disco del sigillo, condiviso da diagramma / carte / responso del test.
+   I PNG (assets/sigillo-*.png) hanno il simbolo centrato su nero pieno:
+   overflow:hidden su un contenitore tondo ritaglia il quadrato in un disco,
+   così sotto al simbolo non resta nessuno spigolo visibile. */
+.el-sigillo{
+  position:relative;border-radius:50%;overflow:hidden;background:#000;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  box-shadow:
+    0 0 0 1.5px var(--c),
+    0 0 22px color-mix(in srgb,var(--c) 60%,transparent),
+    0 0 48px color-mix(in srgb,var(--c) 28%,transparent);
+  transition:box-shadow .28s ease,transform .28s ease;
+}
+.el-sigillo img{display:block;width:100%;height:100%;object-fit:cover}
+
 .el-node{
   position:absolute;left:50%;top:50%;
   width:19%;aspect-ratio:1/1;transform:translate(-50%,-50%);
-  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  /* reset del <button> */
+  background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:opacity .28s ease;
 }
-/* Alone colorato dietro ogni nodo + anello sottile */
-.el-node::before{
-  content:'';position:absolute;inset:-26%;border-radius:50%;
-  background:radial-gradient(circle,var(--c) 0%,transparent 68%);
-  opacity:.34;filter:blur(8px);
+.el-node .el-sigillo{width:100%;height:100%}
+.el-node:focus-visible{outline:none}
+.el-node:focus-visible .el-sigillo,
+.el-node:hover .el-sigillo,
+.el-node.is-active .el-sigillo{
+  transform:scale(1.09);
+  box-shadow:
+    0 0 0 2px var(--c),
+    0 0 34px var(--c),
+    0 0 76px color-mix(in srgb,var(--c) 55%,transparent);
 }
-.el-node::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  border:1.5px solid var(--c);
-  box-shadow:0 0 22px var(--c),0 0 46px color-mix(in srgb,var(--c) 45%,transparent),inset 0 0 20px color-mix(in srgb,var(--c) 30%,transparent);
-}
-.el-node img{
-  position:relative;z-index:1;width:104%;height:104%;object-fit:contain;
-  /* I PNG dei sigilli hanno fondo nero pieno: "screen" lo fonde nel fondo
-     scuro della pagina lasciando solo il simbolo. */
-  mix-blend-mode:screen;
-}
+/* Quando un elemento è selezionato, gli altri si spengono */
+.el-diagram.has-active .el-node:not(.is-active):not(.el-node-center){opacity:.4}
 .el-node-name{
   position:absolute;white-space:nowrap;
   font-family:'Asul',sans-serif;font-size:clamp(13px,1.5vw,19px);font-weight:700;
@@ -143,24 +157,19 @@
   background:linear-gradient(160deg,rgba(12,4,26,.92),rgba(5,0,12,.92));
   transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
 }
-.el-card:hover{
+.el-card{cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,opacity .28s ease}
+.el-card:hover,.el-card.is-active{
   transform:translateY(-5px);border-color:color-mix(in srgb,var(--c) 62%,transparent);
   box-shadow:0 16px 44px rgba(0,0,0,.55),0 0 34px color-mix(in srgb,var(--c) 28%,transparent);
 }
-.el-card-icon{
-  position:relative;width:80px;height:80px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+.el-card:hover .el-sigillo,.el-card.is-active .el-sigillo{
+  transform:scale(1.06);
+  box-shadow:0 0 0 2px var(--c),0 0 30px var(--c),0 0 64px color-mix(in srgb,var(--c) 45%,transparent);
 }
-.el-card-icon::before{
-  content:'';position:absolute;inset:-18%;border-radius:50%;
-  background:radial-gradient(circle,var(--c) 0%,transparent 68%);opacity:.28;filter:blur(6px);
-}
-.el-card-icon::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  border:1.5px solid var(--c);
-  box-shadow:0 0 18px color-mix(in srgb,var(--c) 65%,transparent),inset 0 0 16px color-mix(in srgb,var(--c) 28%,transparent);
-}
-.el-card-icon img{position:relative;z-index:1;width:104%;height:104%;object-fit:contain;mix-blend-mode:screen}
+/* Con un elemento selezionato le altre carte restano leggibili ma spente */
+.el-cards.has-active .el-card:not(.is-active){opacity:.42}
+.el-cards.has-active .el-card:not(.is-active):hover{opacity:1}
+.el-card-icon{width:80px;height:80px}
 .el-card-name{
   align-self:center;
   font-family:'Asul',sans-serif;font-size:clamp(20px,1.8vw,26px);font-weight:700;
@@ -236,19 +245,7 @@
 
 /* ── RISULTATO ── */
 .eltest-result{text-align:center;padding:6px 0 4px}
-.eltest-result-icon{
-  position:relative;width:132px;height:132px;margin:0 auto 22px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-}
-.eltest-result-icon::before{
-  content:'';position:absolute;inset:-22%;border-radius:50%;
-  background:radial-gradient(circle,var(--c) 0%,transparent 68%);opacity:.32;filter:blur(10px);
-}
-.eltest-result-icon::after{
-  content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--c);
-  box-shadow:0 0 26px color-mix(in srgb,var(--c) 70%,transparent),inset 0 0 22px color-mix(in srgb,var(--c) 30%,transparent);
-}
-.eltest-result-icon img{position:relative;z-index:1;width:104%;height:104%;object-fit:contain;mix-blend-mode:screen}
+.eltest-result-icon{width:132px;height:132px;margin:0 auto 22px}
 .eltest-result-label{
   font-family:'Asul',sans-serif;font-size:15px;font-weight:700;letter-spacing:4px;
   text-transform:uppercase;color:var(--gray-light);margin-bottom:8px;
