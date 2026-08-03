@@ -197,6 +197,47 @@ document.addEventListener('DOMContentLoaded', function() {
     return emptyBtn;
   }
 
+  // ── Tasto sulla pagina di conferma ordine ────────────────────────────────────
+  // La schermata "Grazie per il tuo ordine" (#/order/...) NON ha il pulsante
+  // "Pagamento": il tasto qui sotto viene quindi agganciato in fondo al
+  // contenitore dell'ordine. Senza, da quella pagina non c'e' modo evidente di
+  // tornare al sito se non con il tasto indietro del browser.
+  let orderBtn = null;
+  function buildOrderButton() {
+    if (orderBtn) return orderBtn;
+    orderBtn = document.createElement('button');
+    orderBtn.type = 'button';
+    orderBtn.id = 'snipcartOrderBackBtn';
+    orderBtn.setAttribute('aria-label', 'Torna al sito');
+    orderBtn.innerHTML = '<span aria-hidden="true">&larr;</span> Torna al sito';
+    Object.assign(orderBtn.style, {
+      display: 'block', width: '100%', maxWidth: '340px', margin: '26px auto 40px',
+      padding: '14px 18px', border: '1px solid rgba(192,132,252,.5)',
+      borderRadius: '6px', cursor: 'pointer',
+      background: 'transparent', color: '#c9a8ff',
+      font: '600 15px/1.2 Asul, system-ui, sans-serif', letterSpacing: '.5px',
+      textAlign: 'center'
+    });
+    orderBtn.addEventListener('mouseenter', function(){ orderBtn.style.background = 'rgba(123,47,255,.14)'; orderBtn.style.color = '#fff'; });
+    orderBtn.addEventListener('mouseleave', function(){ orderBtn.style.background = 'transparent'; orderBtn.style.color = '#c9a8ff'; });
+    orderBtn.addEventListener('click', function() {
+      if (window.Snipcart && window.Snipcart.api) window.Snipcart.api.theme.cart.close();
+      // Pulisce la route #/order/... : senza, riaprendo il carrello si
+      // tornerebbe sulla schermata di conferma invece che sul carrello.
+      history.replaceState(null, '', location.pathname + location.search);
+      if (orderBtn.parentNode) orderBtn.parentNode.removeChild(orderBtn);
+    });
+    return orderBtn;
+  }
+
+  function injectOrderButton() {
+    const box = document.querySelector('.snipcart-cart__order-container');
+    if (!box) return false;
+    const b = buildOrderButton();
+    if (b.parentNode !== box) box.appendChild(b);
+    return true;
+  }
+
   // Inserisce i pulsanti subito dopo il tasto "Pagamento", se presente.
   function injectBackButton() {
     const payBtn = document.querySelector('.snipcart button.snipcart-button-primary');
@@ -212,22 +253,41 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
 
-  function showBackButton() {
+  // A seconda della schermata serve un aggancio diverso: nel carrello/checkout
+  // il tasto va sotto "Pagamento", nella conferma ordine in fondo al riepilogo.
+  function injectButtons() {
     injectBackButton();
+    injectOrderButton();
+  }
+
+  function showBackButton() {
+    injectButtons();
     // Osserva il carrello: se Vue lo ridisegna, re-inserisce il pulsante.
+    // L'observer sta su document.body e non su #snipcart perche' Snipcart
+    // ricrea quel nodo montandosi, lasciando l'observer su un elemento staccato.
     if (!backObserver) {
-      const root = document.getElementById('snipcart') || document.body;
       backObserver = new MutationObserver(function() {
-        if (location.hash.indexOf('#/') === 0) injectBackButton();
+        if (location.hash.indexOf('#/') === 0) injectButtons();
       });
-      backObserver.observe(root, { childList: true, subtree: true });
+      backObserver.observe(document.body, { childList: true, subtree: true });
     }
   }
 
   function hideBackButton() {
     if (backObserver) { backObserver.disconnect(); backObserver = null; }
     if (backBtn && backBtn.parentNode) backBtn.parentNode.removeChild(backBtn);
+    if (orderBtn && orderBtn.parentNode) orderBtn.parentNode.removeChild(orderBtn);
   }
+
+  // Dopo un pagamento Snipcart porta su #/order/... senza passare da un nostro
+  // click, e chi riapre quel link ci arriva direttamente al caricamento: in
+  // entrambi i casi nessuno avrebbe chiamato showBackButton(). Lo agganciamo
+  // quindi anche all'avvio, se la route e' gia' dentro il carrello.
+  function syncButtonsWithRoute() {
+    if (location.hash.indexOf('#/') === 0) showBackButton();
+  }
+  if (window.Snipcart && window.Snipcart.api) syncButtonsWithRoute();
+  else document.addEventListener('snipcart.ready', syncButtonsWithRoute, { once: true });
 
   // ── Indirizzo: campi manuali aperti di default ───────────────────────────────
   // L'autocompletamento di Snipcart usa Google Places senza restrizione di paese
