@@ -718,6 +718,22 @@ section[id]{scroll-margin-top:90px}
   transition:color .25s ease;
 }
 .ritual-step p{font-size:16px;color:#e8dff7;line-height:1.35;max-width:260px;margin:0 auto}
+/* Hover solo desktop: i box restano accesi di default, l'hover li intensifica
+   (non e' un effetto bottone che li "riaccende" da spenti). */
+@media (hover:hover) and (pointer:fine){
+  .ritual-frame,.ritual-medal,.ritual-num{transition:box-shadow .3s ease,border-color .3s ease,filter .3s ease,transform .3s ease,text-shadow .3s ease}
+  .ritual-step:hover .ritual-frame{
+    border-color:rgba(216,180,254,1);
+    box-shadow:0 0 62px rgba(123,47,255,.5),inset 0 0 60px rgba(123,47,255,.16);
+    transform:translateY(-4px);
+  }
+  .ritual-step:hover .ritual-medal{
+    border-color:rgba(216,180,254,1);
+    filter:drop-shadow(0 0 22px rgba(123,47,255,.85));
+  }
+  .ritual-step:hover .ritual-num{text-shadow:0 0 16px rgba(192,132,252,.9)}
+  .ritual-step:hover h3{color:#f0e2ff}
+}
 .ritual-banner{
   margin-top:50px;border:1.5px solid rgba(150,80,255,.5);border-radius:18px;
   padding:30px 48px;display:flex;align-items:center;justify-content:center;gap:44px;

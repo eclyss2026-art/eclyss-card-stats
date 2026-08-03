@@ -191,13 +191,8 @@ section[id]{scroll-margin-top:90px}
   position:absolute;top:0;left:0;right:0;z-index:2;
   padding:150px 72px 0;max-width:640px;
 }
-/* Scrim scuro morbido dietro il testo: alza il contrasto sul video chiaro
-   senza bordi netti (sfuma in tutte le direzioni, più denso a sinistra). */
-.world-hero-top::before{
-  content:'';position:absolute;inset:-40px 0 -60px 0;z-index:-1;pointer-events:none;
-  background:radial-gradient(ellipse 95% 115% at 22% 42%,
-    rgba(6,2,16,.78) 0%, rgba(6,2,16,.5) 42%, rgba(6,2,16,.15) 66%, transparent 80%);
-}
+/* Nessuno scrim dietro il testo: il blocco resta trasparente sul video,
+   il contrasto lo danno solo le text-shadow sui singoli testi. */
 .world-hero-top .section-label{justify-content:flex-start}
 .world-hero-top .section-title{
   text-align:left;font-size:clamp(32px,4.4vw,58px);margin-bottom:22px;
@@ -222,7 +217,9 @@ section[id]{scroll-margin-top:90px}
   padding:0 64px;
 }
 .whq{
-  max-width:260px;font-family:'Asul',sans-serif;font-size:15px;font-weight:600;
+  /* fluida: sotto i ~1100px si stringe, così non finisce addosso al lead a sinistra */
+  max-width:clamp(240px,24vw,340px);
+  font-family:'Asul',sans-serif;font-size:clamp(16px,1.5vw,21px);font-weight:600;
   letter-spacing:1px;font-style:italic;
   color:rgba(255,255,255,.6);line-height:1.6;
   text-shadow:0 2px 14px rgba(0,0,0,.95);
