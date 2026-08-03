@@ -458,16 +458,23 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
      sotto, sul fondo della pagina — leggibile sempre, qualunque fotogramma
      passi. Prima il video era uno sfondo assoluto con il testo sovrapposto. */
   .world-hero{min-height:0}
-  .world-hero-bg{position:relative;inset:auto;aspect-ratio:auto}
+  /* Il video nativo e' 16:9: a tutta larghezza su telefono diventa una striscia
+     bassa e i dettagli spariscono. Gli diamo un riquadro 4:3 e "cover", cosi'
+     taglia i lati e ingrandisce di circa 1,3x — il varco resta al centro. */
+  .world-hero-bg{position:relative;inset:auto;aspect-ratio:4/3;overflow:hidden}
   .world-hero-bg img,.world-hero-bg video{
-    position:relative;inset:auto;width:100%;height:auto;object-fit:contain;
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   }
   /* Solo la sfumatura in basso, per fondere il bordo del video nel nero della
      pagina: non serve piu' scurire in alto, non c'e' testo da far risaltare. */
   .world-hero-bg::after{background:linear-gradient(180deg,transparent 0%,transparent 55%,rgba(10,4,21,.5) 80%,#0a0415 100%)}
-  .world-hero-top{position:relative;top:auto;padding:34px 24px 46px;max-width:none;background:none;text-align:center}
-  .world-hero-top .section-label{justify-content:center}
-  .world-hero-top .section-title{text-align:center}
+  /* Titolo attaccato al video: senza sovrapposizione i due blocchi devono
+     leggersi come un'unica apertura, non come due sezioni separate. */
+  .world-hero-top{position:relative;top:auto;padding:16px 24px 44px;max-width:none;background:none;text-align:center}
+  .world-hero-top .section-label{justify-content:center;margin-bottom:2px}
+  /* Su fondo pieno il titolo puo' crescere: la clamp desktop (4.4vw) su
+     telefono si schiacciava al minimo di 32px. */
+  .world-hero-top .section-title{text-align:center;font-size:clamp(34px,9.5vw,46px);margin-bottom:14px}
   .world-hero-lead{margin:0 auto}
   /* Le etichette di sezione (Cronologia Cosmica, Il mantra di Eclyss, ...) usano
      letter-spacing + maiuscolo: il box del testo risulta piu' largo delle lettere
