@@ -1,2 +1,11 @@
+# Pre-lancio: il sito non deve comparire nei motori di ricerca.
+#
+# Il blocco NON si fa con "Disallow: /". Impedendo la scansione, il crawler non
+# legge il <meta name="robots" content="noindex"> che c'e' in ogni pagina: se
+# qualcuno linka il sito, l'URL puo' finire comunque nei risultati (senza
+# descrizione, ma indicizzato).
+#
+# La scansione va quindi PERMESSA, cosi' il crawler legge il noindex e tiene le
+# pagine fuori dall'indice. E' il modo corretto di ottenere il risultato.
 User-agent: *
-Disallow: /
+Allow: /
