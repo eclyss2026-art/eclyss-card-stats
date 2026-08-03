@@ -66,7 +66,7 @@ window.ECLYSS_I18N = { en: {
   "ECLYSS “Respiro Originario” Box": "ECLYSS “Original Breath” Box",
   "Aggiungi al Carrello": "Add to Cart",
   "4 Energy Drink Collezionabili \"Respiro Originario\"": "4 Collectible Energy Drinks \"Original Breath\"",
-  "Carte originali e rare": "Original and rare cards",
+  "Carte base, holo e epiche": "Base, holo and epic cards",
   "Raccolta digitale nell'App": "Digital collection in the App",
   "Gadget a sorpresa": "Surprise gadget",
   "L'App di ECLYSS": "The ECLYSS App",
