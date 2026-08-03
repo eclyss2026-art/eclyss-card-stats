@@ -62,7 +62,7 @@ window.ECLYSS_I18N = { en: {
   "Ogni creatura, un <span class=\"hl\">frammento dell'Eclydex</span>. Ogni storia, il tuo legame.": "Every creature, a <span class=\"hl\">fragment of the Eclydex</span>. Every story, your bond.",
   "Nel caos delle Prime Risonanze nasce <span class=\"hl\">ECLYSS</span><br>Il primo Energy drink davvero collezionabile<br>Custode o Interferente? Scopri il tuo legame": "From the chaos of the First Resonances, <span class=\"hl\">ECLYSS</span> is born<br>The first truly collectible energy drink<br>Guardian or Interferer? Discover your bond",
   "Un'Intera Collezione<br>Ti Aspetta": "An Entire Collection<br>Awaits You",
-  "Ogni box racchiude 4 lattine&nbsp;ECLYSS casuali. Sotto ogni sigillo, una carta da rivelare: ogni creatura è un frammento dell'<span class=\"hl\">Eclydex</span>, <br> il linguaggio segreto di&nbsp;ECLYSS.": "Each box holds 4 random&nbsp;ECLYSS cans. Under every seal, a card to reveal: each creature is a fragment of the <span class=\"hl\">Eclydex</span>, <br> the secret language of&nbsp;ECLYSS.",
+  "Ogni box racchiude 4 lattine&nbsp;ECLYSS casuali. <br> Sotto ogni sigillo, una carta da rivelare: ogni creatura è un frammento dell'<span class=\"hl\">Eclydex</span>, il linguaggio segreto di&nbsp;ECLYSS.": "Each box holds 4 random&nbsp;ECLYSS cans. <br> Under every seal, a card to reveal: each creature is a fragment of the <span class=\"hl\">Eclydex</span>, the secret language of&nbsp;ECLYSS.",
   "ECLYSS “Respiro Originario” Box": "ECLYSS “Original Breath” Box",
   "Aggiungi al Carrello": "Add to Cart",
   "4 Energy Drink Collezionabili \"Respiro Originario\"": "4 Collectible Energy Drinks \"Original Breath\"",
