@@ -14,11 +14,60 @@ window.STORE_LINKS = {
   googlePlay: 'https://play.google.com/store/apps/'
 };
 
+// ── Campi fatturazione italiani nel checkout Snipcart ────────────────────────
+// Snipcart permette "order custom fields" sovrascrivendo i template: si mette
+// un <billing section="bottom"> dentro il div #snipcart PRIMA che Snipcart si
+// monti. Lo iniettiamo da qui invece che nell'HTML perche' le pagine del sito
+// sono cifrate con StaticCrypt: toccarle vorrebbe dire ricifrarle tutte ad
+// ogni ritocco di un'etichetta, mentre config.js resta in chiaro.
+//
+// Tutti i campi sono SEMPRE VISIBILI e facoltativi: niente logica condizionale
+// Privato/Azienda, che dipenderebbe dal DOM interno di Snipcart e andrebbe
+// riverificata ad ogni loro aggiornamento. Piu' brutto, molto piu' robusto.
+// I valori finiscono in customFields dell'ordine e si vedono nel dashboard.
+function injectBillingFields(snipcart) {
+  if (snipcart.querySelector('billing')) return;
+  // Etichette secche + un titolo di sezione che spiega una volta sola che sono
+  // facoltativi: ripeterlo in ogni etichetta ("per fattura a privato", "per
+  // fattura ad azienda") le allungava e rendeva il blocco pesante da leggere.
+  // Snipcart non ha titoli di sezione nativi: usiamo delle snipcart-label.
+  // ATTENZIONE: una snipcart-label SENZA attributo "for" viene scartata in fase
+  // di compilazione e non arriva nemmeno nel DOM — verificato. Il titolo e la
+  // riga di spiegazione puntano quindi al primo campo.
+  const FIELDS = [
+    ['codiceFiscale',  'Codice Fiscale (privati)'],
+    ['ragioneSociale', 'Ragione sociale (aziende)'],
+    ['partitaIva',     'Partita IVA (aziende)'],
+    ['codiceSdi',      'Codice Destinatario SDI o PEC (aziende)']
+  ];
+  const billing = document.createElement('billing');
+  billing.setAttribute('section', 'bottom');
+  billing.innerHTML =
+    '<fieldset class="snipcart-form__set">' +
+      '<div class="snipcart-form__field">' +
+        '<snipcart-label class="snipcart__font--secondary snipcart__font--bold" for="codiceFiscale">' +
+          'Dati per la fattura' +
+        '</snipcart-label>' +
+        '<snipcart-label class="snipcart__font--tiny" for="codiceFiscale">' +
+          'Facoltativi: compilali solo se ti serve la fattura.' +
+        '</snipcart-label>' +
+      '</div>' +
+      FIELDS.map(([name, label]) =>
+        '<div class="snipcart-form__field">' +
+          '<snipcart-label class="snipcart__font--tiny" for="' + name + '">' + label + '</snipcart-label>' +
+          '<snipcart-input name="' + name + '"></snipcart-input>' +
+        '</div>'
+      ).join('') +
+    '</fieldset>';
+  snipcart.appendChild(billing);
+}
+
 // Applica la API key al div Snipcart
 document.addEventListener('DOMContentLoaded', function() {
   const snipcart = document.getElementById('snipcart');
   if (snipcart) {
     snipcart.setAttribute('data-api-key', window.SNIPCART_API_KEY);
+    injectBillingFields(snipcart);
   }
 
   // Aggiorna i link agli app store su tutte le pagine
