@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/entra-nel-nostro-mondo.css?v=13">
+<link rel="stylesheet" href="css/elementi.css?v=1">
 <!-- Snipcart eCommerce -->
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
 <link rel="stylesheet" href="css/snipcart-theme.css?v=2">
@@ -60,6 +61,102 @@
   <div class="world-hero-quotes">
     <!-- <p class="whq whq-left">Il confine è solo l'inizio.</p> -->
     <p class="whq whq-right">Ciò che conosci è solo un frammento dell'Eclydex</p>
+  </div>
+</section>
+
+<!-- I QUATTRO ELEMENTI -->
+<section class="elementi" id="elementi">
+  <div class="elementi-inner">
+
+    <div class="el-top">
+      <div class="el-intro">
+        <div class="section-label">Le Forze Primordiali</div>
+        <h2 class="section-title">I Quattro<br>Elementi</h2>
+        <div class="el-intro-rule">◈</div>
+        <p class="el-intro-lead">Ogni Custode nasce da uno dei quattro Elementi Primordiali.<br>Silenzio, Caos, Ombra e Tempo governano ogni forza dell'Eclyss.</p>
+        <div class="el-badge">
+          <span class="el-badge-glyph" aria-hidden="true"></span>
+          <span class="el-badge-txt">Quattro forze. Un equilibrio.<br>L'Eclyss esiste grazie a loro.</span>
+        </div>
+        <!-- Il motore i18n riscrive l'innerHTML dell'<a>: la chiave del
+             dizionario e' quindi l'intero contenuto del link (span annidati
+             compresi), percio' va tenuto semplice e stabile. -->
+        <a href="#test-elemento" class="el-cta"><span class="el-cta-glyph" aria-hidden="true">◈</span><span class="el-cta-txt"><span class="el-cta-main">Scopri il tuo Elemento</span><span class="el-cta-sub">Fai il test dell'Eclydex</span></span></a>
+      </div>
+
+      <!-- Diagramma: i quattro Elementi orbitano attorno a ECLYSS -->
+      <div class="el-diagram">
+        <svg class="el-diagram-svg" viewBox="0 0 600 600" aria-hidden="true">
+          <circle cx="300" cy="300" r="168" fill="none" stroke="rgba(192,132,252,.16)" stroke-width="1"/>
+          <circle cx="300" cy="300" r="216" fill="none" stroke="rgba(192,132,252,.08)" stroke-width="1"/>
+          <circle cx="300" cy="300" r="120" fill="none" stroke="rgba(192,132,252,.07)" stroke-width="1"/>
+          <line x1="300" y1="231" x2="300" y2="189" stroke="#7EC8FF" stroke-width="1.6" opacity=".75"/>
+          <line x1="300" y1="369" x2="300" y2="411" stroke="#FF3B1F" stroke-width="1.6" opacity=".75"/>
+          <line x1="231" y1="300" x2="189" y2="300" stroke="#A855F7" stroke-width="1.6" opacity=".75"/>
+          <line x1="369" y1="300" x2="411" y2="300" stroke="#F5B942" stroke-width="1.6" opacity=".75"/>
+        </svg>
+
+        <div class="el-node el-node-center"><span>ECLYSS</span></div>
+
+        <div class="el-node el-node-top" style="--c:#7EC8FF">
+          <img src="assets/TEMPO 2.png" alt="Sigillo del Silenzio" loading="lazy" decoding="async">
+          <span class="el-node-name">Silenzio</span>
+        </div>
+        <div class="el-node el-node-right" style="--c:#F5B942">
+          <img src="assets/SILENZIO 3.png" alt="Sigillo del Tempo" loading="lazy" decoding="async">
+          <span class="el-node-name">Tempo</span>
+        </div>
+        <div class="el-node el-node-bottom" style="--c:#FF3B1F">
+          <img src="assets/CAOS.png" alt="Sigillo del Caos" loading="lazy" decoding="async">
+          <span class="el-node-name">Caos</span>
+        </div>
+        <div class="el-node el-node-left" style="--c:#A855F7">
+          <img src="assets/OMBRA 3.png" alt="Sigillo dell'Ombra" loading="lazy" decoding="async">
+          <span class="el-node-name">Ombra</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="el-cards">
+      <div class="el-card" style="--c:#7EC8FF">
+        <div class="el-card-icon"><img src="assets/TEMPO 2.png" alt="" loading="lazy" decoding="async"></div>
+        <span class="el-card-name">Silenzio</span>
+        <p class="el-card-body"><strong>L'origine dell'equilibrio.</strong>Il Silenzio è lo spazio tra un pensiero e l'altro, dove ogni scelta prende forma. Non impone, non distrugge: osserva, comprende e protegge. Chi ne è legato domina la mente, l'intuito e l'energia invisibile che unisce ogni essere vivente.</p>
+      </div>
+
+      <div class="el-card" style="--c:#FF3B1F">
+        <div class="el-card-icon"><img src="assets/CAOS.png" alt="" loading="lazy" decoding="async"></div>
+        <span class="el-card-name">Caos</span>
+        <p class="el-card-body"><strong>L'origine della possibilità.</strong>Il Caos è la forza da cui nasce ogni creazione. È imprevedibile, mutevole e impossibile da dominare completamente. Rompe gli equilibri per generarne di nuovi, trasformando l'impossibile in realtà. Chi lo controlla possiede un potere senza confini, ma mai senza conseguenze.</p>
+      </div>
+
+      <div class="el-card" style="--c:#A855F7">
+        <div class="el-card-icon"><img src="assets/OMBRA 3.png" alt="" loading="lazy" decoding="async"></div>
+        <span class="el-card-name">Ombra</span>
+        <p class="el-card-body"><strong>L'origine dell'ignoto.</strong>L'Ombra custodisce tutto ciò che il mondo nasconde: paure, desideri, segreti e ricordi dimenticati. Non appartiene all'oscurità, ma alla parte invisibile di ogni anima. Chi ne attinge il potere può manipolare ciò che gli altri non riescono a vedere… o ad accettare.</p>
+      </div>
+
+      <div class="el-card" style="--c:#F5B942">
+        <div class="el-card-icon"><img src="assets/SILENZIO 3.png" alt="" loading="lazy" decoding="async"></div>
+        <span class="el-card-name">Tempo</span>
+        <p class="el-card-body"><strong>L'origine del cambiamento.</strong>Il Tempo non scorre: trasforma. Custodisce il passato, plasma il presente e apre infinite possibilità per il futuro. Chi ne possiede l'essenza può accelerare, rallentare o alterare il corso degli eventi, sapendo che ogni cambiamento lascia una traccia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST: SCOPRI IL TUO ELEMENTO -->
+<section class="eltest" id="test-elemento">
+  <div class="eltest-inner">
+    <div class="section-label">Il Responso dell'Eclydex</div>
+    <h2 class="section-title">Scopri il tuo Elemento</h2>
+    <p class="eltest-lead">Ogni anima è guidata da uno dei quattro Elementi. Nessuno è superiore agli altri: ognuno rivela un modo diverso di affrontare il mondo di Eclyss.<br>Rispondi seguendo il tuo istinto. L'Eclydex rivelerà l'energia che risuona dentro di te.</p>
+
+    <!-- data-no-i18n: il quiz e' generato via JS, il motore i18n non deve
+         riscriverne l'innerHTML (azzererebbe le barre e lo stato). -->
+    <div class="eltest-box" id="eltestBox" data-no-i18n>
+      <!-- Quiz e risultato sono generati da js/elementi-quiz.js -->
+    </div>
   </div>
 </section>
 
@@ -318,10 +415,11 @@
 
 <script src="js/catalogo.js"></script>
 <script src="js/entra-nel-nostro-mondo.js"></script>
+<script src="js/elementi-quiz.js?v=1"></script>
 <!-- Carica variabili d'ambiente (per development locale e build) -->
 <script src="js/env-loader.js"></script>
 <!-- Config Snipcart -->
-<script src="js/i18n-dict.js?v=5"></script>
+<script src="js/i18n-dict.js?v=6"></script>
 <script src="js/i18n.js?v=10"></script>
 <script src="js/config.js?v=11"></script>
 <!-- Snipcart -->

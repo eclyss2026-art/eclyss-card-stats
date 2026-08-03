@@ -185,6 +185,29 @@ window.ECLYSS_I18N = { en: {
   "Bonifico bancario": "Bank transfer",
 
   "Ordine Confermato": "Order Confirmed",
-  "Grazie per il tuo acquisto! Riceverai una conferma via e-mail con i dettagli della spedizione.": "Thank you for your purchase! You'll receive an e-mail confirmation with the shipping details."
+  "Grazie per il tuo acquisto! Riceverai una conferma via e-mail con i dettagli della spedizione.": "Thank you for your purchase! You'll receive an e-mail confirmation with the shipping details.",
+
+  /* ── I Quattro Elementi ── */
+  "Le Forze Primordiali": "The Primordial Forces",
+  "I Quattro<br>Elementi": "The Four<br>Elements",
+  "Ogni Custode nasce da uno dei quattro Elementi Primordiali.<br>Silenzio, Caos, Ombra e Tempo governano ogni forza dell'Eclyss.": "Every Guardian is born from one of the four Primordial Elements.<br>Silence, Chaos, Shadow and Time rule every force of the Eclyss.",
+  "Quattro forze. Un equilibrio.<br>L'Eclyss esiste grazie a loro.": "Four forces. One balance.<br>The Eclyss exists thanks to them.",
+  "Scopri il tuo Elemento": "Discover your Element",
+  "Fai il test dell'Eclydex": "Take the Eclydex test",
+  /* Il link CTA viene tradotto in blocco: il motore riscrive l'innerHTML dell'<a>
+     e stacca gli span figli prima che tocchi il loro turno. */
+  "<span class=\"el-cta-glyph\" aria-hidden=\"true\">◈</span><span class=\"el-cta-txt\"><span class=\"el-cta-main\">Scopri il tuo Elemento</span><span class=\"el-cta-sub\">Fai il test dell'Eclydex</span></span>": "<span class=\"el-cta-glyph\" aria-hidden=\"true\">◈</span><span class=\"el-cta-txt\"><span class=\"el-cta-main\">Discover your Element</span><span class=\"el-cta-sub\">Take the Eclydex test</span></span>",
+  "Silenzio": "Silence",
+  "Caos": "Chaos",
+  "Ombra": "Shadow",
+  "Tempo": "Time",
+  "<strong>L'origine dell'equilibrio.</strong>Il Silenzio è lo spazio tra un pensiero e l'altro, dove ogni scelta prende forma. Non impone, non distrugge: osserva, comprende e protegge. Chi ne è legato domina la mente, l'intuito e l'energia invisibile che unisce ogni essere vivente.": "<strong>The origin of balance.</strong>Silence is the space between one thought and the next, where every choice takes shape. It does not impose, it does not destroy: it observes, understands and protects. Those bound to it master the mind, intuition and the invisible energy that connects every living being.",
+  "<strong>L'origine della possibilità.</strong>Il Caos è la forza da cui nasce ogni creazione. È imprevedibile, mutevole e impossibile da dominare completamente. Rompe gli equilibri per generarne di nuovi, trasformando l'impossibile in realtà. Chi lo controlla possiede un potere senza confini, ma mai senza conseguenze.": "<strong>The origin of possibility.</strong>Chaos is the force from which all creation is born. It is unpredictable, ever-changing and impossible to fully master. It breaks balances to generate new ones, turning the impossible into reality. Those who control it hold a power without limits, but never without consequences.",
+  "<strong>L'origine dell'ignoto.</strong>L'Ombra custodisce tutto ciò che il mondo nasconde: paure, desideri, segreti e ricordi dimenticati. Non appartiene all'oscurità, ma alla parte invisibile di ogni anima. Chi ne attinge il potere può manipolare ciò che gli altri non riescono a vedere… o ad accettare.": "<strong>The origin of the unknown.</strong>Shadow keeps everything the world hides: fears, desires, secrets and forgotten memories. It does not belong to darkness, but to the invisible part of every soul. Those who draw on its power can shape what others cannot see… or accept.",
+  "<strong>L'origine del cambiamento.</strong>Il Tempo non scorre: trasforma. Custodisce il passato, plasma il presente e apre infinite possibilità per il futuro. Chi ne possiede l'essenza può accelerare, rallentare o alterare il corso degli eventi, sapendo che ogni cambiamento lascia una traccia.": "<strong>The origin of change.</strong>Time does not flow: it transforms. It guards the past, shapes the present and opens infinite possibilities for the future. Those who hold its essence can speed up, slow down or alter the course of events, knowing that every change leaves a trace.",
+
+  /* ── Test "Scopri il tuo Elemento" ── */
+  "Il Responso dell'Eclydex": "The Eclydex Verdict",
+  "Ogni anima è guidata da uno dei quattro Elementi. Nessuno è superiore agli altri: ognuno rivela un modo diverso di affrontare il mondo di Eclyss.<br>Rispondi seguendo il tuo istinto. L'Eclydex rivelerà l'energia che risuona dentro di te.": "Every soul is guided by one of the four Elements. None is superior to the others: each reveals a different way of facing the world of Eclyss.<br>Answer following your instinct. The Eclydex will reveal the energy resonating within you."
 
 }};

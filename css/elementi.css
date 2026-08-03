@@ -1,0 +1,344 @@
+/* ============================================================
+   ECLYSS — "I Quattro Elementi" + Test "Scopri il tuo Elemento"
+   Sezioni della pagina Entra nel Nostro Mondo.
+   Caricato DOPO entra-nel-nostro-mondo.css (ne eredita variabili,
+   .section-label, .section-title, .btn-hero).
+   ============================================================ */
+
+:root{
+  --el-silenzio:#7EC8FF;
+  --el-caos:#FF3B1F;
+  --el-ombra:#A855F7;
+  --el-tempo:#F5B942;
+}
+
+/* ── SEZIONE ELEMENTI ── */
+.elementi{background:transparent;overflow:hidden}
+.elementi-inner{max-width:1280px;margin:0 auto}
+
+/* Blocco alto: testo a sinistra, diagramma a destra */
+.el-top{
+  display:grid;grid-template-columns:minmax(280px,380px) 1fr;
+  gap:48px;align-items:center;margin-bottom:56px;
+}
+.el-intro .section-label{justify-content:flex-start;text-align:left}
+.el-intro .section-title{text-align:left;font-size:clamp(30px,3.6vw,46px);line-height:1.15;margin-bottom:10px}
+/* Piccolo rombo separatore sotto il titolo, come nella referenza */
+.el-intro-rule{
+  display:flex;align-items:center;gap:10px;margin-bottom:22px;
+  color:rgba(192,132,252,.55);font-size:11px;
+}
+.el-intro-rule::before,.el-intro-rule::after{
+  content:'';display:block;width:34px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(192,132,252,.5));
+}
+.el-intro-rule::after{background:linear-gradient(90deg,rgba(192,132,252,.5),transparent)}
+.el-intro-lead{font-size:18px;line-height:1.75;color:rgba(255,255,255,.78);margin-bottom:26px}
+
+/* Riquadro "Quattro forze. Un equilibrio." */
+.el-badge{
+  display:flex;align-items:center;gap:16px;
+  border:1px solid rgba(192,132,252,.28);border-radius:3px;
+  background:rgba(123,47,255,.06);padding:16px 20px;margin-bottom:22px;
+  max-width:340px;
+}
+.el-badge-glyph{
+  flex:0 0 auto;width:30px;height:30px;transform:rotate(45deg);
+  border:1px solid rgba(192,132,252,.5);border-radius:2px;
+  box-shadow:0 0 16px rgba(123,47,255,.35) inset;
+}
+.el-badge-txt{font-size:16px;line-height:1.55;color:rgba(255,255,255,.8)}
+
+/* CTA verso il test */
+.el-cta{
+  display:inline-flex;align-items:center;gap:16px;
+  border:1px solid rgba(192,132,252,.45);border-radius:3px;
+  background:rgba(123,47,255,.12);padding:14px 24px;
+  text-decoration:none;color:var(--white);
+  box-shadow:0 0 30px rgba(123,47,255,.18);
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease;
+}
+.el-cta:hover{
+  background:rgba(123,47,255,.22);border-color:var(--purple-glow);
+  box-shadow:0 8px 34px rgba(123,47,255,.4);transform:translateY(-2px);
+}
+.el-cta-glyph{
+  flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(192,132,252,.45);
+  color:var(--purple-light);font-size:12px;line-height:1;
+}
+.el-cta-txt{display:block}
+.el-cta-main{
+  display:block;font-family:'Asul',sans-serif;font-size:19px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+}
+.el-cta-sub{display:block;font-size:15px;color:rgba(255,255,255,.6);letter-spacing:.5px;margin-top:2px}
+
+/* ── DIAGRAMMA DEI QUATTRO ELEMENTI ── */
+.el-diagram{
+  position:relative;width:100%;max-width:640px;margin:0 auto;
+  aspect-ratio:1/1;
+}
+.el-diagram-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.el-node{
+  position:absolute;left:50%;top:50%;
+  width:19%;aspect-ratio:1/1;transform:translate(-50%,-50%);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+/* Alone colorato dietro ogni nodo + anello sottile */
+.el-node::before{
+  content:'';position:absolute;inset:-26%;border-radius:50%;
+  background:radial-gradient(circle,var(--c) 0%,transparent 68%);
+  opacity:.34;filter:blur(8px);
+}
+.el-node::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid var(--c);
+  box-shadow:0 0 22px var(--c),0 0 46px color-mix(in srgb,var(--c) 45%,transparent),inset 0 0 20px color-mix(in srgb,var(--c) 30%,transparent);
+}
+.el-node img{
+  position:relative;z-index:1;width:104%;height:104%;object-fit:contain;
+  /* I PNG dei sigilli hanno fondo nero pieno: "screen" lo fonde nel fondo
+     scuro della pagina lasciando solo il simbolo. */
+  mix-blend-mode:screen;
+}
+.el-node-name{
+  position:absolute;white-space:nowrap;
+  font-family:'Asul',sans-serif;font-size:clamp(13px,1.5vw,19px);font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:#fff;
+  text-shadow:0 0 18px var(--c),0 2px 8px rgba(0,0,0,.9);
+}
+.el-node-top .el-node-name{bottom:118%;left:50%;transform:translateX(-50%)}
+.el-node-bottom .el-node-name{top:118%;left:50%;transform:translateX(-50%)}
+.el-node-left .el-node-name{right:118%;top:50%;transform:translateY(-50%)}
+.el-node-right .el-node-name{left:118%;top:50%;transform:translateY(-50%)}
+
+.el-node-top{top:22%}
+.el-node-bottom{top:78%}
+.el-node-left{left:22%}
+.el-node-right{left:78%}
+
+/* Nodo centrale ECLYSS */
+.el-node-center{
+  width:23%;background:radial-gradient(circle,#12002b 0%,#05000c 72%);
+}
+.el-node-center::before{background:radial-gradient(circle,#7B2FFF 0%,transparent 70%);opacity:.4}
+.el-node-center::after{border-color:rgba(192,132,252,.75);box-shadow:0 0 30px rgba(123,47,255,.7),0 0 70px rgba(123,47,255,.35)}
+.el-node-center span{
+  position:relative;z-index:1;
+  font-family:'Asul',sans-serif;font-size:clamp(12px,1.9vw,24px);font-weight:700;
+  letter-spacing:2.5px;color:#fff;text-shadow:0 0 20px rgba(192,132,252,.9);
+}
+
+/* ── CARTE DEI QUATTRO ELEMENTI ── */
+.el-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}
+/* Riga 1: sigillo + nome. Riga 2: il testo occupa tutta la larghezza della
+   carta — in colonna a fianco del sigillo resterebbe largo ~160px e la carta
+   diventerebbe una torre di 640px. */
+.el-card{
+  display:grid;grid-template-columns:80px 1fr;gap:14px 16px;
+  padding:22px 20px;border-radius:4px;
+  border:1px solid color-mix(in srgb,var(--c) 34%,transparent);
+  background:linear-gradient(160deg,rgba(12,4,26,.92),rgba(5,0,12,.92));
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.el-card:hover{
+  transform:translateY(-5px);border-color:color-mix(in srgb,var(--c) 62%,transparent);
+  box-shadow:0 16px 44px rgba(0,0,0,.55),0 0 34px color-mix(in srgb,var(--c) 28%,transparent);
+}
+.el-card-icon{
+  position:relative;width:80px;height:80px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.el-card-icon::before{
+  content:'';position:absolute;inset:-18%;border-radius:50%;
+  background:radial-gradient(circle,var(--c) 0%,transparent 68%);opacity:.28;filter:blur(6px);
+}
+.el-card-icon::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid var(--c);
+  box-shadow:0 0 18px color-mix(in srgb,var(--c) 65%,transparent),inset 0 0 16px color-mix(in srgb,var(--c) 28%,transparent);
+}
+.el-card-icon img{position:relative;z-index:1;width:104%;height:104%;object-fit:contain;mix-blend-mode:screen}
+.el-card-name{
+  align-self:center;
+  font-family:'Asul',sans-serif;font-size:clamp(20px,1.8vw,26px);font-weight:700;
+  letter-spacing:3.5px;text-transform:uppercase;color:#fff;
+  text-shadow:0 0 20px color-mix(in srgb,var(--c) 70%,transparent);
+}
+.el-card-body{grid-column:1 / -1;font-size:16px;line-height:1.65;color:rgba(255,255,255,.74)}
+.el-card-body strong{display:block;color:#fff;font-weight:700;margin-bottom:6px}
+
+/* ── TEST "SCOPRI IL TUO ELEMENTO" ── */
+.eltest{background:transparent}
+.eltest-inner{max-width:900px;margin:0 auto}
+.eltest-lead{
+  text-align:center;font-size:18px;line-height:1.8;color:rgba(255,255,255,.76);
+  max-width:720px;margin:0 auto 40px;
+}
+
+.eltest-box{
+  border:1px solid rgba(192,132,252,.22);border-radius:5px;
+  background:linear-gradient(165deg,rgba(14,5,30,.92),rgba(5,0,12,.94));
+  box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 50px rgba(123,47,255,.1);
+  padding:34px 34px 30px;
+}
+
+/* Barra di avanzamento */
+.eltest-progress{margin-bottom:26px}
+.eltest-progress-top{
+  display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;
+  font-family:'Asul',sans-serif;letter-spacing:2.5px;text-transform:uppercase;
+}
+.eltest-step{font-size:15px;font-weight:700;color:var(--purple-light)}
+.eltest-count{font-size:14px;color:var(--gray)}
+.eltest-bar{height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.eltest-bar-fill{
+  height:100%;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--purple),var(--purple-light));
+  box-shadow:0 0 14px rgba(192,132,252,.7);transition:width .35s ease;
+}
+
+.eltest-q{
+  font-family:'Asul',sans-serif;font-size:clamp(21px,2.4vw,28px);font-weight:700;
+  line-height:1.4;margin-bottom:24px;color:#fff;
+}
+.eltest-answers{display:flex;flex-direction:column;gap:12px}
+.eltest-ans{
+  display:flex;align-items:center;gap:16px;width:100%;text-align:left;
+  padding:16px 20px;border-radius:3px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);
+  color:rgba(255,255,255,.85);font-family:'Asul',sans-serif;font-size:17px;line-height:1.5;
+  transition:border-color .2s ease,background .2s ease,transform .2s ease,color .2s ease;
+}
+.eltest-ans:hover{
+  border-color:rgba(192,132,252,.55);background:rgba(123,47,255,.12);
+  color:#fff;transform:translateX(4px);
+}
+.eltest-ans-key{
+  flex:0 0 auto;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(192,132,252,.4);color:var(--purple-light);
+  font-size:14px;font-weight:700;letter-spacing:1px;
+}
+.eltest-ans:hover .eltest-ans-key{background:rgba(123,47,255,.28);border-color:var(--purple-light);color:#fff}
+
+.eltest-nav{display:flex;align-items:center;justify-content:space-between;margin-top:22px;min-height:22px}
+.eltest-back{
+  background:none;border:0;cursor:pointer;padding:0;
+  font-family:'Asul',sans-serif;font-size:15px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gray);transition:color .2s;
+}
+.eltest-back:hover{color:var(--purple-light)}
+.eltest-back[hidden]{display:none}
+.eltest-hint{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray)}
+
+/* ── RISULTATO ── */
+.eltest-result{text-align:center;padding:6px 0 4px}
+.eltest-result-icon{
+  position:relative;width:132px;height:132px;margin:0 auto 22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.eltest-result-icon::before{
+  content:'';position:absolute;inset:-22%;border-radius:50%;
+  background:radial-gradient(circle,var(--c) 0%,transparent 68%);opacity:.32;filter:blur(10px);
+}
+.eltest-result-icon::after{
+  content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--c);
+  box-shadow:0 0 26px color-mix(in srgb,var(--c) 70%,transparent),inset 0 0 22px color-mix(in srgb,var(--c) 30%,transparent);
+}
+.eltest-result-icon img{position:relative;z-index:1;width:104%;height:104%;object-fit:contain;mix-blend-mode:screen}
+.eltest-result-label{
+  font-family:'Asul',sans-serif;font-size:15px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--gray-light);margin-bottom:8px;
+}
+.eltest-result-name{
+  font-family:'Asul',sans-serif;font-size:clamp(32px,5vw,54px);font-weight:700;
+  letter-spacing:6px;text-transform:uppercase;color:#fff;margin-bottom:14px;
+  text-shadow:0 0 34px color-mix(in srgb,var(--c) 80%,transparent);
+}
+.eltest-result-text{
+  font-size:18px;line-height:1.75;color:rgba(255,255,255,.78);
+  max-width:600px;margin:0 auto 28px;
+}
+.eltest-powers-label{
+  font-family:'Asul',sans-serif;font-size:14px;font-weight:700;letter-spacing:3.5px;
+  text-transform:uppercase;color:var(--gray-light);margin-bottom:14px;
+}
+.eltest-powers{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:30px}
+.eltest-power{
+  padding:7px 16px;border-radius:20px;font-size:15px;letter-spacing:1px;
+  border:1px solid color-mix(in srgb,var(--c) 45%,transparent);
+  background:color-mix(in srgb,var(--c) 10%,transparent);color:rgba(255,255,255,.9);
+}
+/* Barre di affinità con gli altri elementi */
+.eltest-scores{max-width:440px;margin:0 auto 30px;display:flex;flex-direction:column;gap:10px}
+.eltest-score{display:grid;grid-template-columns:96px 1fr 34px;align-items:center;gap:12px}
+.eltest-score-name{
+  font-family:'Asul',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(255,255,255,.7);text-align:left;
+}
+.eltest-score-track{height:4px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden}
+.eltest-score-fill{
+  height:100%;width:0;border-radius:3px;background:var(--c);
+  box-shadow:0 0 12px var(--c);transition:width .6s ease;
+}
+.eltest-score-val{font-size:14px;color:var(--gray-light);text-align:right}
+.eltest-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
+.eltest-restart{
+  background:none;cursor:pointer;
+  border:1px solid rgba(192,132,252,.4);border-radius:3px;padding:13px 26px;
+  font-family:'Asul',sans-serif;font-size:16px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:#fff;text-decoration:none;
+  display:inline-flex;align-items:center;
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.eltest-restart:hover{background:rgba(123,47,255,.18);border-color:var(--purple-glow);transform:translateY(-2px)}
+.eltest-restart.is-primary{background:rgba(123,47,255,.2);box-shadow:0 0 26px rgba(123,47,255,.25)}
+
+/* ── RESPONSIVE ── */
+@media (max-width:1100px){
+  .el-cards{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:900px){
+  /* Su telefono il testo va sopra, il diagramma sotto a piena larghezza */
+  .el-top{grid-template-columns:1fr;gap:34px;margin-bottom:40px}
+  .el-intro{text-align:center}
+  .el-intro .section-label{justify-content:center}
+  .el-intro .section-title{text-align:center;font-size:clamp(30px,8.5vw,42px)}
+  .el-intro-rule{justify-content:center}
+  .el-intro-lead{font-size:17px}
+  .el-badge{margin-left:auto;margin-right:auto}
+  .el-cta{width:100%;max-width:340px;margin:0 auto;justify-content:center}
+  .el-diagram{max-width:420px}
+  .el-node-name{letter-spacing:2px}
+  .el-cards{grid-template-columns:1fr;gap:12px}
+  .el-card{grid-template-columns:70px 1fr;gap:12px 14px;padding:18px 16px}
+  .el-card-icon{width:70px;height:70px}
+  .el-card-body{font-size:15.5px}
+  .eltest-lead{font-size:16.5px;margin-bottom:30px}
+  .eltest-box{padding:24px 20px 22px}
+  .eltest-ans{font-size:16px;padding:14px 16px;gap:12px}
+  .eltest-ans:hover{transform:none}
+  .eltest-result-text{font-size:16.5px}
+  .eltest-score{grid-template-columns:80px 1fr 30px;gap:10px}
+}
+@media (max-width:560px){
+  /* Sotto i 560px le etichette laterali (Ombra / Tempo) arrivavano a 5px dal
+     bordo: si stringe il diagramma e le si avvicina ai nodi. */
+  .el-diagram{max-width:286px}
+  .el-node-name{font-size:12px;letter-spacing:1.5px}
+  .el-node-left .el-node-name{right:106%}
+  .el-node-right .el-node-name{left:106%}
+  .el-card{grid-template-columns:56px 1fr}
+  .el-card-icon{width:56px;height:56px}
+  .el-card-name{font-size:20px;letter-spacing:2.5px}
+  .eltest-actions{flex-direction:column}
+  .eltest-restart{width:100%;justify-content:center}
+}
+
+/* Ingrandimento contenuti solo desktop, coerente col resto della pagina */
+@media (min-width:901px){
+  .elementi,.eltest{zoom:1.06}
+}
