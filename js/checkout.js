@@ -207,6 +207,12 @@
     for (const it of existing) {
       await window.Snipcart.api.cart.items.remove(it.uniqueId);
     }
+    // URL che Snipcart usa per validare il prodotto (fa il crawl di questa pagina
+    // e vi cerca la definizione .snipcart-add-item con id/prezzo). Deve essere
+    // ASSOLUTO e raggiungibile: con un percorso relativo la validazione resta
+    // appesa e il carrello si pianta su "Stiamo preparando il tuo carrello...".
+    // Stessa logica di js/config.js — i due percorsi devono restare allineati.
+    const productUrl = new URL('prodotto.html', document.baseURI).href;
     const entries = Object.keys(cart).filter(id => PRODUCTS[id]);
     for (const id of entries) {
       const p = PRODUCTS[id];
@@ -214,7 +220,7 @@
         id: p.id,
         name: p.name,
         price: p.price,
-        url: '/prodotto.html',
+        url: productUrl,
         quantity: cart[id],
         description: p.meta,
         image: p.image

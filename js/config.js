@@ -180,6 +180,44 @@ document.addEventListener('DOMContentLoaded', function() {
     if (backBtn && backBtn.parentNode) backBtn.parentNode.removeChild(backBtn);
   }
 
+  // ── Indirizzo: campi manuali aperti di default ───────────────────────────────
+  // L'autocompletamento di Snipcart usa Google Places senza restrizione di paese
+  // e cerca a livello di via: digitando un comune ("Alba") restituisce strade
+  // statunitensi e l'utente resta bloccato. Snipcart offre una via d'uscita, la
+  // casella "Non trovo il mio indirizzo", che apre i campi manuali (via, citta',
+  // paese, provincia, CAP) — ma e' nascosta e nessuno la cerca.
+  // Qui la spuntiamo noi appena il form compare, cosi' i campi manuali sono
+  // subito visibili. Il form e' Vue e viene ridisegnato, quindi marchiamo ogni
+  // casella gia' gestita: se l'utente la ri-toglie per usare l'autocomplete,
+  // non gliela riattiviamo addosso.
+  const HANDLED = 'eclyssAddrDone';
+
+  function openManualAddressFields() {
+    // Ricerca su tutto il documento, non dentro #snipcart: Snipcart monta il
+    // proprio DOM ricreando quel nodo, quindi un riferimento preso all'avvio
+    // resta agganciato a un elemento ormai staccato.
+    const boxes = document.querySelectorAll('input[id^="addressNotFound_"]');
+    for (const cb of boxes) {
+      if (cb.dataset[HANDLED]) continue;
+      cb.dataset[HANDLED] = '1';
+      // click(), non checked=true: serve l'evento per far reagire Vue.
+      if (!cb.checked) cb.click();
+    }
+  }
+
+  let addrObserver = null;
+  function watchAddressFields() {
+    openManualAddressFields();
+    if (addrObserver) return;
+    addrObserver = new MutationObserver(openManualAddressFields);
+    addrObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // Parte subito: l'observer vive sul body, quindi intercetta il form quando
+  // Snipcart lo monta, senza dipendere da quando arriva "snipcart.ready".
+  if (document.body) watchAddressFields();
+  else document.addEventListener('DOMContentLoaded', watchAddressFields, { once: true });
+
   // Tiene il tasto sincronizzato: se il carrello viene chiuso in altri modi
   // (tasto interno di Snipcart, Esc, fine ordine), la route esce da "#/..." e
   // noi nascondiamo il pulsante.

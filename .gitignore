@@ -2,6 +2,11 @@
 _archive/
 migliore back up/
 
+# Sorgenti HTML in chiaro (pre-StaticCrypt): si modificano qui, poi si ricifra
+# con staticrypt nella root. MAI committare: online il sito e' protetto da
+# password, questi file ne esporrebbero i contenuti in chiaro su GitHub.
+_src/
+
 # Environment variables (credenziali live - mai committare)
 .env
 .env.local
