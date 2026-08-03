@@ -1,6 +1,8 @@
 /* ============================================================
    ECLYSS — "I Quattro Elementi" + Test "Scopri il tuo Elemento"
-   Sezioni della pagina Entra nel Nostro Mondo.
+   Usato da due pagine:
+   - entra-nel-nostro-mondo.html → la sezione "I Quattro Elementi"
+   - scopri-il-tuo-elemento.html → la pagina del test
    Caricato DOPO entra-nel-nostro-mondo.css (ne eredita variabili,
    .section-label, .section-title, .btn-hero).
    ============================================================ */
@@ -137,8 +139,16 @@
 .el-node-center{
   width:23%;background:radial-gradient(circle,#12002b 0%,#05000c 72%);
 }
-.el-node-center::before{background:radial-gradient(circle,#7B2FFF 0%,transparent 70%);opacity:.4}
-.el-node-center::after{border-color:rgba(192,132,252,.75);box-shadow:0 0 30px rgba(123,47,255,.7),0 0 70px rgba(123,47,255,.35)}
+/* Il nodo centrale non ha un sigillo: alone e anello se li disegna da solo */
+.el-node-center::before{
+  content:'';position:absolute;inset:-26%;border-radius:50%;
+  background:radial-gradient(circle,#7B2FFF 0%,transparent 70%);opacity:.4;filter:blur(8px);
+}
+.el-node-center::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(192,132,252,.75);
+  box-shadow:0 0 30px rgba(123,47,255,.7),0 0 70px rgba(123,47,255,.35);
+}
 .el-node-center span{
   position:relative;z-index:1;
   font-family:'Asul',sans-serif;font-size:clamp(12px,1.9vw,24px);font-weight:700;
@@ -338,4 +348,30 @@
 /* Ingrandimento contenuti solo desktop, coerente col resto della pagina */
 @media (min-width:901px){
   .elementi,.eltest{zoom:1.06}
+}
+
+/* ── PAGINA DEDICATA AL TEST (scopri-il-tuo-elemento.html) ──
+   Qui il test e' l'unico contenuto: serve spazio sotto la nav fissa e un
+   po' di respiro attorno al riquadro. */
+.eltest-page{padding-top:130px;padding-bottom:80px;min-height:calc(100vh - 300px)}
+.eltest-page .section-title{margin-bottom:14px}
+
+/* Riga dei quattro sigilli sopra il titolo */
+.eltest-sigilli{display:flex;justify-content:center;gap:18px;margin-bottom:26px}
+.eltest-sigilli .el-sigillo{width:60px;height:60px}
+
+.eltest-torna{text-align:center;margin-top:30px}
+.eltest-torna a{
+  font-family:'Asul',sans-serif;font-size:15px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gray);text-decoration:none;transition:color .2s;
+}
+.eltest-torna a:hover{color:var(--purple-light)}
+
+@media (max-width:900px){
+  .eltest-page{padding-top:100px;padding-bottom:56px;min-height:0}
+  .eltest-sigilli{gap:12px;margin-bottom:20px}
+  .eltest-sigilli .el-sigillo{width:48px;height:48px}
+}
+@media (max-width:560px){
+  .eltest-sigilli .el-sigillo{width:42px;height:42px}
 }

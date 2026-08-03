@@ -5,6 +5,10 @@ window.ECLYSS_I18N = { en: {
   /* ── Titoli pagina ── */
   "ECLYSS — Collectible Energy Drink · Le Voci del Silenzio": "ECLYSS — Collectible Energy Drink · The Voices of Silence",
   "Entra nel Nostro Mondo · ECLYSS": "Enter Our World · ECLYSS",
+  "Scopri il tuo Elemento · ECLYSS": "Discover your Element · ECLYSS",
+  /* Il <p> viene tradotto in blocco: il motore ne riscrive l'innerHTML e
+     stacca l'<a> figlio prima che tocchi il suo turno. */
+  "<a href=\"entra-nel-nostro-mondo.html#elementi\">← Torna ai Quattro Elementi</a>": "<a href=\"entra-nel-nostro-mondo.html#elementi\">← Back to the Four Elements</a>",
   "FAQ — Domande Frequenti · ECLYSS": "FAQ — Frequently Asked Questions · ECLYSS",
   "Stai Acquistando · ECLYSS": "You're Buying · ECLYSS",
 

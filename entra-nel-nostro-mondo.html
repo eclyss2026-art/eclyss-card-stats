@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/entra-nel-nostro-mondo.css?v=13">
-<link rel="stylesheet" href="css/elementi.css?v=2">
+<link rel="stylesheet" href="css/elementi.css?v=3">
 <!-- Snipcart eCommerce -->
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
 <link rel="stylesheet" href="css/snipcart-theme.css?v=2">
@@ -81,7 +81,7 @@
         <!-- Il motore i18n riscrive l'innerHTML dell'<a>: la chiave del
              dizionario e' quindi l'intero contenuto del link (span annidati
              compresi), percio' va tenuto semplice e stabile. -->
-        <a href="#test-elemento" class="el-cta"><span class="el-cta-glyph" aria-hidden="true">◈</span><span class="el-cta-txt"><span class="el-cta-main">Scopri il tuo Elemento</span><span class="el-cta-sub">Fai il test dell'Eclydex</span></span></a>
+        <a href="scopri-il-tuo-elemento.html" class="el-cta"><span class="el-cta-glyph" aria-hidden="true">◈</span><span class="el-cta-txt"><span class="el-cta-main">Scopri il tuo Elemento</span><span class="el-cta-sub">Fai il test dell'Eclydex</span></span></a>
       </div>
 
       <!-- Diagramma: i quattro Elementi orbitano attorno a ECLYSS -->
@@ -145,20 +145,6 @@
   </div>
 </section>
 
-<!-- TEST: SCOPRI IL TUO ELEMENTO -->
-<section class="eltest" id="test-elemento">
-  <div class="eltest-inner">
-    <div class="section-label">Il Responso dell'Eclydex</div>
-    <h2 class="section-title">Scopri il tuo Elemento</h2>
-    <p class="eltest-lead">Ogni anima è guidata da uno dei quattro Elementi. Nessuno è superiore agli altri: ognuno rivela un modo diverso di affrontare il mondo di Eclyss.<br>Rispondi seguendo il tuo istinto. L'Eclydex rivelerà l'energia che risuona dentro di te.</p>
-
-    <!-- data-no-i18n: il quiz e' generato via JS, il motore i18n non deve
-         riscriverne l'innerHTML (azzererebbe le barre e lo stato). -->
-    <div class="eltest-box" id="eltestBox" data-no-i18n>
-      <!-- Quiz e risultato sono generati da js/elementi-quiz.js -->
-    </div>
-  </div>
-</section>
 
 <!-- COLLEZIONE: GUARDIANS -->
 <section class="guardians" id="guardians">
@@ -419,7 +405,7 @@
 <!-- Carica variabili d'ambiente (per development locale e build) -->
 <script src="js/env-loader.js"></script>
 <!-- Config Snipcart -->
-<script src="js/i18n-dict.js?v=6"></script>
+<script src="js/i18n-dict.js?v=8"></script>
 <script src="js/i18n.js?v=10"></script>
 <script src="js/config.js?v=11"></script>
 <!-- Snipcart -->
