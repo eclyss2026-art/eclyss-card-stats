@@ -210,6 +210,12 @@ window.ECLYSS_I18N = { en: {
   "<strong>L'origine dell'ignoto.</strong>L'Ombra custodisce tutto ciò che il mondo nasconde: paure, desideri, segreti e ricordi dimenticati. Non appartiene all'oscurità, ma alla parte invisibile di ogni anima. Chi ne attinge il potere può manipolare ciò che gli altri non riescono a vedere… o ad accettare.": "<strong>The origin of the unknown.</strong>Shadow keeps everything the world hides: fears, desires, secrets and forgotten memories. It does not belong to darkness, but to the invisible part of every soul. Those who draw on its power can shape what others cannot see… or accept.",
   "<strong>L'origine del cambiamento.</strong>Il Tempo non scorre: trasforma. Custodisce il passato, plasma il presente e apre infinite possibilità per il futuro. Chi ne possiede l'essenza può accelerare, rallentare o alterare il corso degli eventi, sapendo che ogni cambiamento lascia una traccia.": "<strong>The origin of change.</strong>Time does not flow: it transforms. It guards the past, shapes the present and opens infinite possibilities for the future. Those who hold its essence can speed up, slow down or alter the course of events, knowing that every change leaves a trace.",
 
+  /* Descrizioni brevi delle carte Elemento */
+  "Lo spazio tra i pensieri, dove nasce ogni scelta.": "The space between thoughts, where every choice is born.",
+  "Forza imprevedibile che trasforma l'impossibile in realtà.": "An unpredictable force that turns the impossible into reality.",
+  "Custodisce segreti e rivela ciò che gli altri non vedono.": "It keeps secrets and reveals what others cannot see.",
+  "Plasma passato, presente e futuro. Ogni scelta lascia una traccia.": "It shapes past, present and future. Every choice leaves a trace.",
+
   /* ── Test "Scopri il tuo Elemento" ── */
   "Il Responso dell'Eclydex": "The Eclydex Verdict",
   "Ogni anima è guidata da uno dei quattro Elementi. Nessuno è superiore agli altri: ognuno rivela un modo diverso di affrontare il mondo di Eclyss.<br>Rispondi seguendo il tuo istinto. L'Eclydex rivelerà l'energia che risuona dentro di te.": "Every soul is guided by one of the four Elements. None is superior to the others: each reveals a different way of facing the world of Eclyss.<br>Answer following your instinct. The Eclydex will reveal the energy resonating within you."

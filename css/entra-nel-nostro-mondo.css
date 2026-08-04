@@ -14,11 +14,8 @@
 }
 html{scroll-behavior:smooth}
 body{
-  /* Sfondo unico continuo nei toni viola-nero del sito: le sezioni sono
-     trasparenti sopra questo, così i blocchi sfumano senza stacchi netti. */
-  background:#070010 linear-gradient(180deg,
-    #0b0018 0%, #160b30 18%, #0a0012 40%, #0f0820 62%, #0b0016 82%, #070010 100%) no-repeat;
-  background-size:100% 100%;
+  /* Sfondo nero uniforme della pagina Universo. */
+  background:#000;
   color:var(--white);font-family:'Asul',sans-serif;overflow-x:hidden;
 }
 

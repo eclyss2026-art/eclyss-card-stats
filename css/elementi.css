@@ -18,16 +18,15 @@
 .elementi{background:transparent;overflow:hidden}
 .elementi-inner{max-width:1280px;margin:0 auto}
 
-/* Blocco alto: testo a sinistra, diagramma a destra */
+/* Blocco introduttivo centrato */
 .el-top{
-  display:grid;grid-template-columns:minmax(280px,380px) 1fr;
-  gap:48px;align-items:center;margin-bottom:56px;
+  display:block;max-width:720px;margin:0 auto 56px;text-align:center;
 }
-.el-intro .section-label{justify-content:flex-start;text-align:left}
-.el-intro .section-title{text-align:left;font-size:clamp(30px,3.6vw,46px);line-height:1.15;margin-bottom:10px}
+.el-intro .section-label{justify-content:center;text-align:center}
+.el-intro .section-title{text-align:center;font-size:clamp(30px,3.6vw,46px);line-height:1.15;margin-bottom:10px}
 /* Piccolo rombo separatore sotto il titolo, come nella referenza */
 .el-intro-rule{
-  display:flex;align-items:center;gap:10px;margin-bottom:22px;
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:22px;
   color:rgba(192,132,252,.55);font-size:11px;
 }
 .el-intro-rule::before,.el-intro-rule::after{
@@ -42,7 +41,7 @@
   display:flex;align-items:center;gap:16px;
   border:1px solid rgba(192,132,252,.28);border-radius:3px;
   background:rgba(123,47,255,.06);padding:16px 20px;margin-bottom:22px;
-  max-width:340px;
+  max-width:340px;margin-left:auto;margin-right:auto;
 }
 .el-badge-glyph{
   flex:0 0 auto;width:30px;height:30px;transform:rotate(45deg);
@@ -80,9 +79,15 @@
 /* ── DIAGRAMMA DEI QUATTRO ELEMENTI ── */
 .el-diagram{
   position:relative;width:100%;max-width:640px;margin:0 auto;
-  aspect-ratio:1/1;
+  aspect-ratio:1/1;justify-self:center;
+}
+.el-orbit-system{
+  position:absolute;inset:0;
 }
 .el-diagram-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.el-orbit-rings circle:nth-child(1){stroke-dasharray:420 60 260 316}
+.el-orbit-rings circle:nth-child(2){stroke-dasharray:620 90 390 257}
+.el-orbit-rings circle:nth-child(3){stroke-dasharray:280 45 210 219}
 /* Disco del sigillo, condiviso da diagramma / carte / responso del test.
    I PNG (assets/sigillo-*.png) hanno il simbolo centrato su nero pieno:
    overflow:hidden su un contenitore tondo ritaglia il quadrato in un disco,
@@ -137,12 +142,11 @@
 
 /* Nodo centrale ECLYSS */
 .el-node-center{
-  width:23%;background:radial-gradient(circle,#12002b 0%,#05000c 72%);
+  width:23%;border-radius:50%;background:radial-gradient(circle,#12002b 0%,#05000c 72%);
 }
 /* Il nodo centrale non ha un sigillo: alone e anello se li disegna da solo */
 .el-node-center::before{
-  content:'';position:absolute;inset:-26%;border-radius:50%;
-  background:radial-gradient(circle,#7B2FFF 0%,transparent 70%);opacity:.4;filter:blur(8px);
+  content:none;
 }
 .el-node-center::after{
   content:'';position:absolute;inset:0;border-radius:50%;
@@ -156,15 +160,16 @@
 }
 
 /* ── CARTE DEI QUATTRO ELEMENTI ── */
-.el-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}
-/* Riga 1: sigillo + nome. Riga 2: il testo occupa tutta la larghezza della
-   carta — in colonna a fianco del sigillo resterebbe largo ~160px e la carta
-   diventerebbe una torre di 640px. */
+.el-cards{
+  display:flex;flex-direction:column;gap:14px;
+  width:100%;max-width:820px;margin:0 auto;
+}
 .el-card{
-  display:grid;grid-template-columns:80px 1fr;gap:14px 16px;
-  padding:22px 20px;border-radius:4px;
+  display:grid;grid-template-columns:58px 1fr;grid-template-rows:auto auto;
+  column-gap:20px;row-gap:3px;align-items:center;
+  padding:16px 24px;border-radius:16px;
   border:1px solid color-mix(in srgb,var(--c) 34%,transparent);
-  background:linear-gradient(160deg,rgba(12,4,26,.92),rgba(5,0,12,.92));
+  background:linear-gradient(100deg,color-mix(in srgb,var(--c) 10%,#090510) 0%,#08060d 38%,#050509 100%);
   transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
 }
 .el-card{cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,opacity .28s ease}
@@ -179,15 +184,14 @@
 /* Con un elemento selezionato le altre carte restano leggibili ma spente */
 .el-cards.has-active .el-card:not(.is-active){opacity:.42}
 .el-cards.has-active .el-card:not(.is-active):hover{opacity:1}
-.el-card-icon{width:80px;height:80px}
+.el-card-icon{grid-row:1 / 3;width:56px;height:56px}
 .el-card-name{
-  align-self:center;
-  font-family:'Asul',sans-serif;font-size:clamp(20px,1.8vw,26px);font-weight:700;
-  letter-spacing:3.5px;text-transform:uppercase;color:#fff;
+  align-self:end;
+  font-family:'Asul',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:1.8px;text-transform:uppercase;color:#fff;
   text-shadow:0 0 20px color-mix(in srgb,var(--c) 70%,transparent);
 }
-.el-card-body{grid-column:1 / -1;font-size:16px;line-height:1.65;color:rgba(255,255,255,.74)}
-.el-card-body strong{display:block;color:#fff;font-weight:700;margin-bottom:6px}
+.el-card-body{grid-column:2;align-self:start;font-size:16px;line-height:1.4;color:rgba(255,255,255,.58)}
 
 /* ── TEST "SCOPRI IL TUO ELEMENTO" ── */
 .eltest{background:transparent}
@@ -321,8 +325,8 @@
   .el-diagram{max-width:420px}
   .el-node-name{letter-spacing:2px}
   .el-cards{grid-template-columns:1fr;gap:12px}
-  .el-card{grid-template-columns:70px 1fr;gap:12px 14px;padding:18px 16px}
-  .el-card-icon{width:70px;height:70px}
+  .el-card{grid-template-columns:54px 1fr;column-gap:16px;row-gap:3px;padding:15px 18px}
+  .el-card-icon{width:52px;height:52px}
   .el-card-body{font-size:15.5px}
   .eltest-lead{font-size:16.5px;margin-bottom:30px}
   .eltest-box{padding:24px 20px 22px}
@@ -338,9 +342,10 @@
   .el-node-name{font-size:12px;letter-spacing:1.5px}
   .el-node-left .el-node-name{right:106%}
   .el-node-right .el-node-name{left:106%}
-  .el-card{grid-template-columns:56px 1fr}
-  .el-card-icon{width:56px;height:56px}
-  .el-card-name{font-size:20px;letter-spacing:2.5px}
+  .el-card{grid-template-columns:48px 1fr;column-gap:13px;padding:13px 14px;border-radius:13px}
+  .el-card-icon{width:46px;height:46px}
+  .el-card-name{font-size:18px;letter-spacing:1.4px}
+  .el-card-body{font-size:14px}
   .eltest-actions{flex-direction:column}
   .eltest-restart{width:100%;justify-content:center}
 }
