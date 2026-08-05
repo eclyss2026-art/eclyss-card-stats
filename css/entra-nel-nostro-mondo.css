@@ -367,18 +367,14 @@ section[id]{scroll-margin-top:90px}
 }
 .cards-row.is-dragging{cursor:grabbing;scroll-snap-type:none}
 .cards-row.is-dragging .gcard{pointer-events:none}
-/* Invito allo scorrimento, in alto a destra sopra la riga di carte: le carte
-   oltre il bordo non si vedono, quindi senza un segnale nessuno prova a
-   trascinare. Sparisce da solo appena la riga viene mossa (classe .is-used,
-   messa da js/entra-nel-nostro-mondo.js). */
+/* Invito persistente allo scorrimento, in alto a destra sopra la riga di carte. */
 .swipe-hint{
   display:flex;align-items:center;justify-content:flex-end;gap:8px;
   margin:0 4px 10px;
   font-family:'Asul',sans-serif;font-size:15px;font-weight:600;
   letter-spacing:2px;text-transform:uppercase;color:rgba(192,132,252,.75);
-  transition:opacity .45s ease;pointer-events:none;
+  pointer-events:none;
 }
-.swipe-hint.is-used{opacity:0}
 /* Il verbo giusto per il dispositivo: col mouse si trascina, col dito si scorre. */
 .sh-swipe{display:none}
 @media (hover:none),(pointer:coarse){
