@@ -310,6 +310,14 @@ if (skipIntroBtn) {
     return offset;
   }
 
+  let compactRotationLocked = false;
+  let compactLockSuppressed = false;
+  let compactRotationProgress = 0;
+  let compactRotationComplete = false;
+  let compactLockScrollY = 0;
+  let compactTouchY = null;
+  let updateCompactRotation = null;
+
   function fullyVisibleStickyTop(center) {
     const safeTop = window.matchMedia('(max-width:900px)').matches ? 84 : 88;
     const fullCanTop = window.innerHeight - center.offsetHeight - 24;
@@ -322,6 +330,8 @@ if (skipIntroBtn) {
   // a portare la lattina intera nello schermo. La rotazione parte quando il
   // contenitore raggiunge la sua posizione sticky e resta tutto visibile.
   function getScrollProgress() {
+    if (compactRotationLocked) return compactRotationProgress;
+
     const rect = stage.getBoundingClientRect();
     const range = stage.offsetHeight - window.innerHeight;
     if (range <= 0) return 1;
@@ -338,6 +348,69 @@ if (skipIntroBtn) {
     const rotationRange = Math.max(1, range - rotationStart);
     return Math.max(0, Math.min(1, (-rect.top - rotationStart) / rotationRange));
   }
+
+  function lockCompactScroll() {
+    if (!isMobileLayout() || compactRotationLocked || compactRotationComplete) return;
+    compactLockScrollY = window.scrollY;
+    compactRotationProgress = 0;
+    compactRotationLocked = true;
+    document.body.style.setProperty('--can-lock-top', -compactLockScrollY + 'px');
+    document.body.classList.add('can-rotation-lock');
+  }
+
+  function unlockCompactScroll(suppressRelock = false) {
+    if (!compactRotationLocked) return;
+    compactRotationLocked = false;
+    compactLockSuppressed = suppressRelock;
+    document.body.classList.remove('can-rotation-lock');
+    document.body.style.removeProperty('--can-lock-top');
+    window.scrollTo({ top: compactLockScrollY, behavior: 'instant' });
+  }
+
+  function maybeLockCompactScroll() {
+    if (!isMobileLayout() || compactRotationLocked || compactRotationComplete) return;
+    const center = stage.querySelector('.hero-center');
+    if (!center) return;
+    const rect = center.getBoundingClientRect();
+    if (compactLockSuppressed) {
+      if (rect.top < 0 || rect.bottom > window.innerHeight - 20) compactLockSuppressed = false;
+      return;
+    }
+    if (rect.top >= 0 && rect.bottom <= window.innerHeight - 20) lockCompactScroll();
+  }
+
+  function advanceCompactRotation(delta, event) {
+    if (!compactRotationLocked) return;
+    if (delta < 0 && compactRotationProgress <= 0) {
+      unlockCompactScroll(true);
+      return;
+    }
+
+    event.preventDefault();
+    const distance = event.type === 'wheel' ? 900 : 520;
+    compactRotationProgress = Math.max(0, Math.min(1, compactRotationProgress + delta / distance));
+    if (updateCompactRotation) updateCompactRotation();
+  }
+
+  window.addEventListener('wheel', event => {
+    advanceCompactRotation(event.deltaY, event);
+  }, { passive: false });
+
+  window.addEventListener('touchstart', event => {
+    compactTouchY = event.touches[0] ? event.touches[0].clientY : null;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', event => {
+    if (!compactRotationLocked || compactTouchY === null || !event.touches[0]) return;
+    const nextY = event.touches[0].clientY;
+    const delta = compactTouchY - nextY;
+    compactTouchY = nextY;
+    advanceCompactRotation(delta, event);
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    compactTouchY = null;
+  }, { passive: true });
 
   /* ── PAUSA A ECLISSI CHIUSA ──
      Appena l'eclissi si completa si tiene un istante fermi prima di liberare
@@ -435,11 +508,14 @@ if (skipIntroBtn) {
     const CIRC_FB = 2 * Math.PI * 20;
     let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
     function onScrollLite() {
+      if (!fbRotationCompleted) maybeLockCompactScroll();
       const p = getScrollProgress();
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
+        compactRotationComplete = true;
         fbEclipseLocked = true;
         img.style.cursor = 'grab';
+        unlockCompactScroll();
         // via la zona morta dell'hero incollato (come nel percorso 3D, solo desktop)
         if (!isMobileLayout()) {
           const top = stage.offsetTop;
@@ -464,6 +540,7 @@ if (skipIntroBtn) {
       }
       if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
     }
+    updateCompactRotation = onScrollLite;
     window.addEventListener('scroll', onScrollLite, { passive: true });
     onScrollLite();
   }
@@ -838,11 +915,14 @@ if (skipIntroBtn) {
   }
 
   function onScroll() {
+    if (!rotationCompleted) maybeLockCompactScroll();
     const p = getScrollProgress();
     if (p >= 0.995 && !rotationCompleted) {
       rotationCompleted = true;      // da qui comanda il trascinamento
+      compactRotationComplete = true;
       eclipseLocked = true;          // l'eclissi completa resta completa
       canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
+      unlockCompactScroll();
       unpinStage();                  // sgancio ORA, fuso col movimento in corso
       blockScrollBriefly();          // poi un istante fermi: l'eclissi respira
     }
@@ -861,6 +941,7 @@ if (skipIntroBtn) {
     }
     if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
   }
+  updateCompactRotation = onScroll;
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 

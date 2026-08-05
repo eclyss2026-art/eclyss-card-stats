@@ -1017,3 +1017,8 @@ footer{
   .hero-row{padding-bottom:65svh}
   .hero-center{top:var(--can-sticky-top,84px)}
 }
+
+body.can-rotation-lock{
+  position:fixed;top:var(--can-lock-top);left:0;right:0;width:100%;
+  overflow:hidden;overscroll-behavior:none;
+}
