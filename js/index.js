@@ -436,7 +436,7 @@ if (skipIntroBtn) {
   const W = 480, H = 700;
   // Cap del pixel ratio: oltre 2 il guadagno visivo e' nullo ma il costo GPU
   // quadruplica — sui telefoni (DPR 3+) era la causa principale dei blocchi.
-  const isSmallScreen = matchMedia('(max-width: 900px)').matches;
+  const isSmallScreen = matchMedia('(max-width: 1180px), (max-height: 720px)').matches;
   const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.6 : 2);
   canvas.width  = W * pixelRatio;
   canvas.height = H * pixelRatio;
@@ -489,7 +489,9 @@ if (skipIntroBtn) {
     },
   ];
   // Layout mobile: hero non incollato, stage ad altezza automatica
-  const isMobileLayout = () => window.matchMedia('(max-width:900px)').matches;
+  // Anche lo zoom del browser riduce la viewport CSS. Sotto questa soglia la
+  // hero passa al flusso verticale compatto, quindi non va trattata come sticky.
+  const isMobileLayout = () => window.matchMedia('(max-width:1180px), (max-height:720px)').matches;
   /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
      lasciata dallo sgancio: e' valida solo per il layout desktop. */
   window.addEventListener('resize', () => {

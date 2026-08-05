@@ -628,3 +628,25 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
   transition:background .2s,border-color .2s,color .2s;
 }
 .lang-toggle:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5);color:#C084FC}
+
+/* Browser zoom / finestre desktop compatte.
+   Il testo non resta sovrapposto a un video che si abbassa insieme alla
+   viewport: la hero diventa una sequenza video + contenuto prima di collidere. */
+@media (min-width:901px) and (max-width:1180px),
+       (min-width:901px) and (max-height:720px){
+  .world-hero{min-height:0}
+  .world-hero-bg{position:relative;aspect-ratio:16/9;overflow:hidden}
+  .world-hero-bg img,.world-hero-bg video{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  }
+  .world-hero-top{
+    position:relative;top:auto;max-width:none;
+    padding:28px 32px 52px;text-align:center;
+  }
+  .world-hero-top .section-label{justify-content:center}
+  .world-hero-top .section-title{
+    text-align:center;font-size:clamp(36px,5vw,52px);margin-bottom:16px;
+  }
+  .world-hero-lead{margin-left:auto;margin-right:auto}
+  .world-hero-quotes{display:none}
+}
