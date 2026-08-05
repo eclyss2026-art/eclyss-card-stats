@@ -309,7 +309,7 @@
     }
     html += '</div>' +
         '<div class="eltest-actions">' +
-          '<a href="index.html#box" class="eltest-restart is-primary">' + L.ui.carte + '</a>' +
+          '<a href="index.html?acquista=1#box" class="eltest-restart is-primary">' + L.ui.carte + '</a>' +
           '<button type="button" class="eltest-restart" id="eltestRestart">' + L.ui.rifai + '</button>' +
         '</div>' +
       '</div>';
