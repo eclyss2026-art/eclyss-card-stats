@@ -226,3 +226,58 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
   render();
 })();
+// Video hero: prova l'autoplay quando il file e' pronto, quando la pagina
+// torna visibile e al primo gesto dell'utente. Il video rimane trasparente
+// finche' non parte davvero, lasciando visibile il poster senza pulsanti nativi.
+(function() {
+  const video = document.querySelector('.world-hero-bg video');
+  const container = video && video.closest('.world-hero-bg');
+  if (!video || !container) return;
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+
+  const showPoster = () => container.classList.remove('video-is-playing');
+  const showVideo = () => container.classList.add('video-is-playing');
+
+  function tryPlayback() {
+    if (document.hidden) return;
+
+    try {
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') {
+        playback.catch(showPoster);
+      }
+    } catch (error) {
+      showPoster();
+    }
+  }
+
+  video.addEventListener('playing', showVideo);
+  video.addEventListener('error', showPoster);
+  video.addEventListener('loadeddata', tryPlayback);
+  video.addEventListener('canplay', tryPlayback);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && video.paused) tryPlayback();
+  });
+  window.addEventListener('pageshow', () => {
+    if (video.paused) tryPlayback();
+  });
+
+  const unlockOnFirstGesture = () => {
+    document.removeEventListener('pointerdown', unlockOnFirstGesture, true);
+    document.removeEventListener('touchstart', unlockOnFirstGesture, true);
+    document.removeEventListener('keydown', unlockOnFirstGesture, true);
+    tryPlayback();
+  };
+
+  document.addEventListener('pointerdown', unlockOnFirstGesture, true);
+  document.addEventListener('touchstart', unlockOnFirstGesture, { capture: true, passive: true });
+  document.addEventListener('keydown', unlockOnFirstGesture, true);
+
+  if (video.readyState >= 2) tryPlayback();
+})();
