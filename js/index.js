@@ -354,16 +354,12 @@ if (skipIntroBtn) {
     compactLockScrollY = window.scrollY;
     compactRotationProgress = 0;
     compactRotationLocked = true;
-    document.body.style.setProperty('--can-lock-top', -compactLockScrollY + 'px');
-    document.body.classList.add('can-rotation-lock');
   }
 
   function unlockCompactScroll(suppressRelock = false) {
     if (!compactRotationLocked) return;
     compactRotationLocked = false;
     compactLockSuppressed = suppressRelock;
-    document.body.classList.remove('can-rotation-lock');
-    document.body.style.removeProperty('--can-lock-top');
     window.scrollTo({ top: compactLockScrollY, behavior: 'instant' });
   }
 
@@ -410,6 +406,23 @@ if (skipIntroBtn) {
 
   window.addEventListener('touchend', () => {
     compactTouchY = null;
+  }, { passive: true });
+
+  window.addEventListener('keydown', event => {
+    if (!compactRotationLocked) return;
+    const deltas = {
+      ArrowDown: 80, PageDown: 260, End: 520, ' ': 260,
+      ArrowUp: -80, PageUp: -260, Home: -520
+    };
+    if (deltas[event.key] !== undefined) advanceCompactRotation(deltas[event.key], event);
+  });
+
+  // Mantiene invariata la posizione senza togliere il documento dal flusso:
+  // la scrollbar a destra resta visibile mentre swipe/rotella ruotano la lattina.
+  window.addEventListener('scroll', () => {
+    if (compactRotationLocked && Math.abs(window.scrollY - compactLockScrollY) > 1) {
+      window.scrollTo({ top: compactLockScrollY, behavior: 'instant' });
+    }
   }, { passive: true });
 
   /* ── PAUSA A ECLISSI CHIUSA ──
