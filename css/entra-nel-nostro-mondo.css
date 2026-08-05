@@ -345,7 +345,12 @@ section[id]{scroll-margin-top:90px}
   display:flex;align-items:stretch;gap:14px;
   overflow-x:auto;overflow-y:visible;
   scroll-snap-type:x proximity;scroll-padding-inline:4px;
-  padding:4px 4px 18px;
+  /* Il padding sopra NON e' decorativo: con overflow-x:auto il browser forza
+     overflow-y ad "auto" (per specifica non puo' restare visible), quindi la
+     riga ritaglia. In hover la carta sale di 7px e lo scale 1.02 la fa crescere
+     di altri ~4: senza questi 16px il bordo alto veniva tranciato.
+     Il margine negativo riassorbe lo spazio, cosi' il ritmo verticale non cambia. */
+  padding:16px 4px 18px;margin-top:-12px;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
   cursor:grab;user-select:none;
 }
@@ -418,6 +423,16 @@ section[id]{scroll-margin-top:90px}
 .gcard:hover .gcard-stats{opacity:1;transform:translateY(0)}
 .gstat-power{font-family:'Asul',sans-serif;font-size:22px;font-weight:900;color:var(--purple-light);text-shadow:0 0 16px rgba(192,132,252,.8);letter-spacing:1px}
 .gstat-hostile .gstat-power{color:#ff6b6b;text-shadow:0 0 16px rgba(255,107,107,.8)}
+/* Nome della carta: apre l'overlay, e' l'informazione che si cerca per prima.
+   I ritratti sono "senza scritte", quindi senza questo il personaggio resta
+   anonimo. */
+.gstat-name{
+  font-family:'Asul',sans-serif;font-size:26px;font-weight:700;
+  letter-spacing:5px;text-transform:uppercase;color:var(--white);
+  text-shadow:0 0 18px rgba(192,132,252,.75),0 2px 6px rgba(0,0,0,.9);
+  line-height:1;
+}
+.gstat-hostile .gstat-name{text-shadow:0 0 18px rgba(239,68,68,.7),0 2px 6px rgba(0,0,0,.9)}
 .gstat-elem{
   font-family:'Asul',sans-serif;font-size:19px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
   color:rgba(255,255,255,.85);border-top:1px solid rgba(255,255,255,.2);border-bottom:1px solid rgba(255,255,255,.2);padding:4px 10px;
