@@ -1004,3 +1004,16 @@ footer{
   .section-nums span::before{display:none}
   .scroll-hint,#progress-ring{display:none}
 }
+
+/* Prima si porta la lattina intera nello schermo, poi la si trattiene durante
+   la rotazione. Il padding finale e' la corsia di scroll necessaria al giro. */
+@media (max-width:1180px), (max-height:720px){
+  .hero{overflow:clip}
+  .hero-row{padding-bottom:calc(48px + 65svh)}
+  .hero-center{position:sticky;top:88px}
+}
+
+@media (max-width:900px){
+  .hero-row{padding-bottom:65svh}
+  .hero-center{top:84px}
+}

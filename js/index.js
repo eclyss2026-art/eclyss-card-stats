@@ -300,6 +300,37 @@ if (skipIntroBtn) {
   const stage     = document.getElementById('scroll-stage');
   if (!canvas || !stage) return;
 
+  function offsetInsideStage(element) {
+    let offset = 0;
+    let current = element;
+    while (current && current !== stage) {
+      offset += current.offsetTop;
+      current = current.offsetParent;
+    }
+    return offset;
+  }
+
+  // Nel layout mobile/compatto il primo tratto di scroll serve esclusivamente
+  // a portare la lattina intera nello schermo. La rotazione parte quando il
+  // contenitore raggiunge la sua posizione sticky e resta tutto visibile.
+  function getScrollProgress() {
+    const rect = stage.getBoundingClientRect();
+    const range = stage.offsetHeight - window.innerHeight;
+    if (range <= 0) return 1;
+
+    let rotationStart = 0;
+    if (isMobileLayout()) {
+      const center = stage.querySelector('.hero-center');
+      if (center) {
+        const stickyTop = parseFloat(getComputedStyle(center).top) || 0;
+        rotationStart = Math.max(0, offsetInsideStage(center) - stickyTop);
+      }
+    }
+
+    const rotationRange = Math.max(1, range - rotationStart);
+    return Math.max(0, Math.min(1, (-rect.top - rotationStart) / rotationRange));
+  }
+
   /* ── PAUSA A ECLISSI CHIUSA ──
      Appena l'eclissi si completa si tiene un istante fermi prima di liberare
      lo scroll: il momento di eclissi totale respira invece di scivolare via
@@ -396,9 +427,7 @@ if (skipIntroBtn) {
     const CIRC_FB = 2 * Math.PI * 20;
     let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
     function onScrollLite() {
-      const rect = stage.getBoundingClientRect();
-      const range = stage.offsetHeight - window.innerHeight;
-      const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+      const p = getScrollProgress();
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         fbEclipseLocked = true;
@@ -491,7 +520,9 @@ if (skipIntroBtn) {
   // Layout mobile: hero non incollato, stage ad altezza automatica
   // Anche lo zoom del browser riduce la viewport CSS. Sotto questa soglia la
   // hero passa al flusso verticale compatto, quindi non va trattata come sticky.
-  const isMobileLayout = () => window.matchMedia('(max-width:1180px), (max-height:720px)').matches;
+  function isMobileLayout() {
+    return window.matchMedia('(max-width:1180px), (max-height:720px)').matches;
+  }
   /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
      lasciata dallo sgancio: e' valida solo per il layout desktop. */
   window.addEventListener('resize', () => {
@@ -799,10 +830,7 @@ if (skipIntroBtn) {
   }
 
   function onScroll() {
-    const rect = stage.getBoundingClientRect();
-    const range = stage.offsetHeight - window.innerHeight;
-    // range 0 = hero già sganciato: il giro è concluso
-    const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+    const p = getScrollProgress();
     if (p >= 0.995 && !rotationCompleted) {
       rotationCompleted = true;      // da qui comanda il trascinamento
       eclipseLocked = true;          // l'eclissi completa resta completa
