@@ -18,6 +18,7 @@ window.ECLYSS_I18N = { en: {
   "Acquista": "Shop",
   "Il tuo carrello": "Your cart",
   "Il carrello è vuoto.<br>Aggiungi la tua prima <span class=\"hl\">ECLYSS</span> Box.": "Your cart is empty.<br>Add your first <span class=\"hl\">ECLYSS</span> Box.",
+  "Acquista ora": "Shop now",
   "Vai all'acquisto": "Checkout",
   "Torna al Sito": "Back to Site",
 

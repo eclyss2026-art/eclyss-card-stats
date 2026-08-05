@@ -35,8 +35,9 @@
   });
 })();
 
-// Swipe orizzontale delle carte anche su desktop.
-// Touch e trackpad restano nativi; con il mouse si trascina la riga.
+// Nastro infinito delle carte: touch e trackpad restano nativi; con il mouse
+// si trascina la riga. Una copia della sequenza ai due lati permette di
+// oltrepassare prima e ultima carta senza incontrare un fine corsa.
 (function() {
   document.querySelectorAll('.cards-row').forEach(row => {
     let dragging = false;
@@ -44,6 +45,67 @@
     let startX = 0;
     let startScrollLeft = 0;
     let activePointerId = null;
+    let loopWidth = 0;
+    let loopFrame = null;
+
+    const originalCards = Array.from(row.children);
+    const cloneCard = card => {
+      const clone = card.cloneNode(true);
+      clone.dataset.loopClone = 'true';
+      clone.setAttribute('aria-hidden', 'true');
+      return clone;
+    };
+
+    if (originalCards.length > 1) {
+      const beforeCards = originalCards.map(cloneCard);
+      const afterCards = originalCards.map(cloneCard);
+      const beforeFragment = document.createDocumentFragment();
+      const afterFragment = document.createDocumentFragment();
+
+      beforeCards.forEach(card => beforeFragment.appendChild(card));
+      afterCards.forEach(card => afterFragment.appendChild(card));
+      row.insertBefore(beforeFragment, row.firstChild);
+      row.appendChild(afterFragment);
+
+      const measureLoop = () => {
+        const previousWidth = loopWidth;
+        const nextWidth = originalCards[0].offsetLeft - beforeCards[0].offsetLeft;
+        if (nextWidth <= 0) return;
+
+        loopWidth = nextWidth;
+        if (previousWidth > 0) {
+          row.scrollLeft = row.scrollLeft / previousWidth * loopWidth;
+        } else {
+          row.scrollLeft = loopWidth;
+        }
+      };
+
+      const keepInsideLoop = () => {
+        loopFrame = null;
+        if (!loopWidth) return;
+
+        let shift = 0;
+        while (row.scrollLeft + shift < loopWidth * .5) shift += loopWidth;
+        while (row.scrollLeft + shift > loopWidth * 1.5) shift -= loopWidth;
+
+        if (shift) {
+          row.scrollLeft += shift;
+          if (dragging) startScrollLeft += shift;
+        }
+      };
+
+      row.addEventListener('scroll', () => {
+        if (loopFrame === null) loopFrame = requestAnimationFrame(keepInsideLoop);
+      }, { passive: true });
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(measureLoop, 120);
+      }, { passive: true });
+
+      requestAnimationFrame(measureLoop);
+    }
 
     row.addEventListener('dragstart', event => event.preventDefault());
 
@@ -89,14 +151,12 @@
       moved = false;
     }, true);
 
-    // L'invito sopra la riga ha esaurito il suo scopo appena l'utente interagisce.
-    // "scroll" da solo coprirebbe tutti i gesti (trascinamento, dito, rotella,
-    // tastiera), ma lo affianchiamo all'inizio del gesto cosi' l'invito sparisce
-    // subito invece che dopo il primo pixel di movimento.
+    // Il posizionamento iniziale e i salti invisibili del nastro generano eventi
+    // scroll via codice: l'invito deve reagire solo a un gesto reale dell'utente.
     const hint = row.previousElementSibling;
     if (hint && hint.classList.contains('swipe-hint')) {
       const usato = () => hint.classList.add('is-used');
-      ['scroll', 'pointerdown', 'touchstart', 'wheel'].forEach(ev =>
+      ['pointerdown', 'touchstart', 'wheel'].forEach(ev =>
         row.addEventListener(ev, usato, { once: true, passive: true })
       );
     }
