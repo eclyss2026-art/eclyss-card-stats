@@ -186,3 +186,28 @@
   stroke: currentColor !important;
   opacity: 1 !important;
 }
+
+/* Su mobile Snipcart rende la nazione come select nativo non ricercabile.
+   Il campo creato da checkout.js abilita la ricerca da tastiera e mantiene
+   nascosto il select originale, che continua a ricevere il valore scelto. */
+#snipcart .eclyss-country-search {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  font-size: 16px;
+  color: var(--color-input) !important;
+  background: var(--bgColor-input) !important;
+  border: 1px solid var(--borderColor-input) !important;
+  border-radius: 4px;
+  padding: 0 14px;
+}
+
+#snipcart .eclyss-country-search:focus {
+  border-color: var(--borderColor-input-focus) !important;
+  box-shadow: var(--shadow-input-focus) !important;
+  outline: none;
+}
+
+#snipcart .eclyss-country-native-select {
+  display: none !important;
+}
