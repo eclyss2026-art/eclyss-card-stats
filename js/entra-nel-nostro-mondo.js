@@ -88,6 +88,18 @@
       event.stopPropagation();
       moved = false;
     }, true);
+
+    // L'invito sopra la riga ha esaurito il suo scopo appena l'utente interagisce.
+    // "scroll" da solo coprirebbe tutti i gesti (trascinamento, dito, rotella,
+    // tastiera), ma lo affianchiamo all'inizio del gesto cosi' l'invito sparisce
+    // subito invece che dopo il primo pixel di movimento.
+    const hint = row.previousElementSibling;
+    if (hint && hint.classList.contains('swipe-hint')) {
+      const usato = () => hint.classList.add('is-used');
+      ['scroll', 'pointerdown', 'touchstart', 'wheel'].forEach(ev =>
+        row.addEventListener(ev, usato, { once: true, passive: true })
+      );
+    }
   });
 })();
 

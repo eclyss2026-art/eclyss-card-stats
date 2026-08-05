@@ -103,6 +103,8 @@ window.ECLYSS_I18N = { en: {
   "Furia Primordiale": "Primordial Fury",
   "Il Portatore del Rumore": "The Bearer of Noise",
   "L'Eco dell'Oscurità": "The Echo of Darkness",
+  "Trascina per esplorare": "Drag to explore",
+  "Scorri per esplorare": "Swipe to explore",
   "E tanti altri Custodi da scoprire": "And many more Guardians to discover",
   "Figli della Dissonanza": "Children of Dissonance",
   "Dall'incertezza di un Custode, il Silenzio fu spezzato.<br> Dalla frattura nacquero gli Interferenti, espressioni del disordine cosmico.<strong style=\"color:var(--purple-light); font-weight:700;\"><br>Sussurri corrotti dell'Eclydex.</strong>": "From a Guardian's uncertainty, the Silence was broken.<br> From the fracture came the Interferers, expressions of cosmic disorder.<strong style=\"color:var(--purple-light); font-weight:700;\"><br>Corrupted whispers of the Eclydex.</strong>",

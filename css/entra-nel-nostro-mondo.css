@@ -351,12 +351,38 @@ section[id]{scroll-margin-top:90px}
 }
 .cards-row::-webkit-scrollbar{display:none}
 .cards-row img{-webkit-user-drag:none}
+/* Larghezza in frazioni di riga, non in pixel: cosi' l'ultima carta visibile
+   resta SEMPRE tagliata a meta' schermo, a qualunque risoluzione. Con una
+   misura fissa poteva capitare che le carte riempissero la riga esatta, e
+   senza un pezzo che sporge nessuno capisce che si puo' scorrere.
+   4,35 = quattro carte intere piu' un terzo della quinta. */
 .cards-row>.gcard{
-  flex:0 0 clamp(190px,20vw,238px);
+  flex:0 0 calc((100% - 4 * 14px) / 4.35);
   scroll-snap-align:start;
 }
 .cards-row.is-dragging{cursor:grabbing;scroll-snap-type:none}
 .cards-row.is-dragging .gcard{pointer-events:none}
+/* Invito allo scorrimento, in alto a destra sopra la riga di carte: le carte
+   oltre il bordo non si vedono, quindi senza un segnale nessuno prova a
+   trascinare. Sparisce da solo appena la riga viene mossa (classe .is-used,
+   messa da js/entra-nel-nostro-mondo.js). */
+.swipe-hint{
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  margin:0 4px 10px;
+  font-family:'Asul',sans-serif;font-size:15px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;color:rgba(192,132,252,.75);
+  transition:opacity .45s ease;pointer-events:none;
+}
+.swipe-hint.is-used{opacity:0}
+/* Il verbo giusto per il dispositivo: col mouse si trascina, col dito si scorre. */
+.sh-swipe{display:none}
+@media (hover:none),(pointer:coarse){
+  .sh-drag{display:none}
+  .sh-swipe{display:inline}
+}
+.sh-arrow{display:inline-block;font-size:17px;animation:shNudge 1.8s ease-in-out infinite}
+@keyframes shNudge{0%,100%{transform:translateX(0);opacity:.6}50%{transform:translateX(6px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.sh-arrow{animation:none}}
 .more-tag{
   text-align:center;margin-top:40px;
   font-family:'Asul',sans-serif;font-size:18px;font-weight:600;letter-spacing:4px;
@@ -438,7 +464,8 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
 @media (max-width:1100px){
   .era-grid{grid-template-columns:repeat(3,1fr)}
   .codex-grid{grid-template-columns:repeat(4,1fr)}
-  .cards-row{grid-template-columns:repeat(4,1fr)}
+  /* meno carte in vista, ma sempre con la successiva che sporge */
+  .cards-row>.gcard{flex:0 0 calc((100% - 3 * 14px) / 3.35)}
 }
 @media (max-width:900px){
   nav{padding:12px 24px;grid-template-columns:1fr auto}
@@ -506,7 +533,7 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
   .era{padding:18px 16px}
   .era-name{min-height:0}
   .codex-grid{grid-template-columns:repeat(3,1fr)}
-  .cards-row{grid-template-columns:repeat(3,1fr)}
+  .cards-row>.gcard{flex:0 0 calc((100% - 2 * 14px) / 2.4)}
   .more-tag{margin-top:30px;letter-spacing:2.5px}
   .risk-divider{padding:30px 24px}
   .footer-grid{grid-template-columns:1fr 1fr;max-width:none;text-align:left}
