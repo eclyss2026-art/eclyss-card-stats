@@ -35,7 +35,11 @@
   ].join(',');
 
   var curLang = 'it', obs = null, reTimer = null;
-  function norm(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+  // normalize('NFC'): testi incollati da Excel/Mac arrivano spesso decomposti
+  // ("a" + accento combinante U+0300) mentre il dizionario ha la forma
+  // precomposta ("à", U+00E0). A schermo sono identici, come byte no, e la
+  // chiave non combaciava piu' — la frase restava in italiano senza errori.
+  function norm(s) { return (s || '').normalize('NFC').replace(/\s+/g, ' ').trim(); }
 
   function apply(lang) {
     curLang = lang;

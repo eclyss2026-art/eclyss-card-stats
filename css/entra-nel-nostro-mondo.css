@@ -341,7 +341,22 @@ section[id]{scroll-margin-top:90px}
 .guardians-text{max-width:760px;margin:0 auto 48px;text-align:center}
 .guardians-text .section-title{white-space:nowrap}
 .guardians-text p{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;margin:0 auto;max-width:760px}
-.cards-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:start}
+.cards-row{
+  display:flex;align-items:stretch;gap:14px;
+  overflow-x:auto;overflow-y:visible;
+  scroll-snap-type:x proximity;scroll-padding-inline:4px;
+  padding:4px 4px 18px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  cursor:grab;user-select:none;
+}
+.cards-row::-webkit-scrollbar{display:none}
+.cards-row img{-webkit-user-drag:none}
+.cards-row>.gcard{
+  flex:0 0 clamp(190px,20vw,238px);
+  scroll-snap-align:start;
+}
+.cards-row.is-dragging{cursor:grabbing;scroll-snap-type:none}
+.cards-row.is-dragging .gcard{pointer-events:none}
 .more-tag{
   text-align:center;margin-top:40px;
   font-family:'Asul',sans-serif;font-size:18px;font-weight:600;letter-spacing:4px;

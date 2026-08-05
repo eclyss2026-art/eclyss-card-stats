@@ -36,20 +36,6 @@
 .el-intro-rule::after{background:linear-gradient(90deg,rgba(192,132,252,.5),transparent)}
 .el-intro-lead{font-size:18px;line-height:1.75;color:rgba(255,255,255,.78);margin-bottom:26px}
 
-/* Riquadro "Quattro forze. Un equilibrio." */
-.el-badge{
-  display:flex;align-items:center;gap:16px;
-  border:1px solid rgba(192,132,252,.28);border-radius:3px;
-  background:rgba(123,47,255,.06);padding:16px 20px;margin-bottom:22px;
-  max-width:340px;margin-left:auto;margin-right:auto;
-}
-.el-badge-glyph{
-  flex:0 0 auto;width:30px;height:30px;transform:rotate(45deg);
-  border:1px solid rgba(192,132,252,.5);border-radius:2px;
-  box-shadow:0 0 16px rgba(123,47,255,.35) inset;
-}
-.el-badge-txt{font-size:16px;line-height:1.55;color:rgba(255,255,255,.8)}
-
 /* CTA verso il test */
 .el-cta{
   display:inline-flex;align-items:center;gap:16px;
@@ -320,7 +306,6 @@
   .el-intro .section-title{text-align:center;font-size:clamp(30px,8.5vw,42px)}
   .el-intro-rule{justify-content:center}
   .el-intro-lead{font-size:17px}
-  .el-badge{margin-left:auto;margin-right:auto}
   .el-cta{width:100%;max-width:340px;margin:0 auto;justify-content:center}
   .el-diagram{max-width:420px}
   .el-node-name{letter-spacing:2px}

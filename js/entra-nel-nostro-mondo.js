@@ -35,6 +35,62 @@
   });
 })();
 
+// Swipe orizzontale delle carte anche su desktop.
+// Touch e trackpad restano nativi; con il mouse si trascina la riga.
+(function() {
+  document.querySelectorAll('.cards-row').forEach(row => {
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+    let activePointerId = null;
+
+    row.addEventListener('dragstart', event => event.preventDefault());
+
+    row.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse' || event.button !== 0) return;
+
+      dragging = true;
+      moved = false;
+      activePointerId = event.pointerId;
+      startX = event.clientX;
+      startScrollLeft = row.scrollLeft;
+      row.classList.add('is-dragging');
+      row.setPointerCapture(activePointerId);
+    });
+
+    row.addEventListener('pointermove', event => {
+      if (!dragging || event.pointerId !== activePointerId) return;
+
+      const distance = event.clientX - startX;
+      if (Math.abs(distance) > 4) moved = true;
+      row.scrollLeft = startScrollLeft - distance;
+      event.preventDefault();
+    });
+
+    function stopDragging(event) {
+      if (!dragging || event.pointerId !== activePointerId) return;
+
+      dragging = false;
+      row.classList.remove('is-dragging');
+      if (row.hasPointerCapture(activePointerId)) {
+        row.releasePointerCapture(activePointerId);
+      }
+      activePointerId = null;
+    }
+
+    row.addEventListener('pointerup', stopDragging);
+    row.addEventListener('pointercancel', stopDragging);
+
+    row.addEventListener('click', event => {
+      if (!moved) return;
+      event.preventDefault();
+      event.stopPropagation();
+      moved = false;
+    }, true);
+  });
+})();
+
 // ── Smooth scroll per ancore interne (es. nav -> #lore, #codex, ecc.) ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
