@@ -202,7 +202,6 @@ window.ECLYSS_I18N = { en: {
   "Le Forze Primordiali": "The Primordial Forces",
   "I Quattro<br>Elementi": "The Four<br>Elements",
   "Ogni Custode nasce da uno dei quattro Elementi Primordiali.<br>Silenzio, Caos, Ombra e Tempo governano ogni forza dell'Eclyss.": "Every Guardian is born from one of the four Primordial Elements.<br>Silence, Chaos, Shadow and Time rule every force of the Eclyss.",
-  "Quattro forze. Un equilibrio.<br>L'Eclyss esiste grazie a loro.": "Four forces. One balance.<br>The Eclyss exists thanks to them.",
   "Scopri il tuo Elemento": "Discover your Element",
   "Fai il test dell'Eclydex": "Take the Eclydex test",
   /* Il link CTA viene tradotto in blocco: il motore riscrive l'innerHTML dell'<a>

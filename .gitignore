@@ -7,6 +7,12 @@ migliore back up/
 # password, questi file ne esporrebbero i contenuti in chiaro su GitHub.
 _src/
 
+# Originali a piena risoluzione delle carte (PNG da ~2,7 MB l'uno, 43 MB in
+# tutto). Sul sito vanno le versioni WebP a 700px generate da questi, ~230 KB
+# l'una. Gli originali restano solo in locale: servono per rigenerare, non per
+# essere serviti. Qui dentro anche assets/Custodi/, non piu' referenziata.
+_assets-originali/
+
 # Environment variables (credenziali live - mai committare)
 .env
 .env.local
