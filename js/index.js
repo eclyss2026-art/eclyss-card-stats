@@ -54,7 +54,12 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
     // acquisto. Ha priorita' sul ripristino dello scroll e sull'intro 3D.
     if (purchaseRequested) {
       const purchase = document.getElementById('box');
-      if (purchase) purchase.scrollIntoView({ behavior: 'auto' });
+      if (purchase) {
+        const top = window.scrollY + purchase.getBoundingClientRect().top - 90;
+        // `auto` eredita scroll-behavior:smooth e attraverserebbe la hero:
+        // il blocco della lattina intercetterebbe lo scorrimento a meta'.
+        window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+      }
       return;
     }
     if (isFreshNavigation) {
