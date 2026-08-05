@@ -564,7 +564,7 @@ if (skipIntroBtn) {
   // Cap del pixel ratio: oltre 2 il guadagno visivo e' nullo ma il costo GPU
   // quadruplica — sui telefoni (DPR 3+) era la causa principale dei blocchi.
   const isSmallScreen = matchMedia('(max-width: 1180px), (max-height: 720px)').matches;
-  const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.6 : 2);
+  const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.35 : 1.75);
   canvas.width  = W * pixelRatio;
   canvas.height = H * pixelRatio;
   // dimensioni a schermo proporzionate (mai schiacciate, mai tagliate dal riquadro hero,
@@ -721,7 +721,7 @@ if (skipIntroBtn) {
   const TOTAL_MODELS = 1; // Solo il covered: i revealed caricano lazy
   let modelLoaded  = false;
   let modelSwapped = false;
-  let revealedModelsLoading = false; // Lazy load i modelli rivelati al primo interagire
+  const revealedModelsLoading = new Array(REVEALED_URLS.length).fill(false);
 
   function onModelReady() {
     modelsLoaded++;
@@ -762,7 +762,7 @@ if (skipIntroBtn) {
     root.scale.setScalar(scaleFactor);
     root.position.y -= 0.45;
 
-    const maxAniso = renderer.capabilities.getMaxAnisotropy();
+    const maxAniso = Math.min(renderer.capabilities.getMaxAnisotropy(), isSmallScreen ? 4 : 8);
     root.traverse((node) => {
       if (node.isMesh && node.material) {
         const mats = Array.isArray(node.material) ? node.material : [node.material];
@@ -822,27 +822,35 @@ if (skipIntroBtn) {
     }
   );
 
-  // Varianti rivelate — caricate lazy al primo interagire (click/rotazione)
-  function loadRevealedModels() {
-    if (revealedModelsLoading || revealedRoots[0] !== null) return; // Già caricate o in progress
-    revealedModelsLoading = true;
-    REVEALED_URLS.forEach((url, i) => {
-      loader.load(
-        url,
-        (gltf) => {
-          const root = prepareModel(gltf);
-          canGroup.add(root);
-          revealedRoots[i] = root;
-          // Se la rivelazione è già avvenuta, mostra subito la variante scelta
-          // (il modello poteva finire di caricare dopo il click/lo swap).
-          root.visible = (modelSwapped && i === activeRevealed);
-        },
-        undefined,
-        (error) => {
-          console.error('Errore caricamento modello (revealed ' + i + '):', error);
+  // Varianti rivelate: viene caricata soltanto quella selezionata.
+  function loadRevealedModels(index = activeRevealed) {
+    if (revealedModelsLoading[index] || revealedRoots[index]) return;
+    revealedModelsLoading[index] = true;
+    const i = index;
+    const url = REVEALED_URLS[index];
+    loader.load(
+      url,
+      (gltf) => {
+        const root = prepareModel(gltf);
+        canGroup.add(root);
+        revealedRoots[i] = root;
+        revealedModelsLoading[i] = false;
+        // Se la rivelazione è già avvenuta, mostra subito la variante scelta
+        // (il modello poteva finire di caricare dopo il click/lo swap).
+        if (modelSwapped) {
+          revealedRoots.forEach((revealed, revealedIndex) => {
+            if (revealed) revealed.visible = (revealedIndex === activeRevealed);
+          });
+        } else {
+          root.visible = false;
         }
-      );
-    });
+      },
+      undefined,
+      (error) => {
+        revealedModelsLoading[i] = false;
+        console.error('Errore caricamento modello (revealed ' + i + '):', error);
+      }
+    );
   }
 
   canGroup.rotation.x = 0.05; // slight Apple-style tilt
@@ -856,8 +864,8 @@ if (skipIntroBtn) {
     canVariantPicker.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-covered]');
       if (!btn) return;
-      loadRevealedModels(); // Lazy load i modelli al primo click
       setRevealedVariant(Number(btn.dataset.covered));
+      loadRevealedModels(); // Carica solo la variante appena selezionata
       canVariantPicker.querySelectorAll('[data-covered]').forEach(el => el.classList.toggle('active', el === btn));
       if (eclipseRing && btn.dataset.eclipse) {
         eclipseRing.classList.remove('eclipse-light', 'eclipse-dark');
@@ -970,22 +978,31 @@ if (skipIntroBtn) {
     }).observe(canvas);
   }
 
-  // Frame throttling: renderizza 1 frame ogni 2 (60 FPS → 30 FPS).
-  // Riduce il carico GPU mantenendo l'animazione fluida visivamente.
-  let frameCount = 0;
+  // Rendering adattivo: 60 FPS durante il movimento, 15 FPS da ferma.
+  // La rotazione e' piu' fluida, mentre a riposo si riducono GPU e batteria.
+  let lastRenderAt = 0;
 
-  function animate() {
+  function animate(now = 0) {
     if (contextLost) return; // il fallback a fotogrammi ha preso il posto del 3D
     requestAnimationFrame(animate);
-    if (!canvasInView || document.hidden) return;
-    frameCount++;
-    if (frameCount % 2 !== 0) return; // Salta 1 frame ogni 2
+    if (!canvasInView || document.hidden) {
+      lastRenderAt = now;
+      return;
+    }
 
-    currentRotY += (targetRotY + dragRotY - currentRotY) * 0.18;
+    const desiredRotY = targetRotY + dragRotY;
+    const isMoving = dragging || compactRotationLocked || Math.abs(desiredRotY - currentRotY) > 0.001;
+    const minFrameTime = 1000 / (isMoving ? 60 : 15);
+    if (now - lastRenderAt < minFrameTime) return;
+
+    const elapsed = lastRenderAt ? now - lastRenderAt : 1000 / 60;
+    lastRenderAt = now;
+    const smoothing = 1 - Math.pow(1 - 0.18, elapsed / (1000 / 30));
+    currentRotY += (desiredRotY - currentRotY) * smoothing;
     canGroup.rotation.y = currentRotY;
 
     // Lazy load i modelli rivelati quando la rotazione si avvicina (50° prima dello swap)
-    if (!revealedModelsLoading && revealedRoots[0] === null && currentRotY >= (SWAP_RAD * 0.5)) {
+    if (!revealedModelsLoading[activeRevealed] && !revealedRoots[activeRevealed] && currentRotY >= (SWAP_RAD * 0.5)) {
       loadRevealedModels();
     }
 
@@ -1002,7 +1019,7 @@ if (skipIntroBtn) {
     }
 
     if (modelLoaded) {
-      canGroup.position.y = Math.sin(Date.now() * 0.0008) * 0.06;
+      canGroup.position.y = Math.sin(now * 0.0008) * 0.06;
     }
 
     renderer.render(scene, camera);
