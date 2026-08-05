@@ -300,6 +300,131 @@ if (skipIntroBtn) {
   const stage     = document.getElementById('scroll-stage');
   if (!canvas || !stage) return;
 
+  function offsetInsideStage(element) {
+    let offset = 0;
+    let current = element;
+    while (current && current !== stage) {
+      offset += current.offsetTop;
+      current = current.offsetParent;
+    }
+    return offset;
+  }
+
+  let compactRotationLocked = false;
+  let compactLockSuppressed = false;
+  let compactRotationProgress = 0;
+  let compactRotationComplete = false;
+  let compactLockScrollY = 0;
+  let compactTouchY = null;
+  let updateCompactRotation = null;
+
+  function fullyVisibleStickyTop(center) {
+    const safeTop = window.matchMedia('(max-width:900px)').matches ? 84 : 88;
+    const fullCanTop = window.innerHeight - center.offsetHeight - 24;
+    const stickyTop = Math.max(safeTop, fullCanTop);
+    center.style.setProperty('--can-sticky-top', stickyTop + 'px');
+    return stickyTop;
+  }
+
+  // Nel layout mobile/compatto il primo tratto di scroll serve esclusivamente
+  // a portare la lattina intera nello schermo. La rotazione parte quando il
+  // contenitore raggiunge la sua posizione sticky e resta tutto visibile.
+  function getScrollProgress() {
+    if (compactRotationLocked) return compactRotationProgress;
+
+    const rect = stage.getBoundingClientRect();
+    const range = stage.offsetHeight - window.innerHeight;
+    if (range <= 0) return 1;
+
+    let rotationStart = 0;
+    if (isMobileLayout()) {
+      const center = stage.querySelector('.hero-center');
+      if (center) {
+        const stickyTop = fullyVisibleStickyTop(center);
+        rotationStart = Math.max(0, offsetInsideStage(center) - stickyTop);
+      }
+    }
+
+    const rotationRange = Math.max(1, range - rotationStart);
+    return Math.max(0, Math.min(1, (-rect.top - rotationStart) / rotationRange));
+  }
+
+  function lockCompactScroll() {
+    if (!isMobileLayout() || compactRotationLocked || compactRotationComplete) return;
+    compactLockScrollY = window.scrollY;
+    compactRotationProgress = 0;
+    compactRotationLocked = true;
+  }
+
+  function unlockCompactScroll(suppressRelock = false) {
+    if (!compactRotationLocked) return;
+    compactRotationLocked = false;
+    compactLockSuppressed = suppressRelock;
+    window.scrollTo({ top: compactLockScrollY, behavior: 'instant' });
+  }
+
+  function maybeLockCompactScroll() {
+    if (!isMobileLayout() || compactRotationLocked || compactRotationComplete) return;
+    const center = stage.querySelector('.hero-center');
+    if (!center) return;
+    const rect = center.getBoundingClientRect();
+    if (compactLockSuppressed) {
+      if (rect.top < 0 || rect.bottom > window.innerHeight - 20) compactLockSuppressed = false;
+      return;
+    }
+    if (rect.top >= 0 && rect.bottom <= window.innerHeight - 20) lockCompactScroll();
+  }
+
+  function advanceCompactRotation(delta, event) {
+    if (!compactRotationLocked) return;
+    if (delta < 0 && compactRotationProgress <= 0) {
+      unlockCompactScroll(true);
+      return;
+    }
+
+    event.preventDefault();
+    const distance = event.type === 'wheel' ? 900 : 520;
+    compactRotationProgress = Math.max(0, Math.min(1, compactRotationProgress + delta / distance));
+    if (updateCompactRotation) updateCompactRotation();
+  }
+
+  window.addEventListener('wheel', event => {
+    advanceCompactRotation(event.deltaY, event);
+  }, { passive: false });
+
+  window.addEventListener('touchstart', event => {
+    compactTouchY = event.touches[0] ? event.touches[0].clientY : null;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', event => {
+    if (!compactRotationLocked || compactTouchY === null || !event.touches[0]) return;
+    const nextY = event.touches[0].clientY;
+    const delta = compactTouchY - nextY;
+    compactTouchY = nextY;
+    advanceCompactRotation(delta, event);
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    compactTouchY = null;
+  }, { passive: true });
+
+  window.addEventListener('keydown', event => {
+    if (!compactRotationLocked) return;
+    const deltas = {
+      ArrowDown: 80, PageDown: 260, End: 520, ' ': 260,
+      ArrowUp: -80, PageUp: -260, Home: -520
+    };
+    if (deltas[event.key] !== undefined) advanceCompactRotation(deltas[event.key], event);
+  });
+
+  // Mantiene invariata la posizione senza togliere il documento dal flusso:
+  // la scrollbar a destra resta visibile mentre swipe/rotella ruotano la lattina.
+  window.addEventListener('scroll', () => {
+    if (compactRotationLocked && Math.abs(window.scrollY - compactLockScrollY) > 1) {
+      window.scrollTo({ top: compactLockScrollY, behavior: 'instant' });
+    }
+  }, { passive: true });
+
   /* ── PAUSA A ECLISSI CHIUSA ──
      Appena l'eclissi si completa si tiene un istante fermi prima di liberare
      lo scroll: il momento di eclissi totale respira invece di scivolare via
@@ -396,13 +521,14 @@ if (skipIntroBtn) {
     const CIRC_FB = 2 * Math.PI * 20;
     let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
     function onScrollLite() {
-      const rect = stage.getBoundingClientRect();
-      const range = stage.offsetHeight - window.innerHeight;
-      const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+      if (!fbRotationCompleted) maybeLockCompactScroll();
+      const p = getScrollProgress();
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
+        compactRotationComplete = true;
         fbEclipseLocked = true;
         img.style.cursor = 'grab';
+        unlockCompactScroll();
         // via la zona morta dell'hero incollato (come nel percorso 3D, solo desktop)
         if (!isMobileLayout()) {
           const top = stage.offsetTop;
@@ -427,6 +553,7 @@ if (skipIntroBtn) {
       }
       if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
     }
+    updateCompactRotation = onScrollLite;
     window.addEventListener('scroll', onScrollLite, { passive: true });
     onScrollLite();
   }
@@ -436,8 +563,8 @@ if (skipIntroBtn) {
   const W = 480, H = 700;
   // Cap del pixel ratio: oltre 2 il guadagno visivo e' nullo ma il costo GPU
   // quadruplica — sui telefoni (DPR 3+) era la causa principale dei blocchi.
-  const isSmallScreen = matchMedia('(max-width: 900px)').matches;
-  const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.6 : 2);
+  const isSmallScreen = matchMedia('(max-width: 1180px), (max-height: 720px)').matches;
+  const pixelRatio = Math.min(devicePixelRatio, isSmallScreen ? 1.35 : 1.75);
   canvas.width  = W * pixelRatio;
   canvas.height = H * pixelRatio;
   // dimensioni a schermo proporzionate (mai schiacciate, mai tagliate dal riquadro hero,
@@ -489,7 +616,11 @@ if (skipIntroBtn) {
     },
   ];
   // Layout mobile: hero non incollato, stage ad altezza automatica
-  const isMobileLayout = () => window.matchMedia('(max-width:900px)').matches;
+  // Anche lo zoom del browser riduce la viewport CSS. Sotto questa soglia la
+  // hero passa al flusso verticale compatto, quindi non va trattata come sticky.
+  function isMobileLayout() {
+    return window.matchMedia('(max-width:1180px), (max-height:720px)').matches;
+  }
   /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
      lasciata dallo sgancio: e' valida solo per il layout desktop. */
   window.addEventListener('resize', () => {
@@ -590,7 +721,7 @@ if (skipIntroBtn) {
   const TOTAL_MODELS = 1; // Solo il covered: i revealed caricano lazy
   let modelLoaded  = false;
   let modelSwapped = false;
-  let revealedModelsLoading = false; // Lazy load i modelli rivelati al primo interagire
+  const revealedModelsLoading = new Array(REVEALED_URLS.length).fill(false);
 
   function onModelReady() {
     modelsLoaded++;
@@ -631,7 +762,7 @@ if (skipIntroBtn) {
     root.scale.setScalar(scaleFactor);
     root.position.y -= 0.45;
 
-    const maxAniso = renderer.capabilities.getMaxAnisotropy();
+    const maxAniso = Math.min(renderer.capabilities.getMaxAnisotropy(), isSmallScreen ? 4 : 8);
     root.traverse((node) => {
       if (node.isMesh && node.material) {
         const mats = Array.isArray(node.material) ? node.material : [node.material];
@@ -691,27 +822,35 @@ if (skipIntroBtn) {
     }
   );
 
-  // Varianti rivelate — caricate lazy al primo interagire (click/rotazione)
-  function loadRevealedModels() {
-    if (revealedModelsLoading || revealedRoots[0] !== null) return; // Già caricate o in progress
-    revealedModelsLoading = true;
-    REVEALED_URLS.forEach((url, i) => {
-      loader.load(
-        url,
-        (gltf) => {
-          const root = prepareModel(gltf);
-          canGroup.add(root);
-          revealedRoots[i] = root;
-          // Se la rivelazione è già avvenuta, mostra subito la variante scelta
-          // (il modello poteva finire di caricare dopo il click/lo swap).
-          root.visible = (modelSwapped && i === activeRevealed);
-        },
-        undefined,
-        (error) => {
-          console.error('Errore caricamento modello (revealed ' + i + '):', error);
+  // Varianti rivelate: viene caricata soltanto quella selezionata.
+  function loadRevealedModels(index = activeRevealed) {
+    if (revealedModelsLoading[index] || revealedRoots[index]) return;
+    revealedModelsLoading[index] = true;
+    const i = index;
+    const url = REVEALED_URLS[index];
+    loader.load(
+      url,
+      (gltf) => {
+        const root = prepareModel(gltf);
+        canGroup.add(root);
+        revealedRoots[i] = root;
+        revealedModelsLoading[i] = false;
+        // Se la rivelazione è già avvenuta, mostra subito la variante scelta
+        // (il modello poteva finire di caricare dopo il click/lo swap).
+        if (modelSwapped) {
+          revealedRoots.forEach((revealed, revealedIndex) => {
+            if (revealed) revealed.visible = (revealedIndex === activeRevealed);
+          });
+        } else {
+          root.visible = false;
         }
-      );
-    });
+      },
+      undefined,
+      (error) => {
+        revealedModelsLoading[i] = false;
+        console.error('Errore caricamento modello (revealed ' + i + '):', error);
+      }
+    );
   }
 
   canGroup.rotation.x = 0.05; // slight Apple-style tilt
@@ -725,8 +864,8 @@ if (skipIntroBtn) {
     canVariantPicker.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-covered]');
       if (!btn) return;
-      loadRevealedModels(); // Lazy load i modelli al primo click
       setRevealedVariant(Number(btn.dataset.covered));
+      loadRevealedModels(); // Carica solo la variante appena selezionata
       canVariantPicker.querySelectorAll('[data-covered]').forEach(el => el.classList.toggle('active', el === btn));
       if (eclipseRing && btn.dataset.eclipse) {
         eclipseRing.classList.remove('eclipse-light', 'eclipse-dark');
@@ -797,14 +936,14 @@ if (skipIntroBtn) {
   }
 
   function onScroll() {
-    const rect = stage.getBoundingClientRect();
-    const range = stage.offsetHeight - window.innerHeight;
-    // range 0 = hero già sganciato: il giro è concluso
-    const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 1;
+    if (!rotationCompleted) maybeLockCompactScroll();
+    const p = getScrollProgress();
     if (p >= 0.995 && !rotationCompleted) {
       rotationCompleted = true;      // da qui comanda il trascinamento
+      compactRotationComplete = true;
       eclipseLocked = true;          // l'eclissi completa resta completa
       canvas.style.cursor = 'grab';  // su desktop si vede che è afferrabile
+      unlockCompactScroll();
       unpinStage();                  // sgancio ORA, fuso col movimento in corso
       blockScrollBriefly();          // poi un istante fermi: l'eclissi respira
     }
@@ -823,6 +962,7 @@ if (skipIntroBtn) {
     }
     if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
   }
+  updateCompactRotation = onScroll;
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
@@ -838,22 +978,31 @@ if (skipIntroBtn) {
     }).observe(canvas);
   }
 
-  // Frame throttling: renderizza 1 frame ogni 2 (60 FPS → 30 FPS).
-  // Riduce il carico GPU mantenendo l'animazione fluida visivamente.
-  let frameCount = 0;
+  // Rendering adattivo: 60 FPS durante il movimento, 15 FPS da ferma.
+  // La rotazione e' piu' fluida, mentre a riposo si riducono GPU e batteria.
+  let lastRenderAt = 0;
 
-  function animate() {
+  function animate(now = 0) {
     if (contextLost) return; // il fallback a fotogrammi ha preso il posto del 3D
     requestAnimationFrame(animate);
-    if (!canvasInView || document.hidden) return;
-    frameCount++;
-    if (frameCount % 2 !== 0) return; // Salta 1 frame ogni 2
+    if (!canvasInView || document.hidden) {
+      lastRenderAt = now;
+      return;
+    }
 
-    currentRotY += (targetRotY + dragRotY - currentRotY) * 0.18;
+    const desiredRotY = targetRotY + dragRotY;
+    const isMoving = dragging || compactRotationLocked || Math.abs(desiredRotY - currentRotY) > 0.001;
+    const minFrameTime = 1000 / (isMoving ? 60 : 15);
+    if (now - lastRenderAt < minFrameTime) return;
+
+    const elapsed = lastRenderAt ? now - lastRenderAt : 1000 / 60;
+    lastRenderAt = now;
+    const smoothing = 1 - Math.pow(1 - 0.18, elapsed / (1000 / 30));
+    currentRotY += (desiredRotY - currentRotY) * smoothing;
     canGroup.rotation.y = currentRotY;
 
     // Lazy load i modelli rivelati quando la rotazione si avvicina (50° prima dello swap)
-    if (!revealedModelsLoading && revealedRoots[0] === null && currentRotY >= (SWAP_RAD * 0.5)) {
+    if (!revealedModelsLoading[activeRevealed] && !revealedRoots[activeRevealed] && currentRotY >= (SWAP_RAD * 0.5)) {
       loadRevealedModels();
     }
 
@@ -870,7 +1019,7 @@ if (skipIntroBtn) {
     }
 
     if (modelLoaded) {
-      canGroup.position.y = Math.sin(Date.now() * 0.0008) * 0.06;
+      canGroup.position.y = Math.sin(now * 0.0008) * 0.06;
     }
 
     renderer.render(scene, camera);

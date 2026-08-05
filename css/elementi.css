@@ -37,6 +37,9 @@
 .el-intro-lead{font-size:18px;line-height:1.75;color:rgba(255,255,255,.78);margin-bottom:26px}
 
 /* CTA verso il test */
+.el-cta-wrap{
+  display:flex;justify-content:center;margin-top:38px;
+}
 .el-cta{
   display:inline-flex;align-items:center;gap:16px;
   border:1px solid rgba(192,132,252,.45);border-radius:3px;
@@ -278,7 +281,7 @@
 }
 .eltest-score-track{height:4px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden}
 .eltest-score-fill{
-  height:100%;width:0;border-radius:3px;background:var(--c);
+  display:block;height:100%;width:0;border-radius:3px;background:var(--c);
   box-shadow:0 0 12px var(--c);transition:width .6s ease;
 }
 .eltest-score-val{font-size:14px;color:var(--gray-light);text-align:right}
@@ -306,7 +309,8 @@
   .el-intro .section-title{text-align:center;font-size:clamp(30px,8.5vw,42px)}
   .el-intro-rule{justify-content:center}
   .el-intro-lead{font-size:17px}
-  .el-cta{width:100%;max-width:340px;margin:0 auto;justify-content:center}
+  .el-cta-wrap{margin-top:28px;padding:0 4px}
+  .el-cta{width:100%;max-width:340px;margin:0;justify-content:center}
   .el-diagram{max-width:420px}
   .el-node-name{letter-spacing:2px}
   .el-cards{grid-template-columns:1fr;gap:12px}

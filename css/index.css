@@ -971,3 +971,49 @@ footer{
   transition:background .2s,border-color .2s,color .2s;
 }
 .lang-toggle:hover{background:rgba(123,47,255,.18);border-color:rgba(155,95,255,.5);color:#C084FC}
+
+/* Browser zoom / finestre desktop compatte.
+   Lo zoom riduce la viewport CSS: prima che titolo, lattina e comandi possano
+   sovrapporsi dentro l'hero fissa, la sola hero passa a un flusso verticale. */
+@media (min-width:901px) and (max-width:1180px),
+       (min-width:901px) and (max-height:720px){
+  #scroll-stage{height:auto}
+  .hero{
+    position:relative;top:auto;height:auto;min-height:100vh;
+    overflow:hidden;padding-bottom:0;
+  }
+  .hero-row{
+    display:block;position:relative;min-height:0;
+    padding:104px 0 48px;
+  }
+  .hero-content{position:relative;padding:0 32px;text-align:center}
+  .hero-title{
+    margin-left:0;font-size:clamp(42px,6vw,64px);line-height:.96;
+  }
+  .hero-eyebrow{margin-left:auto;margin-right:auto}
+  .btn-hero{margin-left:auto;margin-right:auto}
+  .hero-center{
+    position:relative;top:auto;left:auto;transform:none;
+    margin:30px auto 0;display:flex;justify-content:center;
+  }
+  .eclipse-sun,.eclipse-moon{transform:translate(-50%,-50%)}
+  .section-nums{
+    position:static;transform:none;flex-direction:row;
+    justify-content:center;align-items:center;margin-top:28px;padding-bottom:28px;
+  }
+  .section-nums span::before{display:none}
+  .scroll-hint,#progress-ring{display:none}
+}
+
+/* Prima si porta la lattina intera nello schermo, poi la si trattiene durante
+   la rotazione. Il padding finale e' la corsia di scroll necessaria al giro. */
+@media (max-width:1180px), (max-height:720px){
+  .hero{overflow:clip}
+  .hero-row{padding-bottom:calc(48px + 65svh)}
+  .hero-center{position:sticky;top:var(--can-sticky-top,88px)}
+}
+
+@media (max-width:900px){
+  .hero-row{padding-bottom:65svh}
+  .hero-center{top:var(--can-sticky-top,84px)}
+}
