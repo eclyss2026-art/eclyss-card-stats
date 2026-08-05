@@ -47,8 +47,16 @@ document.querySelectorAll('a[href^="#"]:not(.skip-intro)').forEach(a => {
 
   const navEntry = performance.getEntriesByType('navigation')[0];
   const isFreshNavigation = !navEntry || navEntry.type === 'navigate';
+  const purchaseRequested = new URLSearchParams(window.location.search).get('acquista') === '1';
 
   function position() {
+    // Il test usa questo parametro per richiedere esplicitamente la sezione
+    // acquisto. Ha priorita' sul ripristino dello scroll e sull'intro 3D.
+    if (purchaseRequested) {
+      const purchase = document.getElementById('box');
+      if (purchase) purchase.scrollIntoView({ behavior: 'auto' });
+      return;
+    }
     if (isFreshNavigation) {
       const t = window.location.hash && document.querySelector(window.location.hash);
       if (t) t.scrollIntoView({ behavior: 'auto' });
