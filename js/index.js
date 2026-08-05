@@ -310,6 +310,14 @@ if (skipIntroBtn) {
     return offset;
   }
 
+  function fullyVisibleStickyTop(center) {
+    const safeTop = window.matchMedia('(max-width:900px)').matches ? 84 : 88;
+    const fullCanTop = window.innerHeight - center.offsetHeight - 24;
+    const stickyTop = Math.max(safeTop, fullCanTop);
+    center.style.setProperty('--can-sticky-top', stickyTop + 'px');
+    return stickyTop;
+  }
+
   // Nel layout mobile/compatto il primo tratto di scroll serve esclusivamente
   // a portare la lattina intera nello schermo. La rotazione parte quando il
   // contenitore raggiunge la sua posizione sticky e resta tutto visibile.
@@ -322,7 +330,7 @@ if (skipIntroBtn) {
     if (isMobileLayout()) {
       const center = stage.querySelector('.hero-center');
       if (center) {
-        const stickyTop = parseFloat(getComputedStyle(center).top) || 0;
+        const stickyTop = fullyVisibleStickyTop(center);
         rotationStart = Math.max(0, offsetInsideStage(center) - stickyTop);
       }
     }

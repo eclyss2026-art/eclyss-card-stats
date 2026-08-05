@@ -1010,10 +1010,10 @@ footer{
 @media (max-width:1180px), (max-height:720px){
   .hero{overflow:clip}
   .hero-row{padding-bottom:calc(48px + 65svh)}
-  .hero-center{position:sticky;top:88px}
+  .hero-center{position:sticky;top:var(--can-sticky-top,88px)}
 }
 
 @media (max-width:900px){
   .hero-row{padding-bottom:65svh}
-  .hero-center{top:84px}
+  .hero-center{top:var(--can-sticky-top,84px)}
 }
