@@ -351,15 +351,18 @@ section[id]{scroll-margin-top:90px}
 .guardians-text .section-title{white-space:nowrap}
 .guardians-text p{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;margin:0 auto;max-width:760px}
 .cards-row{
+  --cards-edge-gutter:max(20px,calc((100vw - 1280px) / 2));
   display:flex;align-items:stretch;gap:14px;
   overflow-x:auto;overflow-y:visible;
-  scroll-snap-type:x proximity;scroll-padding-inline:4px;
+  box-sizing:border-box;width:100vw;
+  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+  scroll-snap-type:x proximity;scroll-padding-inline:var(--cards-edge-gutter);
   /* Il padding sopra NON e' decorativo: con overflow-x:auto il browser forza
      overflow-y ad "auto" (per specifica non puo' restare visible), quindi la
      riga ritaglia. In hover la carta sale di 7px e lo scale 1.02 la fa crescere
      di altri ~4: senza questi 16px il bordo alto veniva tranciato.
      Il margine negativo riassorbe lo spazio, cosi' il ritmo verticale non cambia. */
-  padding:16px 4px 18px;margin-top:-12px;
+  padding:16px var(--cards-edge-gutter) 18px;margin-top:-12px;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
   cursor:grab;user-select:none;
 }
@@ -587,7 +590,10 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
     display:flex;grid-template-columns:none;align-items:stretch;
     gap:14px;overflow-x:auto;overflow-y:visible;
     scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
-    scroll-padding-left:20px;padding:4px 20px 16px;margin:0 -20px;
+    --cards-edge-gutter:20px;
+    scroll-padding-inline:var(--cards-edge-gutter);
+    padding:4px var(--cards-edge-gutter) 16px;
+    margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
     scrollbar-width:none;
   }
   .cards-row::-webkit-scrollbar{display:none}
