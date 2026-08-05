@@ -248,8 +248,114 @@
     });
   }
 
+  // Snipcart 3.2.2 usa un <select> nativo per la nazione su telefoni e tablet.
+  // Il menu e' scorribile, ma non consente di cercare digitando. Questo campo
+  // testuale offre la ricerca da tastiera e sincronizza la scelta con il select
+  // originale, lasciando a Snipcart validazione, tasse e spedizione.
+  function enhanceMobileCountrySelects() {
+    if (!('HTMLDataListElement' in window)) return;
+
+    document.querySelectorAll('#snipcart select[name="country"]').forEach(select => {
+      const existingSearchId = select.dataset.eclyssCountrySearch;
+      if (existingSearchId && document.getElementById(existingSearchId)) return;
+
+      const nativeWrapper = select.closest('.snipcart-form__select-wrapper') || select.parentElement;
+      if (!nativeWrapper || !nativeWrapper.parentElement) return;
+
+      const options = Array.from(select.options).filter(option => option.value);
+      const listId = 'eclyss-country-list-' + Math.random().toString(36).slice(2);
+      const input = document.createElement('input');
+      const list = document.createElement('datalist');
+
+      input.type = 'text';
+      input.id = listId + '-input';
+      select.dataset.eclyssCountrySearch = input.id;
+      input.className = 'snipcart-form__select snipcart__font--secondary snipcart__font--bold eclyss-country-search';
+      input.setAttribute('list', listId);
+      input.setAttribute('inputmode', 'text');
+      input.setAttribute('enterkeyhint', 'done');
+      input.setAttribute('autocomplete', 'country-name');
+      input.setAttribute('aria-label', document.documentElement.lang === 'en' ? 'Country' : 'Nazione');
+      input.placeholder = document.documentElement.lang === 'en' ? 'Type country' : 'Digita la nazione';
+
+      list.id = listId;
+      options.forEach(option => {
+        const suggestion = document.createElement('option');
+        suggestion.value = option.textContent.trim();
+        list.appendChild(suggestion);
+      });
+
+      function normalize(value) {
+        return value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+      }
+
+      function selectedLabel() {
+        const selected = select.options[select.selectedIndex];
+        return selected && selected.value ? selected.textContent.trim() : '';
+      }
+
+      function commitTypedCountry(allowUniquePartial) {
+        const query = normalize(input.value);
+        if (!query) return false;
+
+        let matches = options.filter(option => normalize(option.textContent) === query);
+        if (!matches.length && allowUniquePartial) {
+          matches = options.filter(option => normalize(option.textContent).startsWith(query));
+        }
+        if (matches.length !== 1) return false;
+
+        select.value = matches[0].value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        input.value = matches[0].textContent.trim();
+        return true;
+      }
+
+      input.value = selectedLabel();
+      input.addEventListener('input', () => commitTypedCountry(false));
+      input.addEventListener('change', () => commitTypedCountry(true));
+      input.addEventListener('blur', () => {
+        if (!commitTypedCountry(true)) input.value = selectedLabel();
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key !== 'Enter') return;
+        if (commitTypedCountry(true)) {
+          event.preventDefault();
+          input.blur();
+        }
+      });
+      select.addEventListener('change', () => { input.value = selectedLabel(); });
+
+      nativeWrapper.classList.add('eclyss-country-native-select');
+      nativeWrapper.before(input, list);
+
+      const label = nativeWrapper.closest('.snipcart-form__field')?.querySelector('label[for="country"]');
+      if (label) label.setAttribute('for', input.id);
+    });
+  }
+
+  let snipcartCountryObserver = null;
+  function observeSnipcartCountrySelects() {
+    const snipcartRoot = document.getElementById('snipcart');
+    if (!snipcartRoot || snipcartCountryObserver) return;
+
+    snipcartCountryObserver = new MutationObserver(enhanceMobileCountrySelects);
+    snipcartCountryObserver.observe(snipcartRoot, {
+      childList: true,
+      subtree: true
+    });
+    enhanceMobileCountrySelects();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeSnipcartCountrySelects, { once: true });
+  } else {
+    observeSnipcartCountrySelects();
+  }
+
   // Svuota il carrello e mostra la conferma SOLO dopo un pagamento riuscito.
   document.addEventListener('snipcart.ready', () => {
+    observeSnipcartCountrySelects();
+    enhanceMobileCountrySelects();
     window.Snipcart.events.on('order.completed', () => {
       cart = {};
       saveCart(cart);
