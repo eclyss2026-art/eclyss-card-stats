@@ -35,7 +35,7 @@
       ui: {
         domanda: 'Domanda', indietro: '← Indietro', istinto: 'Segui l’istinto',
         tuoElemento: 'Il tuo Elemento è', poteri: 'Poteri compatibili',
-        carte: 'Scopri le Carte', rifai: 'Rifai il test', sigillo: 'Sigillo'
+        carte: 'Acquista', rifai: 'Rifai il test', sigillo: 'Sigillo'
       },
       elementi: {
         silenzio: {
@@ -117,7 +117,7 @@
       ui: {
         domanda: 'Question', indietro: '← Back', istinto: 'Follow your instinct',
         tuoElemento: 'Your Element is', poteri: 'Matching powers',
-        carte: 'Discover the Cards', rifai: 'Take the test again', sigillo: 'Seal'
+        carte: 'Shop', rifai: 'Take the test again', sigillo: 'Seal'
       },
       elementi: {
         silenzio: {
