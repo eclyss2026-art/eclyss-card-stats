@@ -1017,17 +1017,19 @@ footer{
   /* Corsia di scorrimento sotto la lattina. Un valore solo, usato da tutti e
      tre i punti che devono restare sincronizzati: se divergono, i selettori
      01/02 si staccano dalla lattina o l'altezza della hero sbaglia.
-     Ridotta da 65svh a 30svh: su telefono la rotazione NON e' guidata da questa
+     Ridotta da 65svh a 18svh: su telefono la rotazione NON e' guidata da questa
      corsia ma dal blocco dello scroll in js/index.js (compactRotationLocked),
      che ferma la pagina e fa girare la lattina con i gesti. Il resto era scroll
-     morto: mezzo schermo di vuoto fra i selettori e "Il Respiro Originario". */
-  :root{--can-runway:30svh}
+     morto: mezzo schermo di vuoto fra i selettori e "Il Respiro Originario".
+     --nums-drop stacca i selettori dal bordo del canvas: a 0 risultavano
+     incollati alla lattina. */
+  :root{--can-runway:18svh;--nums-drop:18px}
   .hero-row{padding-bottom:var(--can-runway)}
   .hero-center{top:var(--can-sticky-top,84px)}
   /* I selettori risalgono nella fascia trasparente in fondo al canvas, cosi'
      restano attaccati alla lattina invece di comparire dopo tutta la corsia. */
   .section-nums{
-    margin-top:calc(-1 * var(--can-runway));
-    padding-bottom:calc(var(--can-runway) + 36px);
+    margin-top:calc(var(--nums-drop) - var(--can-runway));
+    padding-bottom:calc(var(--can-runway) + 24px);
   }
 }

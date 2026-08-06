@@ -153,12 +153,40 @@
 
     // Il posizionamento iniziale e i salti invisibili del nastro generano eventi
     // scroll via codice: l'invito deve reagire solo a un gesto reale dell'utente.
+    // Sparisce solo dopo un movimento orizzontale vero: un tap, o la rotellina
+    // usata per scorrere la pagina in verticale, non contano come esplorazione.
     const hint = row.previousElementSibling;
     if (hint && hint.classList.contains('swipe-hint')) {
-      const usato = () => hint.classList.add('is-used');
-      ['pointerdown', 'touchstart', 'wheel'].forEach(ev =>
-        row.addEventListener(ev, usato, { once: true, passive: true })
-      );
+      const usato = () => {
+        hint.classList.add('is-used');
+        row.removeEventListener('pointermove', suMouse);
+        row.removeEventListener('touchmove', suTocco);
+        row.removeEventListener('touchstart', segnaTocco);
+        row.removeEventListener('wheel', suRotella);
+      };
+
+      function suMouse() { if (moved) usato(); }
+      function suRotella(event) {
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) usato();
+      }
+
+      let toccoX = 0, toccoY = 0;
+      function segnaTocco(event) {
+        const t = event.touches[0];
+        if (t) { toccoX = t.clientX; toccoY = t.clientY; }
+      }
+      function suTocco(event) {
+        const t = event.touches[0];
+        if (!t) return;
+        const dx = Math.abs(t.clientX - toccoX);
+        const dy = Math.abs(t.clientY - toccoY);
+        if (dx > 12 && dx > dy) usato();
+      }
+
+      row.addEventListener('pointermove', suMouse, { passive: true });
+      row.addEventListener('wheel', suRotella, { passive: true });
+      row.addEventListener('touchstart', segnaTocco, { passive: true });
+      row.addEventListener('touchmove', suTocco, { passive: true });
     }
   });
 })();

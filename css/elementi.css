@@ -90,7 +90,20 @@
     0 0 48px color-mix(in srgb,var(--c) 28%,transparent);
   transition:box-shadow .28s ease,transform .28s ease;
 }
-.el-sigillo img{display:block;width:100%;height:100%;object-fit:cover}
+.el-sigillo img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  /* I PNG hanno il simbolo piccolo e non perfettamente centrato dentro un
+     quadrato nero: ogni simbolo viene ingrandito e ricentrato in modo che il
+     disegno riempia il disco. --sig-s = ingrandimento, --sig-y = ricentratura
+     verticale (in % dell'altezza, prima della scala). */
+  transform:scale(var(--sig-s,1)) translateY(var(--sig-y,0));
+  transform-origin:50% 50%;
+}
+/* Valori tarati sulle proporzioni dei singoli file in assets/nuovi simboli/ */
+.el-sigillo img[src*="SILENZIO"]{--sig-s:1.93;--sig-y:5.1%}
+.el-sigillo img[src*="CAOS"]    {--sig-s:1.81;--sig-y:5.2%}
+.el-sigillo img[src*="OMBRA"]   {--sig-s:1.55;--sig-y:1%}
+.el-sigillo img[src*="TEMPO"]   {--sig-s:1.23;--sig-y:0}
 
 .el-node{
   position:absolute;left:50%;top:50%;
