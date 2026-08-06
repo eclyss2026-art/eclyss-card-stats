@@ -11,11 +11,15 @@
 :root{
   --black:#000;--dark:#07070a;--purple:#7B2FFF;--purple-glow:#9B5FFF;--purple-light:#C084FC;
   --white:#fff;--gray:#666;--gray-light:#999;--gold:#F59E0B;
+  /* Toni condivisi fra le sezioni: il primo e' campionato dalla fascia
+     inferiore del video, il secondo e' il fondo continuo della pagina. */
+  --universe-video-edge:#171429;
+  --universe-base:#020106;
 }
 html{scroll-behavior:smooth}
 body{
   /* Sfondo nero uniforme della pagina Universo. */
-  background:#000;
+  background:var(--universe-base);
   color:var(--white);font-family:'Asul',sans-serif;overflow-x:hidden;
 }
 
@@ -174,7 +178,7 @@ section[id]{scroll-margin-top:90px}
 
 /* ── HERO "MONDO" (immagine/video di sfondo + testo sovrapposto) ── */
 .world-hero{
-  position:relative;padding:0;overflow:hidden;background:transparent;
+  position:relative;padding:0;overflow:hidden;background:var(--universe-video-edge);
 }
 .world-hero-bg{position:relative;width:100%;line-height:0}
 .world-hero-bg img,.world-hero-bg video{display:block;width:100%;height:auto}
@@ -191,7 +195,7 @@ section[id]{scroll-margin-top:90px}
   z-index:2;pointer-events:none;
   /* Il fondo del video si scioglie nel nero campionato (#0a0415): l'ultima fascia
      diventa quasi solida, così il bordo del video sparisce nel passaggio. */
-  background:linear-gradient(180deg,rgba(8,0,18,.68) 0%,rgba(8,0,18,.06) 20%,transparent 46%,rgba(10,4,21,.35) 68%,rgba(10,4,21,.8) 86%,#0a0415 100%);
+  background:linear-gradient(180deg,rgba(8,0,18,.68) 0%,rgba(8,0,18,.06) 20%,transparent 45%,rgba(23,20,41,.28) 66%,rgba(23,20,41,.82) 87%,var(--universe-video-edge) 100%);
 }
 .world-hero-top{
   position:absolute;top:0;left:0;right:0;z-index:2;
@@ -218,7 +222,7 @@ section[id]{scroll-margin-top:90px}
 }
 .world-hero-cta{backdrop-filter:blur(4px)}
 .world-hero-quotes{
-  position:absolute;left:0;right:0;bottom:6%;z-index:2;
+  position:absolute;left:0;right:0;bottom:12%;z-index:2;
   display:flex;align-items:flex-start;justify-content:space-between;
   padding:0 64px;
 }
@@ -231,6 +235,10 @@ section[id]{scroll-margin-top:90px}
   text-shadow:0 2px 14px rgba(0,0,0,.95);
 }
 .whq-right{text-align:right;margin-left:auto}
+.world-hero-quote-group{
+  margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;
+}
+.world-hero-test-link{margin-top:18px;text-align:left}
 .whq-ec{font-size:1.15em;color:rgba(255,255,255,.78)}
 
 /* ── LORE / UNIVERSO ── */
@@ -456,8 +464,8 @@ section[id]{scroll-margin-top:90px}
   border-color:rgba(192,132,252,.4);z-index:5;
 }
 .guardians.interferenti .gcard:hover{
-  box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 0 1px rgba(239,68,68,.4),0 0 34px rgba(239,68,68,.28);
-  border-color:rgba(239,68,68,.45);
+  box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 0 1px rgba(192,132,252,.35),0 0 34px rgba(123,47,255,.28);
+  border-color:rgba(192,132,252,.4);
 }
 .gi-wolf{background:linear-gradient(160deg,#1a003a,#3b0a6e,#0d001f)}
 
@@ -524,12 +532,12 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
      sotto, sul fondo della pagina — leggibile sempre, qualunque fotogramma
      passi. Prima il video era uno sfondo assoluto con il testo sovrapposto. */
   .world-hero{min-height:0}
-  /* Il video nativo e' 16:9: a tutta larghezza su telefono diventa una striscia
-     bassa e i dettagli spariscono. Gli diamo un riquadro 4:3 e "cover", cosi'
-     taglia i lati e ingrandisce di circa 1,3x — il varco resta al centro. */
-  .world-hero-bg{position:relative;inset:auto;aspect-ratio:4/3;overflow:hidden}
+  /* Su telefono il video occupa un riquadro quadrato e viene ingrandito
+     leggermente: i bordi possono essere ritagliati e il varco resta al centro. */
+  .world-hero-bg{position:relative;inset:auto;aspect-ratio:1/1;overflow:hidden}
   .world-hero-bg img,.world-hero-bg video{
     position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    object-position:center;transform:scale(1.12);
   }
   /* Solo la sfumatura in basso, per fondere il bordo del video nel nero della
      pagina: non serve piu' scurire in alto, non c'e' testo da far risaltare. */
@@ -566,9 +574,10 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
   .footer-grid{grid-template-columns:1fr 1fr;max-width:none;text-align:left}
   .footer-grid > div:first-child{grid-column:1 / -1;text-align:center;margin-bottom:8px}
   .footer-bottom{flex-direction:column;gap:14px;text-align:center}
-  .footer-mantra{flex-direction:column;gap:10px}
+  footer{padding:44px 24px 24px}
+  .footer-mantra{flex-direction:column;gap:10px;margin-bottom:32px}
   .fm-txt{white-space:normal}
-  .fm-line{flex:0 0 60px}
+  .fm-line{flex:none;width:60px;height:1px}
 }
 @media (max-width:560px){
   section{padding:48px 20px}
@@ -592,7 +601,9 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
     scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
     --cards-edge-gutter:20px;
     scroll-padding-inline:var(--cards-edge-gutter);
-    padding:4px var(--cards-edge-gutter) 16px;
+    /* L'hover solleva la carta di 7px e la ingrandisce: 16px evitano che
+       il bordo e l'alone superiore vengano ritagliati dal contenitore scroll. */
+    padding:16px var(--cards-edge-gutter) 16px;
     margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
     scrollbar-width:none;
   }

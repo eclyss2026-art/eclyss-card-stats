@@ -1016,4 +1016,12 @@ footer{
 @media (max-width:900px){
   .hero-row{padding-bottom:65svh}
   .hero-center{top:var(--can-sticky-top,84px)}
+  /* La corsia di rotazione resta dentro .hero-row, ma i selettori non devono
+     comparire 65svh dopo la lattina. Li riportiamo sotto il modello e li
+     facciamo risalire nella fascia trasparente in fondo al canvas, cosi' la
+     distanza visiva dalla lattina resta compatta. */
+  .section-nums{
+    margin-top:-65svh;
+    padding-bottom:calc(65svh + 36px);
+  }
 }
