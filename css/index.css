@@ -1023,13 +1023,13 @@ footer{
      morto: mezzo schermo di vuoto fra i selettori e "Il Respiro Originario".
      --nums-drop stacca i selettori dal bordo del canvas: a 0 risultavano
      incollati alla lattina. */
-  :root{--can-runway:18svh;--nums-drop:18px}
+  :root{--can-runway:6svh;--nums-drop:18px}
   .hero-row{padding-bottom:var(--can-runway)}
   .hero-center{top:var(--can-sticky-top,84px)}
   /* I selettori risalgono nella fascia trasparente in fondo al canvas, cosi'
      restano attaccati alla lattina invece di comparire dopo tutta la corsia. */
   .section-nums{
     margin-top:calc(var(--nums-drop) - var(--can-runway));
-    padding-bottom:calc(var(--can-runway) + 24px);
+    padding-bottom:calc(var(--can-runway) + 14px);
   }
 }
