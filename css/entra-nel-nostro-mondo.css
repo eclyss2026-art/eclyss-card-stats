@@ -241,8 +241,14 @@ section[id]{scroll-margin-top:90px}
 .world-hero-test-link{margin-top:18px;text-align:left}
 .whq-ec{font-size:1.15em;color:rgba(255,255,255,.78)}
 
+/* elementi.css viene caricato dopo questo foglio: la maggiore specificita'
+   mantiene qui la dissolvenza video -> contenuti senza influire sulla pagina test. */
+body .elementi{
+  background:linear-gradient(180deg,var(--universe-video-edge) 0%,rgba(23,20,41,.82) 72px,rgba(10,8,20,.5) 220px,var(--universe-base) 460px);
+}
+
 /* ── LORE / UNIVERSO ── */
-.lore{background:transparent}
+.lore{background:linear-gradient(180deg,var(--universe-base) 0%,#07030f 48%,var(--universe-base) 100%)}
 .lore-inner{max-width:1280px;margin:0 auto}
 /* righe da ~70 caratteri: oltre i 900px il testo lungo diventa faticoso da seguire */
 .lore-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.85;max-width:760px;margin:0 auto 22px;text-align:center}
@@ -267,7 +273,7 @@ section[id]{scroll-margin-top:90px}
 }
 
 /* ── ECLYDEX (glifi/simboli) ── */
-.codex{background:transparent}
+.codex{background:linear-gradient(180deg,var(--universe-base) 0%,#05020c 52%,var(--universe-base) 100%)}
 .codex-inner{max-width:1280px;margin:0 auto}
 .codex-lead{font-size:19px;color:rgba(255,255,255,.78);line-height:1.8;max-width:760px;margin:0 auto 48px;text-align:center}
 .codex-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
@@ -291,7 +297,7 @@ section[id]{scroll-margin-top:90px}
 
 /* ── SCARICA L'APP — copia della sezione di index ── */
 .app-download{
-  background:transparent;
+  background:linear-gradient(180deg,var(--universe-base) 0%,#07030f 55%,var(--universe-base) 100%);
   text-align:center;position:relative;overflow:hidden;
 }
 .app-download::before{content:none}
@@ -339,8 +345,8 @@ section[id]{scroll-margin-top:90px}
 /* ── COLLEZIONE — CUSTODI / INTERFERENTI (carte creature) ── */
 /* Sfumatura dall'alto col nero campionato dal fondo del video: il passaggio
    video → sezione è fuso (parte dallo stesso nero e svanisce nel gradiente). */
-.guardians{background:linear-gradient(180deg,#0a0415 0%,rgba(10,4,21,.75) 12%,rgba(10,4,21,0) 360px)}
-.guardians.interferenti{background:transparent}
+.guardians{background:linear-gradient(180deg,var(--universe-base) 0%,#0a0415 18%,rgba(7,3,15,.9) 62%,var(--universe-base) 100%)}
+.guardians.interferenti{background:linear-gradient(180deg,var(--universe-base) 0%,#080311 30%,rgba(6,2,13,.9) 68%,var(--universe-base) 100%)}
 .risk-divider{background:transparent;padding:34px 52px;text-align:center}
 .risk-divider-inner{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:10px}
 .risk-side{font-family:'Asul',sans-serif;font-size:19px;font-weight:900;letter-spacing:3px;text-transform:uppercase}
@@ -471,7 +477,7 @@ section[id]{scroll-margin-top:90px}
 
 /* ── FOOTER (identico al sito principale) ── */
 /* Fine pagina: sfuma dolcemente verso il nero campionato, come il passaggio in alto */
-footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,132,252,.18)}
+footer{background:linear-gradient(180deg,var(--universe-base) 0%,#070010 150px);padding:70px 52px 30px;border-top:0}
 .footer-mantra{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:50px}
 .fm-line{flex:0 0 110px;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.55))}
 .fm-line-r{background:linear-gradient(90deg,rgba(192,132,252,.55),transparent)}
@@ -541,7 +547,7 @@ footer{background:#070010;padding:70px 52px 30px;border-top:1px solid rgba(192,1
   }
   /* Solo la sfumatura in basso, per fondere il bordo del video nel nero della
      pagina: non serve piu' scurire in alto, non c'e' testo da far risaltare. */
-  .world-hero-bg::after{background:linear-gradient(180deg,transparent 0%,transparent 55%,rgba(10,4,21,.5) 80%,#0a0415 100%)}
+  .world-hero-bg::after{background:linear-gradient(180deg,transparent 0%,transparent 52%,rgba(23,20,41,.48) 78%,var(--universe-video-edge) 100%)}
   /* Titolo attaccato al video: senza sovrapposizione i due blocchi devono
      leggersi come un'unica apertura, non come due sezioni separate. */
   .world-hero-top{position:relative;top:auto;padding:16px 24px 44px;max-width:none;background:none;text-align:center}
