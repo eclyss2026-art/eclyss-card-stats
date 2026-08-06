@@ -331,12 +331,43 @@ if (skipIntroBtn) {
   let compactTouchY = null;
   let updateCompactRotation = null;
 
+  /* Le misure della corsia (posizione sticky, inizio rotazione, corsa totale)
+     non cambiano mentre si ruota: ricalcolarle a ogni scroll/touchmove costava
+     un reflow forzato per evento, perché la scrittura di --can-sticky-top
+     invalidava il layout appena letto con offsetHeight/offsetTop. Si misurano
+     una volta e si rinfrescano solo quando il layout cambia davvero. */
+  let stickyTopApplied = null;
+  let stageMetrics = null;
+
+  function invalidateStageMetrics() {
+    stageMetrics = null;
+    stickyTopApplied = null;
+  }
+
   function fullyVisibleStickyTop(center) {
     const safeTop = window.matchMedia('(max-width:900px)').matches ? 84 : 88;
     const fullCanTop = window.innerHeight - center.offsetHeight - 24;
     const stickyTop = Math.max(safeTop, fullCanTop);
-    center.style.setProperty('--can-sticky-top', stickyTop + 'px');
+    // Scrivere solo se cambia: una scrittura identica invalida comunque lo stile.
+    if (stickyTop !== stickyTopApplied) {
+      center.style.setProperty('--can-sticky-top', stickyTop + 'px');
+      stickyTopApplied = stickyTop;
+    }
     return stickyTop;
+  }
+
+  function getStageMetrics() {
+    if (stageMetrics) return stageMetrics;
+    const range = stage.offsetHeight - window.innerHeight;
+    let rotationStart = 0;
+    if (isMobileLayout()) {
+      const center = stage.querySelector('.hero-center');
+      if (center) {
+        rotationStart = Math.max(0, offsetInsideStage(center) - fullyVisibleStickyTop(center));
+      }
+    }
+    stageMetrics = { range, rotationStart };
+    return stageMetrics;
   }
 
   // Nel layout mobile/compatto il primo tratto di scroll serve esclusivamente
@@ -345,19 +376,10 @@ if (skipIntroBtn) {
   function getScrollProgress() {
     if (compactRotationLocked) return compactRotationProgress;
 
-    const rect = stage.getBoundingClientRect();
-    const range = stage.offsetHeight - window.innerHeight;
+    const { range, rotationStart } = getStageMetrics();
     if (range <= 0) return 1;
 
-    let rotationStart = 0;
-    if (isMobileLayout()) {
-      const center = stage.querySelector('.hero-center');
-      if (center) {
-        const stickyTop = fullyVisibleStickyTop(center);
-        rotationStart = Math.max(0, offsetInsideStage(center) - stickyTop);
-      }
-    }
-
+    const rect = stage.getBoundingClientRect();
     const rotationRange = Math.max(1, range - rotationStart);
     return Math.max(0, Math.min(1, (-rect.top - rotationStart) / rotationRange));
   }
@@ -482,7 +504,7 @@ if (skipIntroBtn) {
     if (loadingEl) loadingEl.style.display = 'none';
 
     // fotogramma mostrato = base dallo scroll + giro manuale col dito
-    let fbBase = 0, fbOffset = 0, fbRevealed = false;
+    let fbBase = 0, fbOffset = 0, fbRevealed = false, fbShownFrame = 0;
     const FB_SWAP = FALLBACK_FRAMES / 2; // dal 24 in poi la lattina è rivelata
     function applyFallbackFrame() {
       let i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
@@ -490,6 +512,10 @@ if (skipIntroBtn) {
       // creatura non si torna ai fotogrammi sigillati (si resta almeno a 180°).
       if (i >= FB_SWAP) fbRevealed = true;
       else if (fbRevealed) i = FB_SWAP;
+      // Riassegnare lo stesso src fa comunque ripartire il ciclo di caricamento:
+      // durante uno swipe erano decine di assegnazioni inutili per secondo.
+      if (i === fbShownFrame) return;
+      fbShownFrame = i;
       img.src = fallbackFrameSrc(i);
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
@@ -533,6 +559,25 @@ if (skipIntroBtn) {
     const hintFb  = document.querySelector('.scroll-hint');
     const CIRC_FB = 2 * Math.PI * 20;
     let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
+    // Come nel percorso 3D: --ecl e l'anello costano uno style recalc dell'intero
+    // documento più un repaint dei dischi sfocati, quindi si scrivono al massimo
+    // una volta per frame invece che a ogni evento scroll/touchmove.
+    let fbVisualFrame = null;
+    let fbVisualApplied = -1;
+    if (ringFb) ringFb.style.strokeDasharray = CIRC_FB;
+    function applyFbVisuals(p) {
+      fbVisualFrame = null;
+      const value = fbEclipseLocked ? 1 : (isFinite(p) ? p : 0);
+      if (Math.abs(value - fbVisualApplied) < 0.0005) return;
+      fbVisualApplied = value;
+      document.documentElement.style.setProperty('--ecl', value.toFixed(4));
+      if (ringFb) ringFb.style.strokeDashoffset = CIRC_FB * (1 - value);
+      if (hintFb) hintFb.style.opacity = value > 0.04 ? 0 : 1;
+    }
+    function scheduleFbVisuals(p) {
+      if (fbVisualFrame !== null) cancelAnimationFrame(fbVisualFrame);
+      fbVisualFrame = requestAnimationFrame(() => applyFbVisuals(p));
+    }
     function onScrollLite() {
       if (!fbRotationCompleted) maybeLockCompactScroll();
       const p = getScrollProgress();
@@ -558,13 +603,7 @@ if (skipIntroBtn) {
         fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
         applyFallbackFrame();
       }
-      document.documentElement.style.setProperty('--ecl',
-        fbEclipseLocked ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
-      if (ringFb) {
-        ringFb.style.strokeDasharray  = CIRC_FB;
-        ringFb.style.strokeDashoffset = CIRC_FB * (1 - p);
-      }
-      if (hintFb) hintFb.style.opacity = p > 0.04 ? 0 : 1;
+      scheduleFbVisuals(p);
     }
     updateCompactRotation = onScrollLite;
     window.addEventListener('scroll', onScrollLite, { passive: true });
@@ -634,11 +673,28 @@ if (skipIntroBtn) {
   function isMobileLayout() {
     return window.matchMedia('(max-width:1180px), (max-height:720px)').matches;
   }
-  /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
-     lasciata dallo sgancio: e' valida solo per il layout desktop. */
+  /* Le misure in cache vanno buttate appena il layout cambia, e rifatte subito
+     dopo: --can-sticky-top guida la posizione sticky, non può restare al valore
+     del viewport precedente in attesa del prossimo scroll. Il ricalcolo è
+     posticipato (debounce) perché durante un ridimensionamento continuo, o
+     mentre la barra indirizzi di iOS si ritrae, misurare a ogni evento
+     rimetterebbe in mezzo i reflow appena eliminati. */
+  let metricsTimer;
+  function refreshStageMetrics() {
+    invalidateStageMetrics();
+    clearTimeout(metricsTimer);
+    metricsTimer = setTimeout(getStageMetrics, 120);
+  }
   window.addEventListener('resize', () => {
+    /* Passando a mobile (o rimpicciolendo la pagina) va tolta l'altezza inline
+       lasciata dallo sgancio: e' valida solo per il layout desktop. */
     if (isMobileLayout() && stage.style.height) stage.style.height = '';
+    refreshStageMetrics();
   });
+  // Su iOS l'orientamento e il ritorno dalla cronologia (bfcache) possono
+  // ripresentare la pagina con misure diverse da quelle memorizzate.
+  window.addEventListener('orientationchange', refreshStageMetrics);
+  window.addEventListener('pageshow', refreshStageMetrics);
 
   let renderer = null;
   // ?nowebgl nell'URL: simula un PC senza WebGL per collaudare il fallback foto
@@ -941,11 +997,34 @@ if (skipIntroBtn) {
        primo cambio di zoom o ridimensionamento, lasciando lo stage più corto
        dell'hero — e le sezioni successive gli finirebbero sopra. */
     stage.style.height = '100vh';
+    invalidateStageMetrics(); // lo stage ha cambiato altezza: le misure vanno rifatte
     /* Il contenuto sotto risale di `range`: compenso lo scroll della stessa
        quantità così la vista non salta — né completando il giro con la rotella,
        né arrivandoci di colpo (ancora del menu, ricerca nella pagina). */
     window.scrollTo({ top: Math.max(top, window.scrollY - range), behavior: 'instant' });
     if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+  }
+
+  /* ── SCRITTURE VISIVE: UNA VOLTA PER FRAME ──
+     --ecl vive su :root e comanda trasformazioni con filter:url(#flameFilter)
+     e blur: ogni scrittura invalida lo stile dell'intero documento e obbliga a
+     ri-rasterizzare i due dischi sfocati. Scriverla dentro scroll/touchmove
+     (fino a 120 eventi/s su iPhone) significava fino a 120 style recalc +
+     repaint filtrati al secondo, in concorrenza con il rendering WebGL: era il
+     vero collo di bottiglia degli scatti su mobile. Gli handler ora aggiornano
+     solo lo stato; i pixel li scrive il loop di rendering, al più una volta per
+     frame e solo se il valore è davvero cambiato. */
+  let visualProgress = 0;
+  let visualApplied = -1;
+  if (ringFg) ringFg.style.strokeDasharray = CIRCUMF; // costante: si scrive una volta sola
+
+  function applyProgressVisuals() {
+    const p = eclipseLocked ? 1 : visualProgress;
+    if (Math.abs(p - visualApplied) < 0.0005) return;
+    visualApplied = p;
+    document.documentElement.style.setProperty('--ecl', p.toFixed(4));
+    if (ringFg) ringFg.style.strokeDashoffset = CIRCUMF * (1 - p);
+    if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
   }
 
   function onScroll() {
@@ -965,19 +1044,14 @@ if (skipIntroBtn) {
     if (!rotationCompleted) targetRotY = (p * TOTAL * Math.PI) / 180;
 
     // Eclissi: si forma e si riapre con lo scroll, ma una volta completa resta
-    // completa per sempre. Guardia anti-NaN.
-    document.documentElement.style.setProperty('--ecl',
-      eclipseLocked ? '1.0000' : (isFinite(p) ? p : 0).toFixed(4));
-
-    if (ringFg) {
-      ringFg.style.strokeDasharray  = CIRCUMF;
-      ringFg.style.strokeDashoffset = CIRCUMF * (1 - p);
-    }
-    if (hint) hint.style.opacity = p > 0.04 ? 0 : 1;
+    // completa per sempre. Guardia anti-NaN. Lo stato si aggiorna qui, il DOM
+    // lo tocca applyProgressVisuals() dentro il loop di rendering.
+    visualProgress = isFinite(p) ? p : 0;
   }
   updateCompactRotation = onScroll;
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+  applyProgressVisuals(); // stato iniziale coerente prima del primo frame
 
   /* ── ANIMATE LOOP ── */
   const SWAP_RAD = (SWAP_PROGRESS * TOTAL * Math.PI) / 180; // soglia in radianti, sulla rotazione realmente renderizzata
@@ -1002,6 +1076,10 @@ if (skipIntroBtn) {
       lastRenderAt = now;
       return;
     }
+
+    // Eclissi, anello e suggerimento: una sola scrittura per frame, saltata
+    // del tutto quando il progresso non è cambiato.
+    applyProgressVisuals();
 
     const desiredRotY = targetRotY + dragRotY;
     const isMoving = dragging || compactRotationLocked || Math.abs(desiredRotY - currentRotY) > 0.001;
