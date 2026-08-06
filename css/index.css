@@ -1006,11 +1006,27 @@ footer{
 }
 
 /* Prima si porta la lattina intera nello schermo, poi la si trattiene durante
-   la rotazione. Il padding finale e' la corsia di scroll necessaria al giro. */
+   la rotazione. Il padding finale e' la corsia di scroll sotto la lattina.
+   Questa soglia e' la STESSA usata da isMobileLayout() in js/index.js: dentro
+   qui la rotazione e' guidata dal blocco dei gesti, non dallo scroll, quindi la
+   corsia serve solo a trattenere la lattina e non deve essere mezza pagina.
+   Ci rientrano anche i portatili 1280x720 e qualunque schermo con lo zoom del
+   browser al 100% ma poco alto. */
 @media (max-width:1180px), (max-height:720px){
+  :root{--can-runway:10svh;--nums-drop:18px}
   .hero{overflow:clip}
-  .hero-row{padding-bottom:calc(48px + 65svh)}
+  .hero-row{padding-bottom:calc(48px + var(--can-runway))}
   .hero-center{position:sticky;top:var(--can-sticky-top,88px)}
+}
+
+/* Fascia "portatile": stessa compensazione del telefono. Senza, i selettori
+   01/02 restavano in fondo alla corsia, staccati dalla lattina di oltre 500px. */
+@media (min-width:901px) and (max-width:1180px),
+       (min-width:901px) and (max-height:720px){
+  .section-nums{
+    margin-top:calc(var(--nums-drop) - var(--can-runway));
+    padding-bottom:calc(var(--can-runway) + 14px);
+  }
 }
 
 @media (max-width:900px){
