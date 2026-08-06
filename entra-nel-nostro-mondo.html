@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/entra-nel-nostro-mondo.css?v=21">
+<link rel="stylesheet" href="css/entra-nel-nostro-mondo.css?v=22">
 <link rel="stylesheet" href="css/elementi.css?v=11">
 <!-- Snipcart eCommerce -->
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.2/default/snipcart.css">
@@ -53,8 +53,12 @@
 <!-- WORLD HERO -->
 <section class="world-hero">
   <div class="world-hero-bg">
-    <img class="world-hero-poster" src="assets/universo-poster.jpg?v=1" alt="" aria-hidden="true">
-    <video src="assets/universo-loop.mp4?v=4" autoplay muted loop playsinline preload="auto" aria-label="Un varco luminoso tra le rocce cosmiche, soglia dell'Universo di ECLYSS"></video>
+    <video src="assets/universo-loop.mp4?v=4" poster="assets/universo-poster.jpg?v=1" autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" tabindex="-1" aria-hidden="true"></video>
+    <!-- Il poster e' un livello SOPRA il video, non sotto: il video resta sempre
+         visibile (WebKit sospende l'autoplay muto degli elementi resi invisibili
+         e al loro posto disegna il proprio pulsante di avvio) e il poster si
+         dissolve soltanto quando arriva l'evento 'playing'. -->
+    <img class="world-hero-poster" src="assets/universo-poster.jpg?v=1" alt="Un varco luminoso tra le rocce cosmiche, soglia dell'Universo di ECLYSS">
   </div>
   <div class="world-hero-top">
     <h1 class="section-title"><br>L'Universo di<br><span class="hl">ECLYSS</span></h1>
@@ -418,7 +422,7 @@
 </footer>
 
 <script src="js/catalogo.js"></script>
-<script src="js/entra-nel-nostro-mondo.js?v=3"></script>
+<script src="js/entra-nel-nostro-mondo.js?v=4"></script>
 <script src="js/elementi-quiz.js?v=6"></script>
 <!-- Carica variabili d'ambiente (per development locale e build) -->
 <script src="js/env-loader.js"></script>

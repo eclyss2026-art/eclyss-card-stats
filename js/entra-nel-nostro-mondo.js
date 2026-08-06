@@ -327,13 +327,32 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   video.playsInline = true;
   video.setAttribute('muted', '');
   video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+  // Difesa esplicita: se un'estensione o una preferenza del browser reintroduce
+  // i controlli, il pulsante Play tornerebbe visibile sopra al video.
+  video.controls = false;
+  video.removeAttribute('controls');
 
-  const showPoster = () => container.classList.remove('video-is-playing');
-  const showVideo = () => container.classList.add('video-is-playing');
+  // Il poster e' un livello sopra il video: si dissolve solo a riproduzione
+  // confermata, quindi non c'e' mai ne' area nera ne' lampo tra i due.
+  // Una volta che il video ha girato davvero non si torna piu' al poster: un
+  // buffering o una pausa di sistema mostrerebbero un lampo del poster sopra a
+  // un fotogramma gia' identico. Il poster serve solo al primo avvio.
+  let hasPlayed = false;
+  const showPoster = () => {
+    if (!hasPlayed) container.classList.remove('video-is-playing');
+  };
+  const showVideo = () => {
+    hasPlayed = true;
+    container.classList.add('video-is-playing');
+  };
 
   function tryPlayback() {
-    if (document.hidden) return;
+    if (document.hidden || !video.paused) return;
 
+    // Ogni tentativo riafferma il muto: e' la condizione che rende l'autoplay
+    // ammissibile, e un ritorno dalla bfcache puo' ripristinare lo stato salvato.
+    video.muted = true;
     try {
       const playback = video.play();
       if (playback && typeof playback.catch === 'function') {
@@ -348,13 +367,21 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   video.addEventListener('error', showPoster);
   video.addEventListener('loadeddata', tryPlayback);
   video.addEventListener('canplay', tryPlayback);
+  // iOS puo' sospendere la riproduzione (chiamata in arrivo, risparmio energetico,
+  // scheda in secondo piano): si torna al poster e si ritenta, senza mai lasciare
+  // sullo schermo il fotogramma fermo con il pulsante nativo.
+  video.addEventListener('pause', () => {
+    if (video.ended) return;
+    showPoster();
+    tryPlayback();
+  });
+  video.addEventListener('stalled', showPoster);
+  video.addEventListener('waiting', showPoster);
 
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && video.paused) tryPlayback();
+    if (!document.hidden) tryPlayback();
   });
-  window.addEventListener('pageshow', () => {
-    if (video.paused) tryPlayback();
-  });
+  window.addEventListener('pageshow', tryPlayback);
 
   const unlockOnFirstGesture = () => {
     document.removeEventListener('pointerdown', unlockOnFirstGesture, true);

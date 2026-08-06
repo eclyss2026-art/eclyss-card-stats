@@ -184,14 +184,30 @@ section[id]{scroll-margin-top:90px}
 }
 .world-hero-bg{position:relative;width:100%;line-height:0}
 .world-hero-bg img,.world-hero-bg video{display:block;width:100%;height:auto}
+/* Il poster copre il video finche' la riproduzione non e' confermata: sta
+   SOPRA (z-index 2), cosi' il video puo' restare opaco e visibile. Un video a
+   opacity:0 veniva trattato da WebKit come non visibile: sospendeva l'autoplay
+   muto e al suo posto disegnava il proprio pulsante di avvio. */
 .world-hero-bg .world-hero-poster{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  /* Stesso z-index del video ma successivo nell'ordine del documento: resta
+     sopra al video e sotto alla sfumatura ::after (z-index 2) e al testo. */
+  z-index:1;pointer-events:none;
+  transition:opacity .25s ease;
 }
+.world-hero-bg.video-is-playing .world-hero-poster{opacity:0}
 .world-hero-bg video{
-  position:relative;z-index:1;opacity:0;
-  transition:opacity .2s ease;
+  position:relative;z-index:1;
+  pointer-events:none; /* nessun tap puo' mettere in pausa o far comparire i controlli */
 }
-.world-hero-bg.video-is-playing video{opacity:1}
+/* Nessun controllo nativo, in nessuno stato: su iOS il pulsante di avvio
+   compare anche senza l'attributo controls, quando l'autoplay viene rifiutato. */
+.world-hero-bg video::-webkit-media-controls,
+.world-hero-bg video::-webkit-media-controls-panel,
+.world-hero-bg video::-webkit-media-controls-overlay-play-button,
+.world-hero-bg video::-webkit-media-controls-start-playback-button{
+  display:none!important;-webkit-appearance:none;opacity:0;
+}
 .world-hero-bg::after{
   content:'';position:absolute;inset:0;
   z-index:2;pointer-events:none;
