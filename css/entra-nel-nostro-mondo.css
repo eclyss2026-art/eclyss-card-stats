@@ -14,7 +14,9 @@
   /* Toni condivisi fra le sezioni: il primo e' campionato dalla fascia
      inferiore del video, il secondo e' il fondo continuo della pagina. */
   --universe-video-edge:#171429;
-  --universe-base:#020106;
+  /* Nero neutro condiviso ai bordi di ogni sezione: i gradienti partono e
+     tornano allo stesso colore, evitando stacchi netti fra un blocco e l'altro. */
+  --universe-base:#000;
 }
 html{scroll-behavior:smooth}
 body{

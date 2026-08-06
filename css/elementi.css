@@ -8,10 +8,10 @@
    ============================================================ */
 
 :root{
-  --el-silenzio:#7EC8FF;
-  --el-caos:#FF3B1F;
-  --el-ombra:#A855F7;
-  --el-tempo:#F5B942;
+  --el-silenzio:#E2D2C0;
+  --el-caos:#FF4A1F;
+  --el-ombra:#8E4CCB;
+  --el-tempo:#63D315;
 }
 
 /* ── SEZIONE ELEMENTI ── */
@@ -78,7 +78,7 @@
 .el-orbit-rings circle:nth-child(2){stroke-dasharray:620 90 390 257}
 .el-orbit-rings circle:nth-child(3){stroke-dasharray:280 45 210 219}
 /* Disco del sigillo, condiviso da diagramma / carte / responso del test.
-   I PNG (assets/sigillo-*.png) hanno il simbolo centrato su nero pieno:
+   I PNG dei simboli hanno il disegno centrato su nero pieno:
    overflow:hidden su un contenitore tondo ritaglia il quadrato in un disco,
    così sotto al simbolo non resta nessuno spigolo visibile. */
 .el-sigillo{

@@ -22,12 +22,12 @@
      Silenzio, Tempo, Caos, Ombra (in entrambe le lingue). */
   var ORDINE = ['silenzio', 'tempo', 'caos', 'ombra'];
 
-  var COLORI = { silenzio: '#7EC8FF', tempo: '#F5B942', caos: '#FF3B1F', ombra: '#A855F7' };
+  var COLORI = { silenzio: '#E2D2C0', tempo: '#63D315', caos: '#FF4A1F', ombra: '#8E4CCB' };
   var ICONE = {
-    silenzio: 'assets/sigillo-silenzio.png',
-    tempo: 'assets/sigillo-tempo.png',
-    caos: 'assets/sigillo-caos.png',
-    ombra: 'assets/sigillo-ombra.png'
+    silenzio: 'assets/nuovi simboli/SILENZIO.png',
+    tempo: 'assets/nuovi simboli/TEMPO.png',
+    caos: 'assets/nuovi simboli/CAOS.png',
+    ombra: 'assets/nuovi simboli/OMBRA%203.png'
   };
 
   var T = {
