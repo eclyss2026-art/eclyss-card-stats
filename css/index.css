@@ -847,7 +847,9 @@ footer{
     border-bottom:1px solid rgba(255,255,255,.06);
   }
   .nav-links a::after{display:none}
-  section{padding:56px 24px}
+  /* 56px sopra + 56px sotto = 113px di vuoto fra il contenuto di una sezione
+     e quello della successiva: su telefono si leggeva come un buco. */
+  section{padding:32px 24px}
 
   /* Hero: colonna singola, testo sopra e lattina intera sotto.
      Niente piu' altezza fissa 100vh + overflow:hidden: su schermi stretti il
@@ -887,10 +889,23 @@ footer{
      lattina perche' sole/luna sono assoluti dentro .hero-center. */
   .hero-row{
     display:block;position:relative;
-    min-height:100vh;padding:96px 0 0;
+    /* 96px lasciava il titolo incollato sotto la nav: qui scende e respira */
+    min-height:100vh;padding:136px 0 0;
   }
   .hero-content{
     position:static;padding:0 24px;text-align:center;
+  }
+  .hero-title{
+    /* Il vincolo e' "NEL MONDO" su una riga sola: oltre non ci sta e il titolo
+       passa a quattro righe. La misura segue la larghezza utile (100vw meno i
+       48px di padding) invece di un valore fisso, cosi' tiene da 360px in su. */
+    font-size:min(53px,calc((100vw - 48px) / 6.7));
+    letter-spacing:.5px;
+    /* Asul ha solo Regular e Bold: oltre il 700 il browser resta sulla stessa
+       faccia, quindi per ingrossare davvero il titolo serve il contorno.
+       currentColor lo fa funzionare anche su "di ECLYSS", che e' lilla. */
+    -webkit-text-stroke:.7px currentColor;
+    text-shadow:0 4px 30px rgba(0,0,0,.95),0 2px 8px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.7);
   }
   .hero-eyebrow{margin-left:auto;margin-right:auto}
   .btn-hero{margin:0 auto}
@@ -905,6 +920,10 @@ footer{
        (z-index 10), e su un elemento static lo z-index non ha effetto. La
        corsia finiva sopra 01/02 e ne mangiava i click. */
     position:relative;transform:none;
+    /* right:auto azzera il right:72px della regola desktop: su un elemento
+       relative quell'offset non ancora a destra, SPOSTA il blocco di 72px a
+       sinistra, e 01/02 finivano scentrati rispetto alla lattina. */
+    right:auto;
     flex-direction:row;justify-content:center;align-items:center;
     margin-top:32px;padding-bottom:36px;z-index:11;
   }
@@ -921,23 +940,40 @@ footer{
 
   .ritual-grid{grid-template-columns:repeat(2,1fr);gap:28px 20px}
 
-  .ritual-banner{flex-direction:column;text-align:center;padding:26px 24px;gap:20px}
-  .rb-cta{font-size:22px;letter-spacing:4px;gap:12px}
+  /* Via la cornice attorno all'ultimo blocco di testo: resta solo il fondo. */
+  .ritual-banner{flex-direction:column;text-align:center;padding:24px 14px;gap:16px;
+    border:none;box-shadow:none;margin-top:28px}
+  /* A 20px con 4px di spaziatura ogni frase si spezzava: "Custode o
+     Interferente? Scopri il tuo legame" usciva su quattro righe. A 11px con
+     mezzo pixel di spaziatura le tre frasi stanno su una riga ciascuna
+     (319px utili contro i 302 di prima). */
+  .rb-text p{font-size:11px;letter-spacing:.5px;line-height:1.7}
+  .rb-cta{font-size:20px;letter-spacing:3px;gap:12px;margin-top:10px}
 
   .box-inner{grid-template-columns:1fr;text-align:center;gap:36px}
   .box-inner > div:nth-child(2){text-align:center}
   /* width:fit-content: il blocco si stringe attorno alla riga piu' lunga e
      si centra, ma dentro le righe partono tutte dallo stesso filo sinistro
      (con justify-content:center ogni riga si centrava per conto suo). */
-  .box-feats{max-width:420px;margin:0 auto;width:fit-content}
+  /* max-width al filo del bottone "Aggiungi al Carrello" (~306px): il blocco
+     restava largo quanto la colonna (352px) e sporgeva di 23px per lato
+     rispetto al bottone. width:fit-content resta per tenere le righe
+     allineate allo stesso filo sinistro invece di centrarsi una per una. */
+  .box-feats{max-width:306px;margin:0 auto;width:fit-content}
   .box-feat{justify-content:flex-start;text-align:left}
 
   .footer-grid{grid-template-columns:1fr 1fr;max-width:none;text-align:left}
   .footer-grid > div:first-child{grid-column:1 / -1;text-align:center;margin-bottom:8px}
   .footer-bottom{flex-direction:column;gap:14px;text-align:center}
-  .footer-mantra{flex-direction:column;gap:10px}
+  /* Via la riga orizzontale fra "Scarica l'App" e il footer. */
+  .app-download{border-bottom:none}
+  footer{border-top:none;padding:26px 24px 24px}
+  /* Il mantra era incorniciato da due .fm-line che in colonna diventano barre
+     ALTE 60px e larghe 0: invisibili, ma si mangiavano 130px di vuoto sopra e
+     sotto la scritta. In verticale le cornici non servono. */
+  .footer-mantra{flex-direction:column;gap:0;margin-bottom:26px}
   .fm-txt{white-space:normal;font-size:15px}
-  .fm-line{flex:0 0 60px}
+  .fm-line{display:none}
 }
 
 @media (max-width:560px){
@@ -1004,6 +1040,8 @@ footer{
     /* Stesso motivo della fascia telefono: relative + z-index, altrimenti la
        corsia di .hero-row copre 01/02 e i click non arrivano. */
     position:relative;z-index:11;transform:none;flex-direction:row;
+    /* vedi la fascia telefono: senza right:auto il blocco slitta di 72px a sinistra */
+    right:auto;
     justify-content:center;align-items:center;margin-top:28px;padding-bottom:28px;
   }
   .section-nums span::before{display:none}

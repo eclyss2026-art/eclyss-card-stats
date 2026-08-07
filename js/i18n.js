@@ -19,7 +19,8 @@
     '.lore-mantra', '.codex-mantra', '.app-lead', '.app-title',
     '.cart-dropdown-header', '.cart-empty', '.qty-label',
     'button:not(.qty-btn):not(.menu-toggle):not(.cart-btn):not(.lang-toggle)',
-    '.faq-q', 'span', 'a', 'td', 'th', 'label',
+    // 'li': voci di elenco senza link (metodi di pagamento nelle FAQ)
+    '.faq-q', 'span', 'a', 'li', 'td', 'th', 'label',
     '.order-title', '.order-empty', '.cart-item-remove', '.cart-item-meta', '[data-i18n]'
   ].join(',');
 
@@ -60,8 +61,13 @@
       var itHTML = el.getAttribute('data-it');
       if (lang === 'en') {
         var en = EN[norm(itHTML)];
-        el.innerHTML = (en != null) ? en : itHTML;
-      } else {
+        // Si scrive SOLO se la voce esiste. Riscrivere l'innerHTML di un
+        // contenitore che non ha traduzione ne ricrea i figli, e quelli gia'
+        // raccolti in "nodes" (NodeList statica) restano staccati dalla
+        // pagina: le loro traduzioni finivano su nodi orfani. Era il caso del
+        // carrello vuoto, tradotto nel dizionario ma sempre in italiano.
+        if (en != null) el.innerHTML = en;
+      } else if (el.innerHTML !== itHTML) {
         el.innerHTML = itHTML;
       }
     }

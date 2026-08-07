@@ -11,6 +11,8 @@ window.ECLYSS_I18N = { en: {
   "<a href=\"entra-nel-nostro-mondo.html#elementi\">← Torna ai Quattro Elementi</a>": "<a href=\"entra-nel-nostro-mondo.html#elementi\">← Back to the Four Elements</a>",
   "FAQ — Domande Frequenti · ECLYSS": "FAQ — Frequently Asked Questions · ECLYSS",
   "Stai Acquistando · ECLYSS": "You're Buying · ECLYSS",
+  "Spedizioni · ECLYSS": "Shipping · ECLYSS",
+  "Contatti · ECLYSS": "Contacts · ECLYSS",
 
   /* ── Nav / comuni ── */
   "Come Funziona": "How It Works",
@@ -35,9 +37,22 @@ window.ECLYSS_I18N = { en: {
   "Consegne": "Deliveries",
   "Scrivici": "Write to us",
   "Tempi, corrieri e modalità di consegna dei tuoi ordini <span class=\"hl\">ECLYSS</span>.": "Delivery times, couriers and shipping options for your <span class=\"hl\">ECLYSS</span> orders.",
+
+  /* ── Spedizioni (testo contrattuale) ── */
+  "Il servizio di spedizione delle etichette e packaging stampati prevede la consegna nell'ambito ed entro tutto il territorio italiano, europeo e negli Stati Uniti d'America.": "The shipping service for printed labels and packaging covers delivery throughout Italy, Europe and the United States of America.",
+  "Le spedizioni vengono svolte a mezzo del servizio di consegna fornito da UPS (<a href=\"https://www.ups.com/it/it/Home.page\" target=\"_blank\" rel=\"noopener\">ups.com</a>) o DHL (<a href=\"https://www.dhl.com/it-it/home.html\" target=\"_blank\" rel=\"noopener\">dhl.com</a>). Il Cliente ha facoltà di scegliere modalità diverse di spedizione selezionando tra Spedizione Relax (+/- 12 giorni lavorativi), Spedizione Standard (+/- 7 giorni lavorativi) o Spedizione Express (+/- 3 giorni lavorativi). La data di spedizione deve essere calcolata dal giorno successivo alla data di approvazione finale delle bozze.": "Shipments are handled through the delivery service provided by UPS (<a href=\"https://www.ups.com/it/it/Home.page\" target=\"_blank\" rel=\"noopener\">ups.com</a>) or DHL (<a href=\"https://www.dhl.com/it-it/home.html\" target=\"_blank\" rel=\"noopener\">dhl.com</a>). The Customer may choose between different shipping options: Relax Shipping (+/- 12 working days), Standard Shipping (+/- 7 working days) or Express Shipping (+/- 3 working days). The shipping date is calculated from the day after the final approval of the proofs.",
+  "Il Cliente non ha la facoltà invece di utilizzare servizi prestati da vettori diversi da UPS o DHL, pertanto, non è applicabile l'art. 63 co. 2 D.Lgs. 206/2005, novellato dal D.Lgs. 21/2014.": "The Customer may not use services provided by carriers other than UPS or DHL; therefore art. 63 para. 2 of Italian Legislative Decree 206/2005, as amended by Legislative Decree 21/2014, does not apply.",
+  "Ricezioni di Ordini o conferme di pagamento successive alle ore 18:00 si considereranno avvenute, e pertanto saranno prese in carico, il giorno lavorativo successivo. Per giorni lavorativi si intende i giorni dal lunedì al venerdì, con esclusione del 1/1, 6/1, 25/4, 1/5, 2/6, 15/8, 1/11, 8/12, 24/12, 25/12, 26/12, 31/12, Lunedì di Pasqua.": "Orders or payment confirmations received after 6:00 p.m. are deemed received, and will therefore be processed, on the following working day. Working days means Monday to Friday, excluding 1/1, 6/1, 25/4, 1/5, 2/6, 15/8, 1/11, 8/12, 24/12, 25/12, 26/12, 31/12 and Easter Monday.",
+  "L'Ordine deve ritenersi non completato sino al momento dell'avvenuto caricamento del file da parte del Cliente e del relativo pagamento.": "The Order is not considered complete until the Customer has uploaded the file and the related payment has been made.",
+  "I termini di consegna al destinatario finale sono riferiti ai termini applicati dal vettore. I termini e le modalità di spedizione dipendono dalle prestazioni richieste dal Cliente, e le spese di spedizione finali sono calcolate al completamento dell'Ordine, vale a dire all'esito del caricamento del file e della ricezione della conferma della presa in carico dell'Ordine da parte di <strong>ECLYSS</strong>, con relativa quantificazione ed indicazione specifica; in ogni caso, il prezzo finale dell'Ordine è comprensivo delle predette spese di spedizione ad esclusione di eventuali costi doganali a carico del Cliente.": "Delivery times to the final recipient refer to the terms applied by the carrier. Shipping terms and methods depend on the services requested by the Customer, and the final shipping costs are calculated upon completion of the Order, that is, after the file has been uploaded and confirmation of the Order being accepted by <strong>ECLYSS</strong> has been received, with the relevant amount specifically quantified and indicated; in any case, the final price of the Order includes the aforementioned shipping costs, excluding any customs charges payable by the Customer.",
+  "<strong>ECLYSS</strong> non sarà responsabile di fronte al Cliente, in nessun caso, di possibili danni, diretti o indiretti, di ogni e qualsiasi natura, provocati da eventuali errori, vizi o ritardi nella consegna delle etichette e packaging stampate al destinatario da parte del vettore incaricato.": "<strong>ECLYSS</strong> shall not be liable to the Customer, under any circumstances, for any direct or indirect damages of any kind whatsoever caused by errors, defects or delays in the delivery of the printed labels and packaging to the recipient by the appointed carrier.",
   "Domande, collaborazioni o assistenza sul tuo ordine? Compila il form: ti risponderemo il prima possibile.": "Questions, partnerships or help with your order? Fill in the form: we'll get back to you as soon as possible.",
   "Nome": "Name",
   "Messaggio": "Message",
+  /* placeholder dei campi del form contatti (via data-i18n-attr="placeholder") */
+  "Il tuo nome": "Your name",
+  "La tua email": "Your email",
+  "Scrivi qui il tuo messaggio…": "Write your message here…",
   "Invia messaggio": "Send message",
   "Invio in corso…": "Sending…",
   "Messaggio inviato! Ti risponderemo il prima possibile.": "Message sent! We'll get back to you as soon as possible.",
@@ -49,13 +64,17 @@ window.ECLYSS_I18N = { en: {
   "ENTRA<br>NEL MONDO<br>di <span class=\"eclipse\">ECLYSS</span>": "ENTER<br>THE WORLD<br>of <span class=\"eclipse\">ECLYSS</span>",
   "Acquista ora <span class=\"btn-arrow\">›</span>": "Buy now <span class=\"btn-arrow\">›</span>",
   "Il Respiro<br>Originario": "The Original<br>Breath",
-  "Non è un semplice energy drink.<br>È il primo frammento dell'Universo di <span class=\"hl\">ECLYSS</span>.": "It's not just an energy drink.<br>It's the first fragment of the <span class=\"hl\">ECLYSS</span> Universe.",
+  "Non è un semplice energy drink.<br>È il primo frammento dell'Universo <span class=\"hl\">ECLYSS</span>.": "It's not just an energy drink.<br>It's the first fragment of the <span class=\"hl\">ECLYSS</span> Universe.",
   "Gusto Frutti Rossi<small>Scura. Intensa. Indimenticabile.</small>": "Red Berries Flavour<small>Dark. Intense. Unforgettable.</small>",
-  "Servita Ghiacciata<small>Tra 4 °C e 8 °C ogni sorso raggiunge il suo equilibrio ideale.</small>": "Served Ice-Cold<small>Between 4 °C and 8 °C every sip reaches its ideal balance.</small>",
-  "75 mg di Caffeina<small>Focus, resistenza e reattività al massimo.</small>": "75 mg of Caffeine<small>Focus, stamina and reactivity at their peak.</small>",
-  "Vitamine Gruppo B<small>Energia che sostiene corpo e mente.</small>": "B-Group Vitamins<small>Energy that sustains body and mind.</small>",
-  "Collezionabile<small>Ogni lattina contiene una carta unica: oltre 50 da collezionare.</small>": "Collectible<small>Every can holds a unique card: over 50 to collect.</small>",
-  "250 ML<small>Formato slim, energia essenziale.</small>": "250 ML<small>Slim format, essential energy.</small>",
+  "Servita Ghiacciata<small>Tra 4 °C e 8 °C: equilibrio ideale.</small>": "Served Ice-Cold<small>Between 4 °C and 8 °C: ideal balance.</small>",
+  "75 mg di Caffeina<small>Focus, resistenza e reattività.</small>": "75 mg of Caffeine<small>Focus, stamina and reactivity.</small>",
+  "Vitamine Gruppo B<small>Energia per corpo e mente.</small>": "B-Group Vitamins<small>Energy for body and mind.</small>",
+  "Collezionabile<small>Una carta per lattina. Oltre 50 da collezionare.</small>": "Collectible<small>One card per can. Over 50 to collect.</small>",
+  "250 ML<small>Formato slim. Energia essenziale.</small>": "250 ML<small>Slim format. Essential energy.</small>",
+  "Caricamento lattina": "Loading can",
+  "SCORRI": "SCROLL",
+  "<small>Scarica su</small><strong>App Store</strong>": "<small>Download on the</small><strong>App Store</strong>",
+  "<small>Disponibile su</small><strong>Google Play</strong>": "<small>Get it on</small><strong>Google Play</strong>",
   "Ogni lattina è un frammento di <span class=\"hl\">ECLYSS</span>:<br>scoprila, rivela la tua creatura e aggiungila alla tua <span class=\"hl\">collezione</span>.": "Every can is a fragment of <span class=\"hl\">ECLYSS</span>:<br>discover it, reveal your creature and add it to your <span class=\"hl\">collection</span>.",
   "Ogni box contiene <span class=\"hl\">4 lattine collezionabili</span> con personaggi casuali.": "Each box contains <span class=\"hl\">4 collectible cans</span> with random characters.",
   "4 lattine collezionabili": "4 collectible cans",
@@ -84,6 +103,7 @@ window.ECLYSS_I18N = { en: {
   "All'inizio non esisteva né suono, né forma.<br> Da quel silenzio emerse una scintilla di coscienza che divenne <span class=\"hl\">ECLYSS</span>. Custodi e Interferenti si fronteggiano da tempi che nessuno può ricordare.": "In the beginning there was neither sound nor form.<br> From that silence emerged a spark of consciousness that became <span class=\"hl\">ECLYSS</span>. Guardians and Interferers have faced each other since times no one can remember.",
   "Ciò che conosci è solo un frammento dell'Eclydex": "What you know is only a fragment of the Eclydex",
   "Le Voci del Silenzio": "The Voices of Silence",
+  "«Dal silenzio · nasce · l'armonia · eterna»": "«From silence · is born · eternal · harmony»",
   "Quando il silenzio si frantumò in miliardi di suoni e visioni, nacquero i Custodi. <br> Anime ultraterrene che incarnano le forze sottili dell'esistenza.<br><strong style=\"color:var(--purple-light);font-weight:700;\">Manifestazioni di principi puri.</strong>": "When silence shattered into billions of sounds and visions, the Guardians were born. <br> Otherworldly souls that embody the subtle forces of existence.<br><strong style=\"color:var(--purple-light);font-weight:700;\">Manifestations of pure principles.</strong>",
   /* Descrizioni delle carte — allineate al foglio "Dati carte" dell'Excel.
      Gli elementi (Silenzio, Caos, Ombra, Tempo) sono piu' in basso, sezione
@@ -142,6 +162,9 @@ window.ECLYSS_I18N = { en: {
 
   /* ── FAQ ── */
   "Assistenza": "Support",
+  /* voci dell'elenco metodi di pagamento (PayPal resta invariato) */
+  "Carta di credito": "Credit card",
+  "Bonifico bancario": "Bank transfer",
   "Domande Frequenti (FAQ)": "Frequently Asked Questions (FAQ)",
   "Tutto quello che vuoi sapere su <span class=\"hl\">ECLYSS</span>: produzione, acquisto, pagamenti e assistenza. Non trovi la risposta che cerchi? Scrivici, siamo qui per aiutarti.": "Everything you want to know about <span class=\"hl\">ECLYSS</span>: production, purchase, payments and support. Can't find the answer you're looking for? Write to us, we're here to help.",
   "<span class=\"faq-q-text\">Che cos'è <span class=\"hl\">Eclyss</span>?</span> <span class=\"faq-icon\">+</span>": "<span class=\"faq-q-text\">What is <span class=\"hl\">Eclyss</span>?</span> <span class=\"faq-icon\">+</span>",
@@ -164,6 +187,8 @@ window.ECLYSS_I18N = { en: {
   "Sì. Tutte le transazioni vengono effettuate tramite piattaforme di pagamento affidabili e protette, nel rispetto dei più elevati standard di sicurezza.": "Yes. All transactions are carried out through reliable and protected payment platforms, in compliance with the highest security standards.",
   "<span class=\"faq-q-text\">Come posso contattare l'assistenza clienti?</span> <span class=\"faq-icon\">+</span>": "<span class=\"faq-q-text\">How can I contact customer support?</span> <span class=\"faq-icon\">+</span>",
   "Per qualsiasi domanda, informazione o richiesta di assistenza puoi scriverci all'indirizzo:": "For any question, information or support request you can write to us at:",
+  "Per assistenza su un ordine già effettuato (spedizione, reso o pagamento) scrivi invece a:": "For help with an order you have already placed (shipping, returns or payment) write instead to:",
+  "Oppure scrivici direttamente a <a href=\"mailto:hello@eclyssdrink.com\">hello@eclyssdrink.com</a> per informazioni e collaborazioni, o a <a href=\"mailto:orders@eclyssdrink.com\">orders@eclyssdrink.com</a> per assistenza sugli ordini.": "Or write to us directly at <a href=\"mailto:hello@eclyssdrink.com\">hello@eclyssdrink.com</a> for information and partnerships, or at <a href=\"mailto:orders@eclyssdrink.com\">orders@eclyssdrink.com</a> for order support.",
   "Ti risponderemo nel più breve tempo possibile.": "We'll reply as soon as possible.",
   "<span class=\"faq-q-text\">Come vengono trattati i miei dati personali?</span> <span class=\"faq-icon\">+</span>": "<span class=\"faq-q-text\">How is my personal data handled?</span> <span class=\"faq-icon\">+</span>",
   "La protezione dei dati personali è una nostra priorità.": "Protecting personal data is a priority for us.",
