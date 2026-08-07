@@ -1,0 +1,43 @@
+# Pubblicazione di eclyssdrink.com su GitHub Pages.
+# Il sito e' HTML/CSS/JS statico: non c'e' niente da compilare, si carica la
+# root del repo cosi' com'e'. Sostituisce la vecchia pipeline "legacy", il cui
+# passo di deploy restava in coda fino al timeout (run 31097861326).
+name: Deploy sito su Pages
+
+on:
+  push:
+    branches: [main]
+  # Permette di rilanciare il deploy a mano dalla tab Actions senza dover
+  # inventare un commit vuoto.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un deploy alla volta. I push gia' in coda vengono annullati: online deve
+# andare l'ultimo commit, non quello che ha vinto la corsa.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      # Nessun passaggio di build: si impacchetta la root. Restano fuori solo
+      # .git e .github, che non fanno parte del sito servito.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
