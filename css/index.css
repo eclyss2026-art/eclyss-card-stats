@@ -900,8 +900,11 @@ footer{
     margin:28px auto 0;display:flex;justify-content:center;
   }
   .section-nums{
-    /* in flusso sotto la lattina, come prima */
-    position:static;transform:none;
+    /* In flusso sotto la lattina, come prima, ma NON static: piu' sotto un
+       margin-top negativo li fa risalire dentro la corsia di .hero-row
+       (z-index 10), e su un elemento static lo z-index non ha effetto. La
+       corsia finiva sopra 01/02 e ne mangiava i click. */
+    position:relative;transform:none;
     flex-direction:row;justify-content:center;align-items:center;
     margin-top:32px;padding-bottom:36px;z-index:11;
   }
@@ -998,7 +1001,9 @@ footer{
   }
   .eclipse-sun,.eclipse-moon{transform:translate(-50%,-50%)}
   .section-nums{
-    position:static;transform:none;flex-direction:row;
+    /* Stesso motivo della fascia telefono: relative + z-index, altrimenti la
+       corsia di .hero-row copre 01/02 e i click non arrivano. */
+    position:relative;z-index:11;transform:none;flex-direction:row;
     justify-content:center;align-items:center;margin-top:28px;padding-bottom:28px;
   }
   .section-nums span::before{display:none}
