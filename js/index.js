@@ -686,19 +686,46 @@ if (skipIntroBtn) {
        cosi' quelli che servono subito sono pronti per primi. Una decodifica per
        volta per non intasare il thread mentre l'utente sta girando la lattina. */
     let fbRiempimentoAttivo = false;
+    /* Prima scaricava un fotogramma alla volta (await in sequenza): in rete
+       locale non si notava, ma con una latenza reale (100-150ms per richiesta
+       su una connessione mobile) il tempo totale cresce come "numero di
+       fotogrammi x latenza" — con 96 fotogrammi anche solo 100ms a testa fanno
+       quasi 10 secondi prima che l'intero giro sia pronto. Un utente che
+       comincia a ruotare la lattina prima che il precarico abbia finito trova
+       fotogrammi non ancora decodificati: lo schermo resta fermo sul
+       precedente finche' non arrivano, e quello si vede come uno scatto.
+       Ora un piccolo pool di richieste in volo insieme (il browser le
+       moltiplexa comunque su HTTP/2): il tempo totale scende a "numero di
+       fotogrammi / dimensione del pool x latenza" — con pool 6 e le stesse
+       cifre, sotto i 2 secondi invece di quasi 10. */
+    const FB_RIEMPI_CONCORRENZA = 6;
     async function fbRiempi() {
       if (fbRiempimentoAttivo) return;
       fbRiempimentoAttivo = true;
       try {
+        // stessa spirale di priorita' di prima (dal fotogramma corrente verso
+        // l'esterno), calcolata una volta sola: se la rivelazione avviene a
+        // meta' del precarico il peggio che succede e' scaricare qualche
+        // fotogramma sigillato di troppo, liberato subito dopo — non un bug,
+        // solo qualche KB di banda nel caso limite.
+        const daFare = [];
         for (let d = 0; d <= FALLBACK_FRAMES; d++) {
           const insieme = fbInsieme();
           for (const segno of [1, -1]) {
             const i = ((fbShownFrame + segno * d) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
             const voce = insieme[i];
-            if (voce && !fbBmp.has(fbChiave(voce[0], voce[1]))) await fbDecodifica(voce[0], voce[1]);
+            if (voce && !fbBmp.has(fbChiave(voce[0], voce[1]))) daFare.push(voce);
             if (d === 0) break;
           }
         }
+        let cursore = 0;
+        async function lavoratore() {
+          while (cursore < daFare.length) {
+            const voce = daFare[cursore++];
+            await fbDecodifica(voce[0], voce[1]);
+          }
+        }
+        await Promise.all(Array.from({ length: FB_RIEMPI_CONCORRENZA }, lavoratore));
       } finally { fbRiempimentoAttivo = false; }
     }
     /* Una volta rivelata, i fotogrammi sigillati non si rivedono piu': via dalla
