@@ -493,43 +493,97 @@ if (skipIntroBtn) {
      eclissi. Rigenerabili con render-frames.html (utensile interno). */
   const FALLBACK_FRAMES = 48;
   const FB_SWAP_FRAME = FALLBACK_FRAMES / 2;
-  /* La meta' sigillata (0-23) e' identica per le due varianti: cambia solo la
-     creatura rivelata, quindi la seconda cartella contiene i soli 24-47. */
-  const FB_VARIANT_DIRS = ['assets/can-frames', 'assets/can-frames-02'];
-  let fbVariant = 0; // 0 = voce del silenzio, 1 = sussurro corrotto
-  /* I fotogrammi rivelati sono stati ri-renderizzati (Thaera -> Juna) MANTENENDO
-     gli stessi nomi di file: senza una versione nell'URL i browser che avevano
-     gia' visitato il sito continuerebbero a mostrare la vecchia creatura presa
-     dalla cache. Da incrementare a ogni nuovo render dei fotogrammi. */
-  const FB_FRAMES_V = '2';
-  const fbSrc = (i, v) =>
-    FB_VARIANT_DIRS[i >= FB_SWAP_FRAME ? v : 0] + '/frame-' + String(i).padStart(2, '0') +
-    '.webp?v=' + FB_FRAMES_V;
-  const fallbackFrameSrc = (i) => fbSrc(i, fbVariant);
+  const FB_W = 480, FB_H = 700;
+  /* Tre insiemi, ognuno con il giro che gli serve davvero:
+       can-frames     lattina sigillata, 0-23 (oltre i 180 gradi non si vede mai:
+                      la rivelazione e' irreversibile)
+       can-frames-01  Juna rivelata, giro INTERO 0-47
+       can-frames-02  Zyra rivelata, giro INTERO 0-47
+     Il giro intero delle rivelate e' quello che prima mancava: finito il primo
+     giro l'indice torna a 0, che era un fotogramma sigillato, e il codice lo
+     bloccava a meta' giro — la lattina saltava visibilmente all'indietro. */
+  const FB_SEALED_DIR = 'assets/can-frames';
+  const FB_REVEALED_DIRS = ['assets/can-frames-01', 'assets/can-frames-02'];
+  let fbVariant = 0; // 0 = voce del silenzio (Juna), 1 = sussurro corrotto (Zyra)
+  /* Versione negli URL: i fotogrammi vengono ri-renderizzati mantenendo gli
+     stessi nomi, quindi senza questa i browser servirebbero i vecchi dalla
+     cache. Da incrementare a ogni nuovo render. */
+  const FB_FRAMES_V = '3';
+  const fbFrameUrl = (dir, i) =>
+    dir + '/frame-' + String(i).padStart(2, '0') + '.webp?v=' + FB_FRAMES_V;
   function showStaticFallback() {
-    const img = document.createElement('img');
-    img.src = fallbackFrameSrc(0);
-    img.alt = 'Lattina ECLYSS — Il Respiro Originario';
-    img.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;touch-action:pan-y;';
-    img.draggable = false;
+    /* Canvas, non <img>. Assegnare img.src a ogni fotogramma rientra nella
+       pipeline di caricamento del browser e impone una DECODIFICA del webp:
+       misurata a ~12 ms su desktop, contro i 16,7 ms totali che un frame a
+       60fps ha a disposizione — da qui la rotazione a scatti. Decodificando
+       una volta sola in ImageBitmap, disegnare costa 0,05 ms. */
+    const fbCanvas = document.createElement('canvas');
+    fbCanvas.width = FB_W; fbCanvas.height = FB_H;
+    fbCanvas.setAttribute('role', 'img');
+    fbCanvas.setAttribute('aria-label', 'Lattina ECLYSS — Il Respiro Originario');
+    fbCanvas.style.cssText = 'display:block;width:min(340px,72vw);aspect-ratio:480/700;height:auto;touch-action:pan-y;';
+    const fbCtx = fbCanvas.getContext('2d');
     canvas.style.display = 'none';
-    canvas.parentElement.appendChild(img);
+    canvas.parentElement.appendChild(fbCanvas);
+    const img = fbCanvas; // i gestori di puntatore/cursore piu' sotto restano identici
+
+    /* ── Fotogrammi decodificati ──
+       chiave "cartella/indice" -> ImageBitmap. Si decodifica una volta e si
+       tiene: e' il contrario del comportamento di <img>, che ridecodifica ogni
+       volta che la cache delle immagini decodificate lo sfratta. */
+    const fbBmp = new Map();
+    const fbInCorso = new Set();
+    let fbChiaveCorrente = null;
+    const fbChiave = (dir, i) => dir + '/' + i;
+
+    function fbDisegna(bm) {
+      fbCtx.clearRect(0, 0, FB_W, FB_H);
+      fbCtx.drawImage(bm, 0, 0);
+    }
+    async function fbDecodifica(dir, i) {
+      const k = fbChiave(dir, i);
+      if (fbBmp.has(k) || fbInCorso.has(k)) return;
+      fbInCorso.add(k);
+      try {
+        const risposta = await fetch(fbFrameUrl(dir, i));
+        const bm = await createImageBitmap(await risposta.blob());
+        fbBmp.set(k, bm);
+        // se nel frattempo e' proprio il fotogramma richiesto, mostralo adesso
+        if (k === fbChiaveCorrente) fbDisegna(bm);
+      } catch (e) { /* un fotogramma perso non deve fermare la rotazione */ }
+      finally { fbInCorso.delete(k); }
+    }
+    function fbLibera(dir) { // libera la memoria di un insieme non piu' raggiungibile
+      for (const [k, bm] of fbBmp) {
+        if (k.slice(0, k.lastIndexOf('/')) === dir) { bm.close && bm.close(); fbBmp.delete(k); }
+      }
+    }
     if (loadingEl) loadingEl.style.display = 'none';
 
     // fotogramma mostrato = base dallo scroll + giro manuale col dito
     let fbBase = 0, fbOffset = 0, fbRevealed = false, fbShownFrame = 0;
     const FB_SWAP = FALLBACK_FRAMES / 2; // dal 24 in poi la lattina è rivelata
     function applyFallbackFrame() {
-      let i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
-      // Rivelazione irreversibile, come nel percorso 3D: una volta vista la
-      // creatura non si torna ai fotogrammi sigillati (si resta almeno a 180°).
+      const i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
+      /* Rivelazione irreversibile, come nel percorso 3D. Prima si bloccava
+         l'indice a meta' giro, e superato il 47 la lattina saltava indietro al
+         24. Ora le cartelle rivelate hanno il giro intero, quindi dopo la
+         rivelazione si continua a girare senza discontinuita': cambia solo la
+         cartella da cui si pesca. */
       if (i >= FB_SWAP) fbRevealed = true;
-      else if (fbRevealed) i = FB_SWAP;
-      // Riassegnare lo stesso src fa comunque ripartire il ciclo di caricamento:
-      // durante uno swipe erano decine di assegnazioni inutili per secondo.
-      if (i === fbShownFrame) return;
+      const dir = (!fbRevealed && i < FB_SWAP) ? FB_SEALED_DIR : FB_REVEALED_DIRS[fbVariant];
+      const k = fbChiave(dir, i);
+      if (k === fbChiaveCorrente) return;
+      fbChiaveCorrente = k;
       fbShownFrame = i;
-      img.src = fallbackFrameSrc(i);
+      const bm = fbBmp.get(k);
+      // se non e' ancora decodificato resta a schermo il fotogramma precedente:
+      // meglio un fotogramma vecchio di un lampo di vuoto
+      if (bm) fbDisegna(bm); else fbDecodifica(dir, i);
+      // anche da qui: se la rivelazione avviene trascinando col dito non
+      // arrivano eventi di scroll, e la sigillata resterebbe in memoria
+      fbLiberaSigillataSePossibile();
+      fbRiempi();
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
     let fbRotationCompleted = false; // drag col dito solo dopo il giro completo da scroll
@@ -561,20 +615,42 @@ if (skipIntroBtn) {
        serve subito, quella rivelata (~600 KB per variante) solo quando la
        rotazione si avvicina allo swap o si cambia variante — stessa logica del
        lazy load dei modelli sul percorso 3D. */
-    const frameCache = [];
-    const fbPreloaded = [false, false];
-    function fbPreload(from, to, v) {
-      for (let i = from; i < to; i++) {
-        const im = new Image();
-        im.src = fbSrc(i, v);
-        frameCache.push(im);
-      }
+    /* Insieme dei fotogrammi raggiungibili adesso. Prima della rivelazione:
+       sigillata 0-23 piu' la rivelata 24-47 (dove avviene lo swap). Dopo: solo
+       la rivelata, giro intero. */
+    function fbInsieme() {
+      const R = FB_REVEALED_DIRS[fbVariant];
+      const out = [];
+      for (let i = 0; i < FB_SWAP; i++) out.push([fbRevealed ? R : FB_SEALED_DIR, i]);
+      for (let i = FB_SWAP; i < FALLBACK_FRAMES; i++) out.push([R, i]);
+      return out;
     }
-    fbPreload(0, FB_SWAP, 0);
-    function fbPreloadRevealed(v) {
-      if (fbPreloaded[v]) return;
-      fbPreloaded[v] = true;
-      fbPreload(FB_SWAP, FALLBACK_FRAMES, v);
+    /* Decodifica in sottofondo, partendo dal fotogramma corrente e allargandosi:
+       cosi' quelli che servono subito sono pronti per primi. Una decodifica per
+       volta per non intasare il thread mentre l'utente sta girando la lattina. */
+    let fbRiempimentoAttivo = false;
+    async function fbRiempi() {
+      if (fbRiempimentoAttivo) return;
+      fbRiempimentoAttivo = true;
+      try {
+        for (let d = 0; d <= FALLBACK_FRAMES; d++) {
+          const insieme = fbInsieme();
+          for (const segno of [1, -1]) {
+            const i = ((fbShownFrame + segno * d) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
+            const voce = insieme[i];
+            if (voce && !fbBmp.has(fbChiave(voce[0], voce[1]))) await fbDecodifica(voce[0], voce[1]);
+            if (d === 0) break;
+          }
+        }
+      } finally { fbRiempimentoAttivo = false; }
+    }
+    /* Una volta rivelata, i fotogrammi sigillati non si rivedono piu': via dalla
+       memoria, sono ~32 MB di bitmap. */
+    let fbSigillataLiberata = false;
+    function fbLiberaSigillataSePossibile() {
+      if (fbSigillataLiberata || !fbRevealed) return;
+      fbSigillataLiberata = true;
+      fbLibera(FB_SEALED_DIR);
     }
 
     /* Selettore 01/02. Sul percorso 3D e' gestito piu' sotto, ma qui non ci si
@@ -593,13 +669,13 @@ if (skipIntroBtn) {
         }
         const v = Number(btn.dataset.covered);
         if (v === fbVariant) return;
+        const precedente = FB_REVEALED_DIRS[fbVariant];
         fbVariant = v;
-        fbPreloadRevealed(v);
-        // il fotogramma a schermo e' ancora della variante precedente:
-        // forza la riassegnazione azzerando la guardia anti-riassegnazione
-        const corrente = fbShownFrame;
-        fbShownFrame = -1;
-        fbBase = corrente; fbOffset = 0;
+        fbLibera(precedente); // l'altra creatura non serve piu': ~64 MB di bitmap
+        // il fotogramma a schermo e' ancora della variante precedente: si
+        // azzera la guardia per forzarne il ridisegno allo stesso angolo
+        fbChiaveCorrente = null;
+        fbBase = fbShownFrame; fbOffset = 0;
         applyFallbackFrame();
       });
     }
@@ -633,8 +709,8 @@ if (skipIntroBtn) {
     function onScrollLite() {
       if (!fbRotationCompleted) maybeLockCompactScroll();
       const p = getScrollProgress();
-      // ~40% del giro: la meta' rivelata deve essere in cache prima dello swap
-      if (isFinite(p) && p > 0.35) fbPreloadRevealed(fbVariant);
+      // una volta rivelata, i fotogrammi sigillati non tornano: libera la memoria
+      fbLiberaSigillataSePossibile();
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         compactRotationComplete = true;
