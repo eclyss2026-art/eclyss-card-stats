@@ -492,7 +492,14 @@ if (skipIntroBtn) {
      scelti in base allo stesso progresso di scroll che guida rotazione ed
      eclissi. Rigenerabili con render-frames.html (utensile interno). */
   const FALLBACK_FRAMES = 48;
-  const fallbackFrameSrc = (i) => 'assets/can-frames/frame-' + String(i).padStart(2, '0') + '.webp';
+  const FB_SWAP_FRAME = FALLBACK_FRAMES / 2;
+  /* La meta' sigillata (0-23) e' identica per le due varianti: cambia solo la
+     creatura rivelata, quindi la seconda cartella contiene i soli 24-47. */
+  const FB_VARIANT_DIRS = ['assets/can-frames', 'assets/can-frames-02'];
+  let fbVariant = 0; // 0 = voce del silenzio, 1 = sussurro corrotto
+  const fbSrc = (i, v) =>
+    FB_VARIANT_DIRS[i >= FB_SWAP_FRAME ? v : 0] + '/frame-' + String(i).padStart(2, '0') + '.webp';
+  const fallbackFrameSrc = (i) => fbSrc(i, fbVariant);
   function showStaticFallback() {
     const img = document.createElement('img');
     img.src = fallbackFrameSrc(0);
@@ -544,12 +551,51 @@ if (skipIntroBtn) {
         if (fbRotationCompleted) img.style.cursor = 'grab';
       }));
 
-    // precarica tutti i fotogrammi: lo scroll non deve mai aspettare la rete
+    /* Precarico: lo scroll non deve mai aspettare la rete. La meta' sigillata
+       serve subito, quella rivelata (~600 KB per variante) solo quando la
+       rotazione si avvicina allo swap o si cambia variante — stessa logica del
+       lazy load dei modelli sul percorso 3D. */
     const frameCache = [];
-    for (let i = 0; i < FALLBACK_FRAMES; i++) {
-      const im = new Image();
-      im.src = fallbackFrameSrc(i);
-      frameCache.push(im);
+    const fbPreloaded = [false, false];
+    function fbPreload(from, to, v) {
+      for (let i = from; i < to; i++) {
+        const im = new Image();
+        im.src = fbSrc(i, v);
+        frameCache.push(im);
+      }
+    }
+    fbPreload(0, FB_SWAP, 0);
+    function fbPreloadRevealed(v) {
+      if (fbPreloaded[v]) return;
+      fbPreloaded[v] = true;
+      fbPreload(FB_SWAP, FALLBACK_FRAMES, v);
+    }
+
+    /* Selettore 01/02. Sul percorso 3D e' gestito piu' sotto, ma qui non ci si
+       arriva mai (si esce prima con showStaticFallback), quindi senza questo
+       blocco i numeri non farebbero nulla: ne' creatura ne' tono dell'eclissi. */
+    const pickerFb = document.getElementById('canVariantPicker');
+    const eclipseWrapFb = document.querySelector('.hero-center');
+    if (pickerFb) {
+      pickerFb.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-covered]');
+        if (!btn) return;
+        pickerFb.querySelectorAll('[data-covered]').forEach(el => el.classList.toggle('active', el === btn));
+        if (eclipseWrapFb && btn.dataset.eclipse) {
+          eclipseWrapFb.classList.remove('eclipse-light', 'eclipse-dark');
+          eclipseWrapFb.classList.add('eclipse-' + btn.dataset.eclipse);
+        }
+        const v = Number(btn.dataset.covered);
+        if (v === fbVariant) return;
+        fbVariant = v;
+        fbPreloadRevealed(v);
+        // il fotogramma a schermo e' ancora della variante precedente:
+        // forza la riassegnazione azzerando la guardia anti-riassegnazione
+        const corrente = fbShownFrame;
+        fbShownFrame = -1;
+        fbBase = corrente; fbOffset = 0;
+        applyFallbackFrame();
+      });
     }
 
     /* L'eclissi è CSS puro e vive anche senza 3D: senza questo listener --ecl
@@ -581,6 +627,8 @@ if (skipIntroBtn) {
     function onScrollLite() {
       if (!fbRotationCompleted) maybeLockCompactScroll();
       const p = getScrollProgress();
+      // ~40% del giro: la meta' rivelata deve essere in cache prima dello swap
+      if (isFinite(p) && p > 0.35) fbPreloadRevealed(fbVariant);
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         compactRotationComplete = true;
