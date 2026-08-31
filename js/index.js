@@ -412,15 +412,20 @@ if (skipIntroBtn) {
 
   function advanceCompactRotation(delta, event) {
     if (!compactRotationLocked) return;
-    if (delta < 0 && compactRotationProgress <= 0) {
+    // Se il gesto all'indietro raggiunge lo zero, libera la pagina con QUELLO
+    // stesso gesto. Prima serviva un secondo swipe/colpo di rotella.
+    const distance = event.type === 'wheel' ? 700 : 400;
+    const nextProgress = Math.max(0, Math.min(1, compactRotationProgress + delta / distance));
+    if (delta < 0 && nextProgress <= 0) {
+      compactRotationProgress = 0;
+      if (updateCompactRotation) updateCompactRotation();
       unlockCompactScroll(true);
       return;
     }
 
     event.preventDefault();
     // -22% di distanza = stessa carezza del dito copre un po' piu' di giro
-    const distance = event.type === 'wheel' ? 700 : 400;
-    compactRotationProgress = Math.max(0, Math.min(1, compactRotationProgress + delta / distance));
+    compactRotationProgress = nextProgress;
     if (updateCompactRotation) updateCompactRotation();
   }
 
@@ -529,7 +534,7 @@ if (skipIntroBtn) {
   const FB_FRAMES_V = '4';
   const fbFrameUrl = (dir, i) =>
     dir + '/frame-' + String(i).padStart(2, '0') + '.webp?v=' + FB_FRAMES_V;
-  function showStaticFallback() {
+  function showStaticFallback(initialState = {}) {
     /* Canvas, non <img>. Assegnare img.src a ogni fotogramma rientra nella
        pipeline di caricamento del browser e impone una DECODIFICA del webp:
        misurata a ~12 ms su desktop, contro i 16,7 ms totali che un frame a
@@ -565,6 +570,12 @@ if (skipIntroBtn) {
       try {
         const risposta = await fetch(fbFrameUrl(dir, i));
         const bm = await createImageBitmap(await risposta.blob());
+        // Un cambio 01/02 puo' avvenire mentre sono ancora in volo richieste
+        // della variante precedente: non rimetterle in memoria dopo il cambio.
+        if (FB_REVEALED_DIRS.includes(dir) && dir !== FB_REVEALED_DIRS[fbVariant]) {
+          bm.close && bm.close();
+          return;
+        }
         fbBmp.set(k, bm);
         // se nel frattempo e' proprio il fotogramma richiesto, mostralo adesso
         if (k === fbChiaveCorrente) fbDisegna(bm);
@@ -578,8 +589,15 @@ if (skipIntroBtn) {
     }
     if (loadingEl) loadingEl.style.display = 'none';
 
+    if (Number.isInteger(initialState.variant)) fbVariant = initialState.variant;
+    // Dopo una perdita WebGL si riparte dall'angolo realmente visibile, non
+    // dal fronte della lattina.
+    const initialFrame = Number.isFinite(initialState.frame)
+      ? ((Math.round(initialState.frame) % FALLBACK_FRAMES) + FALLBACK_FRAMES) % FALLBACK_FRAMES
+      : 0;
     // fotogramma mostrato = base dallo scroll + giro manuale col dito
-    let fbBase = 0, fbOffset = 0, fbRevealed = false, fbShownFrame = 0;
+    let fbBase = initialFrame, fbOffset = 0;
+    let fbRevealed = !!initialState.revealed, fbShownFrame = initialFrame;
     const FB_SWAP = FALLBACK_FRAMES / 2; // dal 24 in poi la lattina è rivelata
     function applyFallbackFrame() {
       const i = ((fbBase + fbOffset) % FALLBACK_FRAMES + FALLBACK_FRAMES) % FALLBACK_FRAMES;
@@ -604,7 +622,11 @@ if (skipIntroBtn) {
       fbRiempi();
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
-    let fbRotationCompleted = false; // drag col dito solo dopo il giro completo da scroll
+    let fbRotationCompleted = !!initialState.rotationCompleted; // drag col dito solo dopo il giro completo da scroll
+    if (fbRotationCompleted) {
+      compactRotationComplete = true;
+      img.style.cursor = 'grab';
+    }
     const FB_PX_PER_FRAME = 7; // pixel di trascinamento per passare al fotogramma dopo (era 9: un po' piu' pronta)
 
     /* ── Inerzia al rilascio ──
@@ -693,6 +715,8 @@ if (skipIntroBtn) {
        cosi' quelli che servono subito sono pronti per primi. Una decodifica per
        volta per non intasare il thread mentre l'utente sta girando la lattina. */
     let fbRiempimentoAttivo = false;
+    let fbRiempimentoRichiesto = false;
+    let fbGenerazionePrecarico = 0;
     /* Prima scaricava un fotogramma alla volta (await in sequenza): in rete
        locale non si notava, ma con una latenza reale (100-150ms per richiesta
        su una connessione mobile) il tempo totale cresce come "numero di
@@ -707,8 +731,15 @@ if (skipIntroBtn) {
        cifre, sotto i 2 secondi invece di quasi 10. */
     const FB_RIEMPI_CONCORRENZA = 6;
     async function fbRiempi() {
-      if (fbRiempimentoAttivo) return;
+      if (fbRiempimentoAttivo) {
+        // Non perdere la richiesta della nuova variante: appena il worker
+        // corrente termina ne parte uno con l'insieme aggiornato.
+        fbRiempimentoRichiesto = true;
+        return;
+      }
       fbRiempimentoAttivo = true;
+      fbRiempimentoRichiesto = false;
+      const generazione = fbGenerazionePrecarico;
       try {
         // stessa spirale di priorita' di prima (dal fotogramma corrente verso
         // l'esterno), calcolata una volta sola: se la rivelazione avviene a
@@ -727,13 +758,19 @@ if (skipIntroBtn) {
         }
         let cursore = 0;
         async function lavoratore() {
-          while (cursore < daFare.length) {
+          while (cursore < daFare.length && generazione === fbGenerazionePrecarico) {
             const voce = daFare[cursore++];
             await fbDecodifica(voce[0], voce[1]);
           }
         }
         await Promise.all(Array.from({ length: FB_RIEMPI_CONCORRENZA }, lavoratore));
-      } finally { fbRiempimentoAttivo = false; }
+      } finally {
+        fbRiempimentoAttivo = false;
+        if (fbRiempimentoRichiesto || generazione !== fbGenerazionePrecarico) {
+          fbRiempimentoRichiesto = false;
+          fbRiempi();
+        }
+      }
     }
     /* Una volta rivelata, i fotogrammi sigillati non si rivedono piu': via dalla
        memoria, sono ~32 MB di bitmap. */
@@ -762,6 +799,7 @@ if (skipIntroBtn) {
         if (v === fbVariant) return;
         const precedente = FB_REVEALED_DIRS[fbVariant];
         fbVariant = v;
+        fbGenerazionePrecarico++;
         fbLibera(precedente); // l'altra creatura non serve piu': ~64 MB di bitmap
         // il fotogramma a schermo e' ancora della variante precedente: si
         // azzera la guardia per forzarne il ridisegno allo stesso angolo
@@ -777,7 +815,7 @@ if (skipIntroBtn) {
     const ringFb  = document.getElementById('ring-fg');
     const hintFb  = document.querySelector('.scroll-hint');
     const CIRC_FB = 2 * Math.PI * 20;
-    let fbEclipseLocked = false; // una volta completa, l'eclissi non si riapre più
+    let fbEclipseLocked = !!initialState.eclipseLocked; // una volta completa, l'eclissi non si riapre più
     // Come nel percorso 3D: --ecl e l'anello costano uno style recalc dell'intero
     // documento più un repaint dei dischi sfocati, quindi si scrivono al massimo
     // una volta per frame invece che a ogni evento scroll/touchmove.
@@ -802,6 +840,12 @@ if (skipIntroBtn) {
       const p = getScrollProgress();
       // una volta rivelata, i fotogrammi sigillati non tornano: libera la memoria
       fbLiberaSigillataSePossibile();
+      // Applica il fotogramma finale prima di dichiarare concluso il giro.
+      // Il vecchio ordine saltava frame 95 proprio nell'evento che portava p a 1.
+      if (isFinite(p) && !fbRotationCompleted) {
+        fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
+        applyFallbackFrame();
+      }
       if (p >= 0.995 && !fbRotationCompleted) {
         fbRotationCompleted = true;   // da qui comanda il trascinamento
         compactRotationComplete = true;
@@ -819,15 +863,11 @@ if (skipIntroBtn) {
           blockScrollBriefly();
         }
       }
-      // finito il giro comanda solo la mano
-      if (isFinite(p) && !fbRotationCompleted) {
-        fbBase = Math.min(FALLBACK_FRAMES - 1, Math.round(p * (FALLBACK_FRAMES - 1)));
-        applyFallbackFrame();
-      }
       scheduleFbVisuals(p);
     }
     updateCompactRotation = onScrollLite;
     window.addEventListener('scroll', onScrollLite, { passive: true });
+    applyFallbackFrame();
     onScrollLite();
   }
 
@@ -941,12 +981,26 @@ if (skipIntroBtn) {
      a metà sessione: il canvas resta vuoto e la lattina "scompare". In quel
      caso si passa ai fotogrammi pre-renderizzati, senza buchi visivi. */
   let contextLost = false;
+  function activateFrameFallback() {
+    if (contextLost) return;
+    contextLost = true;
+    // Evita che il vecchio percorso 3D continui a reagire allo scroll insieme
+    // al fallback. Trasferisce anche angolo, variante e stato di rivelazione.
+    window.removeEventListener('scroll', onScroll);
+    const turns = currentRotY / (Math.PI * 2);
+    showStaticFallback({
+      frame: turns * FALLBACK_FRAMES,
+      revealed: modelSwapped || currentRotY >= SWAP_RAD,
+      rotationCompleted,
+      eclipseLocked,
+      variant: activeRevealed,
+    });
+  }
   canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
     if (contextLost) return;
-    contextLost = true;
     console.warn('Contesto WebGL perso: passo ai fotogrammi pre-renderizzati');
-    showStaticFallback();
+    activateFrameFallback();
   }, false);
   renderer.setPixelRatio(pixelRatio);
   // false: la dimensione a schermo resta quella di applyCanvasDisplaySize (setSize altrimenti la sovrascrive)
@@ -1108,7 +1162,7 @@ if (skipIntroBtn) {
     undefined,
     (error) => {
       console.error('Errore caricamento modello (covered):', error);
-      loadingEl.innerHTML = '<span style="color:#ff6b6b">Errore caricamento modello</span>';
+      activateFrameFallback();
     }
   );
 
@@ -1134,11 +1188,17 @@ if (skipIntroBtn) {
         } else {
           root.visible = false;
         }
+        // Se lo scroll era gia' arrivato alla soglia mentre il modello si
+        // caricava, riprende subito la rotazione senza aspettare un altro input.
+        onScroll();
       },
       undefined,
       (error) => {
         revealedModelsLoading[i] = false;
         console.error('Errore caricamento modello (revealed ' + i + '):', error);
+        // Non lasciare la sigillata girare per sempre: il percorso a
+        // fotogrammi conserva angolo e variante e completa la rivelazione.
+        activateFrameFallback();
       }
     );
   }
@@ -1251,7 +1311,16 @@ if (skipIntroBtn) {
   function onScroll() {
     if (!rotationCompleted) maybeLockCompactScroll();
     const p = getScrollProgress();
-    if (p >= 0.995 && !rotationCompleted) {
+    const revealReady = !!revealedRoots[activeRevealed];
+    if (p >= SWAP_PROGRESS * 0.5 && !revealReady) loadRevealedModels();
+    // Non oltrepassare visivamente lo strappo finche' la lattina rivelata non
+    // e' pronta. Evita il giro della sigillata oltre 180 gradi e lo swap tardivo.
+    const rotationProgress = revealReady ? p : Math.min(p, SWAP_PROGRESS - 0.002);
+
+    // Applica l'angolo finale prima di segnare il giro come completato.
+    if (!rotationCompleted) targetRotY = (rotationProgress * TOTAL * Math.PI) / 180;
+
+    if (p >= 0.995 && revealReady && !rotationCompleted) {
       rotationCompleted = true;      // da qui comanda il trascinamento
       compactRotationComplete = true;
       eclipseLocked = true;          // l'eclissi completa resta completa
@@ -1262,12 +1331,10 @@ if (skipIntroBtn) {
     }
     /* Finito il giro la lattina passa alla mano: lo scroll non la tocca più
        (resta dove l'utente la lascia) e la pagina scorre libera. */
-    if (!rotationCompleted) targetRotY = (p * TOTAL * Math.PI) / 180;
-
     // Eclissi: si forma e si riapre con lo scroll, ma una volta completa resta
     // completa per sempre. Guardia anti-NaN. Lo stato si aggiorna qui, il DOM
     // lo tocca applyProgressVisuals() dentro il loop di rendering.
-    visualProgress = isFinite(p) ? p : 0;
+    visualProgress = isFinite(rotationProgress) ? rotationProgress : 0;
   }
   updateCompactRotation = onScroll;
   window.addEventListener('scroll', onScroll, { passive: true });

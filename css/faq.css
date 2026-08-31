@@ -184,6 +184,15 @@ section[id]{scroll-margin-top:90px}
 /* ── ELENCO FAQ (accordion) ── */
 .faq-section{background:var(--dark)}
 .faq-inner{max-width:820px;margin:0 auto}
+/* Titolo di ciascun gruppo tematico (Prodotti, Ordini, Spedizioni...):
+   stessa famiglia dei section-label ma allineato a sinistra e senza le
+   lineette laterali, per restare leggero sopra un elenco lungo. */
+.faq-group-title{
+  font-family:'Asul',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--purple-light);
+  margin:56px 0 4px;
+}
+.faq-list:first-of-type .faq-group-title{margin-top:0}
 .faq-list{border-top:1px solid rgba(255,255,255,.08)}
 .faq-item{border-bottom:1px solid rgba(255,255,255,.08)}
 .faq-q{
