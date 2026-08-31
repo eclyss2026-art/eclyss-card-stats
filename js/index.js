@@ -491,9 +491,19 @@ if (skipIntroBtn) {
      sigillata, 24-47 rivelata, come lo swap a 180° del percorso WebGL),
      scelti in base allo stesso progresso di scroll che guida rotazione ed
      eclissi. Rigenerabili con render-frames.html (utensile interno). */
-  const FALLBACK_FRAMES = 48;
+  /* Densita' doppia: passo 3,75 gradi invece di 7,5. Misurato che raddoppiare
+     porta lo scarto visivo fra fotogrammi consecutivi nella zona piu' brusca
+     (vicino al sigillo, indici iniziali) da ~16,7 a ~12,95 — in linea con la
+     zona piu' fluida della densita' precedente. */
+  const FALLBACK_FRAMES = 96;
   const FB_SWAP_FRAME = FALLBACK_FRAMES / 2;
   const FB_W = 480, FB_H = 700;
+  /* I fotogrammi sono ritagliati al riquadro utile della lattina: sulla tela
+     480x700 il 57% dei pixel era trasparenza sprecata (misurato), pesantissima
+     da decodificare e da tenere in memoria per niente. Il ritaglio va ridisegnato
+     esattamente a queste coordinate, altrimenti la lattina finisce nell'angolo
+     invece che al centro. */
+  const FB_CROP_X = 131, FB_CROP_Y = 28, FB_CROP_W = 218, FB_CROP_H = 665;
   /* Tre insiemi, ognuno con il giro che gli serve davvero:
        can-frames     lattina sigillata, 0-23 (oltre i 180 gradi non si vede mai:
                       la rivelazione e' irreversibile)
@@ -508,7 +518,7 @@ if (skipIntroBtn) {
   /* Versione negli URL: i fotogrammi vengono ri-renderizzati mantenendo gli
      stessi nomi, quindi senza questa i browser servirebbero i vecchi dalla
      cache. Da incrementare a ogni nuovo render. */
-  const FB_FRAMES_V = '3';
+  const FB_FRAMES_V = '4';
   const fbFrameUrl = (dir, i) =>
     dir + '/frame-' + String(i).padStart(2, '0') + '.webp?v=' + FB_FRAMES_V;
   function showStaticFallback() {
@@ -538,7 +548,7 @@ if (skipIntroBtn) {
 
     function fbDisegna(bm) {
       fbCtx.clearRect(0, 0, FB_W, FB_H);
-      fbCtx.drawImage(bm, 0, 0);
+      fbCtx.drawImage(bm, FB_CROP_X, FB_CROP_Y);
     }
     async function fbDecodifica(dir, i) {
       const k = fbChiave(dir, i);

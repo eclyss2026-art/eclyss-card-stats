@@ -6,106 +6,187 @@
 </head>
 <body style="background:#111;color:#fff;font-family:monospace">
 <div id="status">avvio…</div>
+<pre id="log" style="white-space:pre-wrap;font-size:12px;opacity:.8"></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
 <script>
-/* Replica la scena di js/index.js e salva N fotogrammi della rotazione in
-   window.FRAMES (dataURL webp). Poi vengono estratti e salvati come file. */
-const W=480,H=700,N=48;
-window.FRAMES=null; window.RENDER_ERROR=null;
-const status=document.getElementById('status');
+/* Replica la scena di js/index.js e genera i fotogrammi per il percorso
+   mobile (showStaticFallback). Ogni serie va nella cartella assets/ giusta
+   e viene RITAGLIATA al riquadro utile della lattina — deve combaciare con
+   FB_CROP_* in js/index.js, altrimenti la lattina esce dal centro sui
+   fotogrammi.
 
-const canvas=document.createElement('canvas');
-canvas.width=W;canvas.height=H;
+   USO — rigenerare tutto dopo un cambio di modello o densita':
+   1) avviare il ricevitore locale (script Python, vedi sotto), che scrive
+      i file ricevuti dentro assets/<cartella>/frame-NN.webp
+   2) aprire questa pagina, aspettare "pronto per il render"
+   3) in console: await window.generaSerie('assets/eclyss-can2.glb', 'can-frames', 0, FB_SWAP)
+      (poi le altre due varianti rivelate, vedi window.PIANO sotto)
+
+   Ricevitore Python minimo (porta 8093, accetta solo nomi frame-NN.webp
+   dentro le cartelle in ELENCO):
+
+     import http.server, os, re, sys
+     ROOT = os.path.abspath(sys.argv[1]); PORT = 8093
+     ELENCO = {'can-frames', 'can-frames-01', 'can-frames-02'}
+     NAME = re.compile(r'^frame-\d{2}\.webp$')
+     class H(http.server.BaseHTTPRequestHandler):
+       def _cors(self):
+         self.send_header('Access-Control-Allow-Origin', '*')
+         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+       def do_OPTIONS(self): self.send_response(204); self._cors(); self.end_headers()
+       def do_POST(self):
+         q = dict(p.split('=', 1) for p in self.path.split('?')[-1].split('&') if '=' in p)
+         d, name = q.get('dir', ''), q.get('name', '')
+         if d not in ELENCO or not NAME.match(name):
+           self.send_response(400); self._cors(); self.end_headers(); return
+         dest_dir = os.path.join(ROOT, 'assets', d); os.makedirs(dest_dir, exist_ok=True)
+         dest = os.path.abspath(os.path.join(dest_dir, name))
+         if os.path.commonpath([ROOT, dest]) != ROOT:
+           self.send_response(400); self._cors(); self.end_headers(); return
+         open(dest, 'wb').write(self.rfile.read(int(self.headers.get('Content-Length', 0))))
+         self.send_response(200); self._cors(); self.end_headers()
+       def log_message(self, *a): pass
+     http.server.HTTPServer(('127.0.0.1', PORT), H).serve_forever()
+
+     Lanciare con: python frame-receiver.py <cartella-del-repo>
+*/
+const W = 480, H = 700;
+/* N e FB_SWAP devono combaciare con FALLBACK_FRAMES/FB_SWAP_FRAME in
+   js/index.js. FB_CROP_* deve combaciare con le costanti omonime li'. */
+const N = 96, FB_SWAP = N / 2;
+const FB_CROP_X = 131, FB_CROP_Y = 28, FB_CROP_W = 218, FB_CROP_H = 665;
+const RICEVITORE = 'http://localhost:8093/put';
+const QUALITA_WEBP = 0.82;
+
+window.RENDER_ERROR = null;
+const status = document.getElementById('status');
+const logEl = document.getElementById('log');
+const log = (s) => { logEl.textContent += s + '\n'; console.log(s); };
+
+const canvas = document.createElement('canvas');
+canvas.width = W; canvas.height = H;
 document.body.appendChild(canvas);
-const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,preserveDrawingBuffer:true});
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1);
-renderer.setSize(W,H,false);
-renderer.outputEncoding=THREE.sRGBEncoding;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.4;
+renderer.setSize(W, H, false);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.4;
 
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(30,W/H,0.1,100);
-camera.position.set(0,0.9,7.3);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+camera.position.set(0, 0.9, 7.3);
 
-const pmrem=new THREE.PMREMGenerator(renderer);
+const pmrem = new THREE.PMREMGenerator(renderer);
 pmrem.compileEquirectangularShader();
-const ENV_ROTATION_Y=Math.PI/2;
+const ENV_ROTATION_Y = Math.PI / 2;
 
-function prepareModel(gltf){
-  const root=gltf.scene;
-  const box=new THREE.Box3().setFromObject(root);
-  const size=new THREE.Vector3();box.getSize(size);
-  const center=new THREE.Vector3();box.getCenter(center);
+function prepareModel(gltf) {
+  const root = gltf.scene;
+  const box = new THREE.Box3().setFromObject(root);
+  const size = new THREE.Vector3(); box.getSize(size);
+  const center = new THREE.Vector3(); box.getCenter(center);
   root.position.sub(center);
-  const scaleFactor=3.5/size.y;
+  const scaleFactor = 3.5 / size.y;
   root.scale.setScalar(scaleFactor);
-  root.position.y-=0.45;
-  const maxAniso=renderer.capabilities.getMaxAnisotropy();
-  root.traverse(n=>{
-    if(n.isMesh&&n.material){
-      const mats=Array.isArray(n.material)?n.material:[n.material];
-      mats.forEach(m=>{
-        ['map','normalMap','roughnessMap','metalnessMap','emissiveMap','aoMap'].forEach(s=>{
-          if(m[s]){m[s].anisotropy=maxAniso;m[s].needsUpdate=true;}
+  root.position.y -= 0.45;
+  const maxAniso = renderer.capabilities.getMaxAnisotropy();
+  root.traverse(n => {
+    if (n.isMesh && n.material) {
+      const mats = Array.isArray(n.material) ? n.material : [n.material];
+      mats.forEach(m => {
+        ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap'].forEach(s => {
+          if (m[s]) { m[s].anisotropy = maxAniso; m[s].needsUpdate = true; }
         });
-        if(m.transmission!==undefined&&m.transmission>0)m.transmission=0;
-        if(m.name==='label'){
-          if(m.clearcoat!==undefined){m.clearcoat=1.0;m.clearcoatRoughness=0.18;}
-          m.metalness=1.0;
-          if(m.roughness!==undefined)m.roughness=Math.min(m.roughness,0.22);
-          m.envMapIntensity=1.3;
-        }else{
-          if(m.roughness!==undefined)m.roughness=Math.min(m.roughness*0.75,0.3);
-          m.envMapIntensity=2.2;
+        if (m.transmission !== undefined && m.transmission > 0) m.transmission = 0;
+        if (m.name === 'label') {
+          if (m.clearcoat !== undefined) { m.clearcoat = 1.0; m.clearcoatRoughness = 0.18; }
+          m.metalness = 1.0;
+          if (m.roughness !== undefined) m.roughness = Math.min(m.roughness, 0.22);
+          m.envMapIntensity = 1.3;
+        } else {
+          if (m.roughness !== undefined) m.roughness = Math.min(m.roughness * 0.75, 0.3);
+          m.envMapIntensity = 2.2;
         }
-        m.needsUpdate=true;
+        m.needsUpdate = true;
       });
     }
   });
   return root;
 }
 
-const loadHDR=()=>new Promise((res,rej)=>{
-  new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load('assets/brown_photostudio_02_1k.hdr',hdr=>{
-    const envScene=new THREE.Scene();
-    const geo=new THREE.SphereGeometry(50,16,8);
-    geo.scale(-1,1,1);
-    const mat=new THREE.MeshBasicMaterial({map:hdr});mat.toneMapped=false;
-    const sphere=new THREE.Mesh(geo,mat);sphere.rotation.y=ENV_ROTATION_Y;
+const loadHDR = () => new Promise((res, rej) => {
+  new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load('assets/brown_photostudio_02_1k.hdr', hdr => {
+    const envScene = new THREE.Scene();
+    const geo = new THREE.SphereGeometry(50, 16, 8);
+    geo.scale(-1, 1, 1);
+    const mat = new THREE.MeshBasicMaterial({ map: hdr }); mat.toneMapped = false;
+    const sphere = new THREE.Mesh(geo, mat); sphere.rotation.y = ENV_ROTATION_Y;
     envScene.add(sphere);
-    scene.environment=pmrem.fromScene(envScene,0).texture;
-    hdr.dispose();res();
-  },undefined,rej);
+    scene.environment = pmrem.fromScene(envScene, 0).texture;
+    hdr.dispose(); res();
+  }, undefined, rej);
 });
-const loadGLB=url=>new Promise((res,rej)=>new THREE.GLTFLoader().load(url,res,undefined,rej));
+const loadGLB = url => new Promise((res, rej) => new THREE.GLTFLoader().load(url, res, undefined, rej));
 
-(async()=>{
-  try{
-    status.textContent='carico HDR + modelli…';
+const cropCanvas = document.createElement('canvas');
+cropCanvas.width = FB_CROP_W; cropCanvas.height = FB_CROP_H;
+const cropCtx = cropCanvas.getContext('2d');
+
+/* Genera i fotogrammi [from,to) di un modello e li invia al ricevitore
+   locale dentro assets/<dir>/frame-NN.webp. dir deve essere una di quelle
+   in ELENCO del ricevitore Python. */
+window.generaSerie = async function (url, dir, from, to) {
+  const gltf = await loadGLB(url);
+  const root = prepareModel(gltf);
+  const group = new THREE.Group();
+  scene.add(group);
+  group.add(root);
+  group.rotation.x = 0.05;
+  let n = 0, bytes = 0;
+  for (let i = from; i < to; i++) {
+    group.rotation.y = (i / N) * Math.PI * 2;
+    renderer.render(scene, camera);
+    cropCtx.clearRect(0, 0, FB_CROP_W, FB_CROP_H);
+    cropCtx.drawImage(canvas, FB_CROP_X, FB_CROP_Y, FB_CROP_W, FB_CROP_H, 0, 0, FB_CROP_W, FB_CROP_H);
+    const blob = await new Promise(r => cropCanvas.toBlob(r, 'image/webp', QUALITA_WEBP));
+    const nome = 'frame-' + String(i).padStart(2, '0') + '.webp';
+    const risposta = await fetch(`${RICEVITORE}?dir=${dir}&name=${nome}`, { method: 'POST', body: blob });
+    if (!risposta.ok) { log('ERRORE su ' + nome + ': ' + risposta.status); break; }
+    n++; bytes += blob.size;
+    status.textContent = `${dir}: fotogramma ${i + 1 - from}/${to - from}`;
+  }
+  scene.remove(group);
+  const risultato = { dir, da: from, a: to - 1, generati: n, kb: Math.round(bytes / 1024) };
+  log(JSON.stringify(risultato));
+  return risultato;
+};
+
+/* Piano completo: sigillata (comune, solo meta' giro) + le due rivelate al
+   giro intero. Da eseguire in ordine, una chiamata per volta:
+     await window.generaSerie('assets/eclyss-can2.glb',    'can-frames',    0, FB_SWAP)
+     await window.generaSerie('assets/juna.glb',            'can-frames-01', 0, N)
+     await window.generaSerie('assets/eclyss-can2-v3.glb',  'can-frames-02', 0, N)
+   (Zyra e' assets/eclyss-can2-v3.glb; se cambia il modello di una variante,
+   aggiornare qui E in REVEALED_URLS dentro js/index.js — sono indipendenti.) */
+window.PIANO = [
+  ['assets/eclyss-can2.glb', 'can-frames', 0, FB_SWAP],
+  ['assets/juna.glb', 'can-frames-01', 0, N],
+  ['assets/eclyss-can2-v3.glb', 'can-frames-02', 0, N],
+];
+
+(async () => {
+  try {
+    status.textContent = 'carico HDR…';
     await loadHDR();
-    const [covered,revealed]=await Promise.all([loadGLB('assets/eclyss-can2.glb'),loadGLB('assets/juna.glb')]);
-    const group=new THREE.Group();scene.add(group);
-    const rootC=prepareModel(covered),rootR=prepareModel(revealed);
-    group.add(rootC);group.add(rootR);
-    group.rotation.x=0.05;
-    const frames=[];
-    const SWAP=N/2; // 180°: sigillata -> rivelata, come nel flusso 3D
-    for(let i=0;i<N;i++){
-      rootC.visible=i<SWAP;
-      rootR.visible=i>=SWAP;
-      group.rotation.y=(i/N)*Math.PI*2;
-      renderer.render(scene,camera);
-      frames.push(canvas.toDataURL('image/webp',0.82));
-      status.textContent='fotogramma '+(i+1)+'/'+N;
-    }
-    window.FRAMES=frames;
-    status.textContent='FATTO: '+N+' fotogrammi pronti in window.FRAMES';
-  }catch(e){
-    window.RENDER_ERROR=String(e&&e.message||e);
-    status.textContent='ERRORE: '+window.RENDER_ERROR;
+    status.textContent = 'pronto per il render — usa window.generaSerie(...) o scorri window.PIANO';
+    log('Esempio: for (const args of window.PIANO) await window.generaSerie(...args);');
+  } catch (e) {
+    window.RENDER_ERROR = String(e && e.message || e);
+    status.textContent = 'ERRORE: ' + window.RENDER_ERROR;
   }
 })();
 </script>
