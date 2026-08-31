@@ -433,10 +433,17 @@ if (skipIntroBtn) {
   }, { passive: true });
 
   window.addEventListener('touchmove', event => {
-    if (!compactRotationLocked || compactTouchY === null || !event.touches[0]) return;
+    /* compactTouchY va aggiornato ad OGNI touchmove, anche prima che il blocco
+       scatti — altrimenti resta fermo al punto del touchstart. Se il blocco
+       arriva a META' di uno swipe continuo (il dito e' gia' sceso di 100-200px
+       facendo scorrere la pagina normalmente), il PRIMO delta calcolato dopo
+       il blocco era l'intero tragitto gia' percorso dal dito: la lattina
+       saltava di colpo a un fotogramma lontano invece di partire da 0. */
+    if (compactTouchY === null || !event.touches[0]) return;
     const nextY = event.touches[0].clientY;
     const delta = compactTouchY - nextY;
     compactTouchY = nextY;
+    if (!compactRotationLocked) return;
     advanceCompactRotation(delta, event);
   }, { passive: false });
 
