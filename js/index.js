@@ -418,7 +418,8 @@ if (skipIntroBtn) {
     }
 
     event.preventDefault();
-    const distance = event.type === 'wheel' ? 900 : 520;
+    // -22% di distanza = stessa carezza del dito copre un po' piu' di giro
+    const distance = event.type === 'wheel' ? 700 : 400;
     compactRotationProgress = Math.max(0, Math.min(1, compactRotationProgress + delta / distance));
     if (updateCompactRotation) updateCompactRotation();
   }
@@ -597,17 +598,60 @@ if (skipIntroBtn) {
     }
     let fbDragging = false, fbLastX = 0, fbAccum = 0;
     let fbRotationCompleted = false; // drag col dito solo dopo il giro completo da scroll
-    const FB_PX_PER_FRAME = 9; // pixel di trascinamento per passare al fotogramma dopo
+    const FB_PX_PER_FRAME = 7; // pixel di trascinamento per passare al fotogramma dopo (era 9: un po' piu' pronta)
+
+    /* ── Inerzia al rilascio ──
+       Prima il dito trascinava la lattina 1:1 e al distacco si fermava di
+       scatto: un oggetto vero non si ferma cosi', continua a girare e
+       rallenta. La velocita' recente del dito (media mobile leggera, cosi'
+       un singolo evento a scatti non la falsa) diventa la spinta iniziale di
+       un giro che rallenta con un attrito costante nel tempo, non nei frame:
+       fluido a 30Hz quanto a 120Hz. */
+    const FB_MOMENTUM_MIN_VEL = 0.05;   // px/ms sotto cui non vale avviare l'inerzia
+    const FB_MOMENTUM_STOP_VEL = 0.01;  // px/ms sotto cui l'inerzia si ferma
+    const FB_MOMENTUM_FRICTION = 0.94;  // frazione di velocita' residua ogni ~16ms
+    let fbVelPxMs = 0, fbLastMoveTs = 0, fbMomentumRAF = null;
+
+    function fbFermaMomentum() {
+      if (fbMomentumRAF) { cancelAnimationFrame(fbMomentumRAF); fbMomentumRAF = null; }
+    }
+    function fbAvviaMomentum() {
+      fbFermaMomentum();
+      let v = fbVelPxMs, ultimo = performance.now();
+      function passo(now) {
+        // clamp: un tab tornato in primo piano dopo secondi non deve far
+        // scattare la lattina di decine di fotogrammi in un colpo solo
+        const dt = Math.min(now - ultimo, 48);
+        ultimo = now;
+        fbAccum += v * dt;
+        const step = Math.trunc(fbAccum / FB_PX_PER_FRAME);
+        if (step !== 0) { fbAccum -= step * FB_PX_PER_FRAME; fbOffset += step; applyFallbackFrame(); }
+        v *= Math.pow(FB_MOMENTUM_FRICTION, dt / 16); // attrito indipendente dal framerate
+        if (Math.abs(v) < FB_MOMENTUM_STOP_VEL) { fbMomentumRAF = null; return; }
+        fbMomentumRAF = requestAnimationFrame(passo);
+      }
+      fbMomentumRAF = requestAnimationFrame(passo);
+    }
+
     img.addEventListener('pointerdown', (e) => {
       if (!fbRotationCompleted) return; // prima si completa il giro con lo scroll
-      fbDragging = true; fbLastX = e.clientX;
+      fbFermaMomentum(); // riafferrare la lattina a meta' inerzia la ferma, come ci si aspetta
+      fbDragging = true; fbLastX = e.clientX; fbVelPxMs = 0; fbLastMoveTs = 0;
       img.style.cursor = 'grabbing';
       try { img.setPointerCapture(e.pointerId); } catch (err) {}
     });
     img.addEventListener('pointermove', (e) => {
       if (!fbDragging) return;
-      fbAccum += e.clientX - fbLastX;
+      const ora = performance.now();
+      const delta = e.clientX - fbLastX;
+      fbAccum += delta;
       fbLastX = e.clientX;
+      if (fbLastMoveTs) {
+        const dt = ora - fbLastMoveTs;
+        // media mobile: smorza gli scatti fra un evento pointermove e l'altro
+        if (dt > 0) fbVelPxMs = fbVelPxMs * 0.7 + (delta / dt) * 0.3;
+      }
+      fbLastMoveTs = ora;
       const step = Math.trunc(fbAccum / FB_PX_PER_FRAME);
       if (step !== 0) {
         fbAccum -= step * FB_PX_PER_FRAME;
@@ -618,7 +662,10 @@ if (skipIntroBtn) {
     ['pointerup', 'pointercancel'].forEach(ev =>
       img.addEventListener(ev, () => {
         fbDragging = false;
-        if (fbRotationCompleted) img.style.cursor = 'grab';
+        if (fbRotationCompleted) {
+          img.style.cursor = 'grab';
+          if (Math.abs(fbVelPxMs) > FB_MOMENTUM_MIN_VEL) fbAvviaMomentum();
+        }
       }));
 
     /* Precarico: lo scroll non deve mai aspettare la rete. La meta' sigillata
@@ -1109,7 +1156,7 @@ if (skipIntroBtn) {
   });
   canvas.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    dragRotY += (e.clientX - dragLastX) * 0.012;
+    dragRotY += (e.clientX - dragLastX) * 0.014; // era 0.012: un po' piu' pronta al trascinamento
     dragLastX = e.clientX;
     loadRevealedModels(); // chi trascina può superare i 180°: varianti pronte
   });
