@@ -497,8 +497,14 @@ if (skipIntroBtn) {
      creatura rivelata, quindi la seconda cartella contiene i soli 24-47. */
   const FB_VARIANT_DIRS = ['assets/can-frames', 'assets/can-frames-02'];
   let fbVariant = 0; // 0 = voce del silenzio, 1 = sussurro corrotto
+  /* I fotogrammi rivelati sono stati ri-renderizzati (Thaera -> Juna) MANTENENDO
+     gli stessi nomi di file: senza una versione nell'URL i browser che avevano
+     gia' visitato il sito continuerebbero a mostrare la vecchia creatura presa
+     dalla cache. Da incrementare a ogni nuovo render dei fotogrammi. */
+  const FB_FRAMES_V = '2';
   const fbSrc = (i, v) =>
-    FB_VARIANT_DIRS[i >= FB_SWAP_FRAME ? v : 0] + '/frame-' + String(i).padStart(2, '0') + '.webp';
+    FB_VARIANT_DIRS[i >= FB_SWAP_FRAME ? v : 0] + '/frame-' + String(i).padStart(2, '0') +
+    '.webp?v=' + FB_FRAMES_V;
   const fallbackFrameSrc = (i) => fbSrc(i, fbVariant);
   function showStaticFallback() {
     const img = document.createElement('img');
