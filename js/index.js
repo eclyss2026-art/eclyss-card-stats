@@ -830,7 +830,7 @@ if (skipIntroBtn) {
   // Un solo disegno di lattina sigillata (mistero), condiviso; alla rivelazione mostra la
   // creatura scelta dai numeri laterali (colibrì o serpente).
   const COVERED_URL = 'assets/eclyss-can2.glb';
-  const REVEALED_URLS = ['assets/eclyss-can2-v2.glb', 'assets/eclyss-can2-v3.glb'];
+  const REVEALED_URLS = ['assets/juna.glb', 'assets/eclyss-can2-v3.glb'];
   let coveredRoot = null;
   const revealedRoots = new Array(REVEALED_URLS.length).fill(null);
   let activeRevealed = 0;

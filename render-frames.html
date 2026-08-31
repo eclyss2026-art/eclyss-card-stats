@@ -86,7 +86,7 @@ const loadGLB=url=>new Promise((res,rej)=>new THREE.GLTFLoader().load(url,res,un
   try{
     status.textContent='carico HDR + modelli…';
     await loadHDR();
-    const [covered,revealed]=await Promise.all([loadGLB('assets/eclyss-can2.glb'),loadGLB('assets/eclyss-can2-v2.glb')]);
+    const [covered,revealed]=await Promise.all([loadGLB('assets/eclyss-can2.glb'),loadGLB('assets/juna.glb')]);
     const group=new THREE.Group();scene.add(group);
     const rootC=prepareModel(covered),rootR=prepareModel(revealed);
     group.add(rootC);group.add(rootR);
